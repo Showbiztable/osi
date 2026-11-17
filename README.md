@@ -18,6 +18,6 @@ Aplicação web desenvolvida como etapa de desafio técnico para organizar solic
 
 ## Estado do projeto
 
-- O projeto está na etapa inicial de setup e definição. 
-- Os próximos incrementos registrarão o acordo de desenvolvimento, as regras de negócio (critérios de ordenação e desempate) e as decisões de arquitetura.
-- Instruções de execução, documentação da API e links da aplicação serão acrescentados conforme estiverem disponíveis.
+- **Concluído:** escopo, tecnologias e [regras da fila de atendimento](docs/regras-da-fila.md) definidos.
+- **Próximo passo:** registrar as decisões de arquitetura e preparar a estrutura inicial do frontend e do backend.
+- **Funcionalidades e publicação:** implementação e hospedagem ainda pendentes.
