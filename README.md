@@ -19,5 +19,6 @@ Aplicação web desenvolvida como etapa de desafio técnico para organizar solic
 ## Estado do projeto
 
 - **Concluído:** escopo, tecnologias, [regras da fila de atendimento](docs/regras-da-fila.md) e [arquitetura inicial](docs/arquitetura.md) definidos.
-- **Próximo passo:** preparar a estrutura inicial do frontend e do backend.
+- **Em andamento:** o backend Spring Boot já tem estrutura inicial e build com Maven Wrapper.
+- **Próximo passo:** preparar a estrutura inicial do frontend.
 - **Funcionalidades e publicação:** implementação e hospedagem ainda pendentes.
