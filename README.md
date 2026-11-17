@@ -18,6 +18,6 @@ Aplicação web desenvolvida como etapa de desafio técnico para organizar solic
 
 ## Estado do projeto
 
-- **Concluído:** escopo, tecnologias e [regras da fila de atendimento](docs/regras-da-fila.md) definidos.
-- **Próximo passo:** registrar as decisões de arquitetura e preparar a estrutura inicial do frontend e do backend.
+- **Concluído:** escopo, tecnologias, [regras da fila de atendimento](docs/regras-da-fila.md) e [arquitetura inicial](docs/arquitetura.md) definidos.
+- **Próximo passo:** preparar a estrutura inicial do frontend e do backend.
 - **Funcionalidades e publicação:** implementação e hospedagem ainda pendentes.
