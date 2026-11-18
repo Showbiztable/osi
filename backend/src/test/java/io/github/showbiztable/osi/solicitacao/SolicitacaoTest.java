@@ -1,5 +1,6 @@
 package io.github.showbiztable.osi.solicitacao;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Clock;
@@ -27,5 +28,27 @@ class SolicitacaoTest {
 
 		// Then
 		assertEquals(instanteDoCadastro, solicitacao.entrada());
+	}
+
+	@Test
+	void identifica_O_Departamento_Solicitante_E_O_Responsavel_No_Cadastro() {
+		// Given
+		String departamentoSolicitante = "Financeiro";
+		String departamentoResponsavel = "TI";
+
+		// When
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			"Acesso ao sistema de notas fiscais",
+			departamentoSolicitante,
+			departamentoResponsavel,
+			Prioridade.ALTA,
+			Clock.systemUTC()
+		);
+
+		// Then
+		assertAll(
+			() -> assertEquals(departamentoSolicitante, solicitacao.departamentoSolicitante()),
+			() -> assertEquals(departamentoResponsavel, solicitacao.departamentoResponsavel())
+		);
 	}
 }

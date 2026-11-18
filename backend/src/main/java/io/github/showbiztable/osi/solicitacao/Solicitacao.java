@@ -19,4 +19,12 @@ class Solicitacao {
 	Instant entrada() {
 		return entrada;
 	}
+
+	String departamentoSolicitante() {
+		return null;
+	}
+
+	String departamentoResponsavel() {
+		return null;
+	}
 }
