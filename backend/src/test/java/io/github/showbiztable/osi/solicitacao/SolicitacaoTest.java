@@ -2,6 +2,7 @@ package io.github.showbiztable.osi.solicitacao;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -86,5 +87,20 @@ class SolicitacaoTest {
 
 		// Then
 		assertEquals(descricaoInformada, solicitacao.getDescricao());
+	}
+
+	@Test
+	void inicia_Ativa_Ao_Cadastrar_Uma_Solicitacao() {
+		// Given & When
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			"Acesso ao sistema de notas fiscais",
+			"Financeiro",
+			"TI",
+			Prioridade.ALTA,
+			Clock.systemUTC()
+		);
+
+		// Then
+		assertTrue(solicitacao.isAtiva());
 	}
 }

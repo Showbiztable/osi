@@ -40,6 +40,10 @@ class Solicitacao {
 		return descricao;
 	}
 
+	boolean isAtiva() {
+		return false;
+	}
+
 	static Solicitacao cadastrar(String descricao, String departamentoSolicitante, String departamentoResponsavel,
 		Prioridade prioridade, Clock relogio) {
 		return new Solicitacao(relogio.instant(), departamentoSolicitante, departamentoResponsavel, prioridade, descricao);
