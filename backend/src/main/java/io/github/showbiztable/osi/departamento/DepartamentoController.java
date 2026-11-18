@@ -1,15 +1,26 @@
 package io.github.showbiztable.osi.departamento;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 class DepartamentoController {
 
+	private final DepartamentoRepository repository;
+
+	DepartamentoController(DepartamentoRepository repository) {
+		this.repository = repository;
+	}
+
 	@GetMapping("/api/departamentos")
-	ResponseEntity<Void> listar() {
-		return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+	List<DepartamentoResumo> listar() {
+		return repository.findAllByOrderByNomeAsc().stream()
+			.map(departamento -> new DepartamentoResumo(departamento.getId(), departamento.getNome()))
+			.toList();
+	}
+
+	record DepartamentoResumo(Long id, String nome) {
 	}
 }
