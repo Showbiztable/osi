@@ -27,6 +27,10 @@ class Solicitacao {
 		return departamentoResponsavel;
 	}
 
+	Prioridade getPrioridade() {
+		return null;
+	}
+
 	static Solicitacao cadastrar(String descricao, String departamentoSolicitante, String departamentoResponsavel,
 		Prioridade prioridade, Clock relogio) {
 		return new Solicitacao(relogio.instant(), departamentoSolicitante, departamentoResponsavel);

@@ -8,6 +8,8 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class SolicitacaoTest {
 
@@ -50,5 +52,21 @@ class SolicitacaoTest {
 			() -> assertEquals(departamentoSolicitante, solicitacao.getDepartamentoSolicitante()),
 			() -> assertEquals(departamentoResponsavel, solicitacao.getDepartamentoResponsavel())
 		);
+	}
+
+	@ParameterizedTest
+	@EnumSource(Prioridade.class)
+	void registra_A_Prioridade_Informada_No_Cadastro(Prioridade prioridadeInformada) {
+		// Given & When
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			"Acesso ao sistema de notas fiscais",
+			"Financeiro",
+			"TI",
+			prioridadeInformada,
+			Clock.systemUTC()
+		);
+
+		// Then
+		assertEquals(prioridadeInformada, solicitacao.getPrioridade());
 	}
 }
