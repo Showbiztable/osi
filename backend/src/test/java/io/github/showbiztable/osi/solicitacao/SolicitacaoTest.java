@@ -69,4 +69,22 @@ class SolicitacaoTest {
 		// Then
 		assertEquals(prioridadeInformada, solicitacao.getPrioridade());
 	}
+
+	@Test
+	void registra_A_Descricao_Informada_No_Cadastro() {
+		// Given
+		String descricaoInformada = "O sistema de notas fiscais não abre.";
+
+		// When
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			descricaoInformada,
+			"Financeiro",
+			"TI",
+			Prioridade.ALTA,
+			Clock.systemUTC()
+		);
+
+		// Then
+		assertEquals(descricaoInformada, solicitacao.getDescricao());
+	}
 }
