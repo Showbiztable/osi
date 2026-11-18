@@ -20,6 +20,10 @@ class Solicitacao {
 		this.descricao = descricao;
 	}
 
+	Long getId() {
+		return null;
+	}
+
 	Instant getEntrada() {
 		return entrada;
 	}
