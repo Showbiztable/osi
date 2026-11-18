@@ -19,15 +19,15 @@ class SolicitacaoTest {
 
 		// When
 		Solicitacao solicitacao = Solicitacao.cadastrar(
-				"Acesso ao sistema de notas fiscais", 
-				"Financeiro", 
-				"TI", 
-				Prioridade.ALTA, 
-				relogio
-			);
+			"Acesso ao sistema de notas fiscais",
+			"Financeiro",
+			"TI",
+			Prioridade.ALTA,
+			relogio
+		);
 
 		// Then
-		assertEquals(instanteDoCadastro, solicitacao.entrada());
+		assertEquals(instanteDoCadastro, solicitacao.getEntrada());
 	}
 
 	@Test
@@ -47,8 +47,8 @@ class SolicitacaoTest {
 
 		// Then
 		assertAll(
-			() -> assertEquals(departamentoSolicitante, solicitacao.departamentoSolicitante()),
-			() -> assertEquals(departamentoResponsavel, solicitacao.departamentoResponsavel())
+			() -> assertEquals(departamentoSolicitante, solicitacao.getDepartamentoSolicitante()),
+			() -> assertEquals(departamentoResponsavel, solicitacao.getDepartamentoResponsavel())
 		);
 	}
 }

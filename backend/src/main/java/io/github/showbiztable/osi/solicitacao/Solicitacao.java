@@ -15,20 +15,20 @@ class Solicitacao {
 		this.departamentoResponsavel = departamentoResponsavel;
 	}
 
-	static Solicitacao cadastrar(String descricao, String departamentoSolicitante, String departamentoResponsavel, 
-		Prioridade prioridade, Clock relogio) {
-		return new Solicitacao(relogio.instant(), departamentoSolicitante, departamentoResponsavel);
-	}
-
-	Instant entrada() {
+	Instant getEntrada() {
 		return entrada;
 	}
 
-	String departamentoSolicitante() {
+	String getDepartamentoSolicitante() {
 		return departamentoSolicitante;
 	}
 
-	String departamentoResponsavel() {
+	String getDepartamentoResponsavel() {
 		return departamentoResponsavel;
+	}
+
+	static Solicitacao cadastrar(String descricao, String departamentoSolicitante, String departamentoResponsavel,
+		Prioridade prioridade, Clock relogio) {
+		return new Solicitacao(relogio.instant(), departamentoSolicitante, departamentoResponsavel);
 	}
 }
