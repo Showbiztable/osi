@@ -20,5 +20,6 @@ Aplicação web desenvolvida como etapa de desafio técnico para organizar solic
 
 - **Concluído:** escopo, tecnologias, [regras da fila de atendimento](docs/regras-da-fila.md) e [arquitetura inicial](docs/arquitetura.md) definidos.
 - **Estrutura inicial:** backend Spring Boot com Maven Wrapper e frontend React com Vite.
-- **Próximo passo:** automatizar as verificações do frontend e do backend no GitHub Actions.
+- **Verificações:** GitHub Actions configurado para rodar lint e build do frontend, além dos testes e build do backend.
+- **Próximo passo:** iniciar o fluxo de cadastro de solicitações.
 - **Funcionalidades e publicação:** implementação e hospedagem ainda pendentes.
