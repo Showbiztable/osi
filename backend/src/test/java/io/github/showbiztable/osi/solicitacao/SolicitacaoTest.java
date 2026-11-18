@@ -14,6 +14,9 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class SolicitacaoTest {
 
+	private static final long DEPARTAMENTO_SOLICITANTE_ID = 10L;
+	private static final long DEPARTAMENTO_RESPONSAVEL_ID = 20L;
+
 	@Test
 	void registra_Automaticamente_O_Instante_De_Entrada_No_Cadastro() {
 		// Given
@@ -23,8 +26,8 @@ class SolicitacaoTest {
 		// When
 		Solicitacao solicitacao = Solicitacao.cadastrar(
 			"Acesso ao sistema de notas fiscais",
-			"Financeiro",
-			"TI",
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
 			Prioridade.ALTA,
 			relogio
 		);
@@ -35,23 +38,19 @@ class SolicitacaoTest {
 
 	@Test
 	void identifica_O_Departamento_Solicitante_E_O_Responsavel_No_Cadastro() {
-		// Given
-		String departamentoSolicitante = "Financeiro";
-		String departamentoResponsavel = "TI";
-
-		// When
+		// Given & When
 		Solicitacao solicitacao = Solicitacao.cadastrar(
 			"Acesso ao sistema de notas fiscais",
-			departamentoSolicitante,
-			departamentoResponsavel,
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
 			Prioridade.ALTA,
 			Clock.systemUTC()
 		);
 
 		// Then
 		assertAll(
-			() -> assertEquals(departamentoSolicitante, solicitacao.getDepartamentoSolicitante()),
-			() -> assertEquals(departamentoResponsavel, solicitacao.getDepartamentoResponsavel())
+			() -> assertEquals(DEPARTAMENTO_SOLICITANTE_ID, solicitacao.getDepartamentoSolicitanteId()),
+			() -> assertEquals(DEPARTAMENTO_RESPONSAVEL_ID, solicitacao.getDepartamentoResponsavelId())
 		);
 	}
 
@@ -61,8 +60,8 @@ class SolicitacaoTest {
 		// Given & When
 		Solicitacao solicitacao = Solicitacao.cadastrar(
 			"Acesso ao sistema de notas fiscais",
-			"Financeiro",
-			"TI",
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
 			prioridadeInformada,
 			Clock.systemUTC()
 		);
@@ -79,8 +78,8 @@ class SolicitacaoTest {
 		// When
 		Solicitacao solicitacao = Solicitacao.cadastrar(
 			descricaoInformada,
-			"Financeiro",
-			"TI",
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
 			Prioridade.ALTA,
 			Clock.systemUTC()
 		);
@@ -94,8 +93,8 @@ class SolicitacaoTest {
 		// Given & When
 		Solicitacao solicitacao = Solicitacao.cadastrar(
 			"Acesso ao sistema de notas fiscais",
-			"Financeiro",
-			"TI",
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
 			Prioridade.ALTA,
 			Clock.systemUTC()
 		);
