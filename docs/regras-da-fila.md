@@ -14,6 +14,16 @@ Por exemplo, em 18/11/2026 às 09:15, o Financeiro solicita à TI acesso ao sist
 A solicitação entra na fila da TI com prioridade alta e entrada em 18/11/2026 às 09:15.  
 O Financeiro aparece como departamento solicitante.
 
+### Escolha dos departamentos
+
+O formulário oferece dois seletores, um para o departamento solicitante e outro para o responsável.  
+Ambos usam a mesma lista de departamentos, consultada pela API.  
+Uma migration do banco cria os registros iniciais, incluindo Financeiro e TI.
+
+O formulário envia o identificador de cada departamento escolhido.  
+O sistema só registra a solicitação se os dois identificadores corresponderem a departamentos cadastrados.  
+Usar uma lista única evita que variações de escrita, como «TI» e «T.I.», criem filas diferentes para o mesmo departamento.
+
 ## Ordem de atendimento
 
 A fila segue estes critérios, na ordem:
