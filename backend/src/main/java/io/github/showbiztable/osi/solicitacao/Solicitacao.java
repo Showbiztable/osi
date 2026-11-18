@@ -6,14 +6,18 @@ import java.time.Instant;
 class Solicitacao {
 
 	private final Instant entrada;
+	private final String departamentoSolicitante;
+	private final String departamentoResponsavel;
 
-	private Solicitacao(Instant entrada) {
+	private Solicitacao(Instant entrada, String departamentoSolicitante, String departamentoResponsavel) {
 		this.entrada = entrada;
+		this.departamentoSolicitante = departamentoSolicitante;
+		this.departamentoResponsavel = departamentoResponsavel;
 	}
 
 	static Solicitacao cadastrar(String descricao, String departamentoSolicitante, String departamentoResponsavel, 
 		Prioridade prioridade, Clock relogio) {
-		return new Solicitacao(relogio.instant());
+		return new Solicitacao(relogio.instant(), departamentoSolicitante, departamentoResponsavel);
 	}
 
 	Instant entrada() {
@@ -21,10 +25,10 @@ class Solicitacao {
 	}
 
 	String departamentoSolicitante() {
-		return null;
+		return departamentoSolicitante;
 	}
 
 	String departamentoResponsavel() {
-		return null;
+		return departamentoResponsavel;
 	}
 }
