@@ -35,6 +35,17 @@ O teste de inicialização do Spring aplica as migrations do Flyway no PostgreSQ
 .\backend\mvnw.cmd -B -ntp -f backend/pom.xml verify
 ```
 
+Os testes de integração têm a tag `integration`.  
+Execute apenas os unitários sem precisar subir o PostgreSQL ou filtre apenas os testes de integração com o banco de dados em execução.
+
+```powershell
+# Apenas unitários
+.\backend\mvnw.cmd -B -ntp -f backend/pom.xml "-DexcludedGroups=integration" test
+
+# Apenas integração
+.\backend\mvnw.cmd -B -ntp -f backend/pom.xml "-Dgroups=integration" test
+```
+
 Use `docker compose stop db` para parar o banco.  
 O volume `postgres-data` guarda os dados entre execuções.
 
