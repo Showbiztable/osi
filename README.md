@@ -28,6 +28,13 @@ O PostgreSQL fica acessível em `127.0.0.1:5432`.
 O banco e o usuário se chamam `osi`, e a senha `osi_local` serve para o desenvolvimento local.  
 Na hospedagem, a API receberá as credenciais do Neon por variáveis de ambiente.
 
+Com o banco em execução, valide o backend a partir da raiz do repositório.  
+O teste de inicialização do Spring aplica as migrations do Flyway no PostgreSQL local.
+
+```powershell
+.\backend\mvnw.cmd -B -ntp -f backend/pom.xml verify
+```
+
 Use `docker compose stop db` para parar o banco.  
 O volume `postgres-data` guarda os dados entre execuções.
 
@@ -37,5 +44,6 @@ O volume `postgres-data` guarda os dados entre execuções.
 - **Estrutura inicial:** backend Spring Boot com Maven Wrapper e frontend React com Vite.
 - **Verificações:** GitHub Actions configurado para rodar lint e build do frontend, além dos testes e build do backend.
 - **Cadastro:** o modelo Java registra a descrição, os departamentos, a prioridade e o instante de entrada. A solicitação começa ativa.
-- **Próximo passo:** aplicar as primeiras migrations no PostgreSQL local e integrar a persistência ao cadastro.
+- **Banco de dados:** PostgreSQL local com Docker Compose e migration do Flyway para o catálogo inicial de departamentos.
+- **Próximo passo:** integrar a persistência ao cadastro.
 - **Publicação:** hospedagem pendente.
