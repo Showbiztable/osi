@@ -9,13 +9,15 @@ class Solicitacao {
 	private final String departamentoSolicitante;
 	private final String departamentoResponsavel;
 	private final Prioridade prioridade;
+	private final String descricao;
 
 	private Solicitacao(Instant entrada, String departamentoSolicitante, String departamentoResponsavel,
-		Prioridade prioridade) {
+		Prioridade prioridade, String descricao) {
 		this.entrada = entrada;
 		this.departamentoSolicitante = departamentoSolicitante;
 		this.departamentoResponsavel = departamentoResponsavel;
 		this.prioridade = prioridade;
+		this.descricao = descricao;
 	}
 
 	Instant getEntrada() {
@@ -35,11 +37,11 @@ class Solicitacao {
 	}
 
 	String getDescricao() {
-		return null;
+		return descricao;
 	}
 
 	static Solicitacao cadastrar(String descricao, String departamentoSolicitante, String departamentoResponsavel,
 		Prioridade prioridade, Clock relogio) {
-		return new Solicitacao(relogio.instant(), departamentoSolicitante, departamentoResponsavel, prioridade);
+		return new Solicitacao(relogio.instant(), departamentoSolicitante, departamentoResponsavel, prioridade, descricao);
 	}
 }
