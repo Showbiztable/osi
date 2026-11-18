@@ -41,7 +41,7 @@ class Solicitacao {
 	}
 
 	boolean isAtiva() {
-		return false;
+		return true;
 	}
 
 	static Solicitacao cadastrar(String descricao, String departamentoSolicitante, String departamentoResponsavel,
