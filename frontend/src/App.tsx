@@ -1,13 +1,32 @@
 import { useEffect, useState, type SubmitEvent } from 'react'
 import { FilaAtendimento } from './FilaAtendimento'
 import { listarDepartamentos, type Departamento } from './departamentos'
-import { alterarPrioridade, cadastrarSolicitacao, listarFila, rotulosPrioridade, type DadosCadastro, type ItemFila } from './solicitacoes'
+import {
+  alterarPrioridade,
+  cadastrarSolicitacao,
+  concluirSolicitacao,
+  listarFila,
+  rotulosPrioridade,
+  type DadosCadastro,
+  type ItemFila,
+} from './solicitacoes'
 import './App.css'
 
 const camposDepartamento = [
   { nome: 'departamentoSolicitanteId', rotulo: 'Departamento solicitante' },
   { nome: 'departamentoResponsavelId', rotulo: 'Departamento responsável' },
 ] as const
+
+const mensagensAcaoFila = {
+  prioridade: {
+    enviando: 'Alterando prioridade…',
+    erro: 'Não foi possível alterar a prioridade. Tente novamente.',
+  },
+  conclusao: {
+    enviando: 'Concluindo solicitação…',
+    erro: 'Não foi possível concluir a solicitação. Tente novamente.',
+  },
+}
 
 type Catalogo =
   | { estado: 'carregando' | 'erro' }
@@ -22,16 +41,21 @@ type Fila =
   | { estado: 'carregando' | 'erro' }
   | { estado: 'pronta'; itens: ItemFila[] }
 
+type AcaoFila = {
+  tipo: keyof typeof mensagensAcaoFila
+  estado: 'enviando' | 'erro'
+}
+
 function App() {
   const [catalogo, setCatalogo] = useState<Catalogo>({ estado: 'carregando' })
   const [envio, setEnvio] = useState<Envio | null>(null)
   const [departamentoFila, setDepartamentoFila] = useState('')
   const [fila, setFila] = useState<Fila>({ estado: 'carregando' })
   const [revisaoFila, setRevisaoFila] = useState(0)
-  const [alteracaoPrioridade, setAlteracaoPrioridade] = useState<'enviando' | 'erro' | null>(null)
+  const [acaoFila, setAcaoFila] = useState<AcaoFila | null>(null)
   const departamentos = catalogo.estado === 'pronto' ? catalogo.departamentos : []
   const enviando = envio?.estado === 'enviando'
-  const alterandoPrioridade = alteracaoPrioridade === 'enviando'
+  const acaoEmAndamento = acaoFila?.estado === 'enviando'
 
   useEffect(() => {
     let desmontado = false
@@ -97,15 +121,15 @@ function App() {
     setRevisaoFila((anterior) => anterior + 1)
   }
 
-  async function salvarPrioridade(solicitacaoId: number, prioridade: ItemFila['prioridade']) {
-    setAlteracaoPrioridade('enviando')
+  async function executarAcaoDaFila(tipo: AcaoFila['tipo'], executar: () => Promise<void>) {
+    setAcaoFila({ tipo, estado: 'enviando' })
 
     try {
-      await alterarPrioridade(solicitacaoId, prioridade)
-      setAlteracaoPrioridade(null)
+      await executar()
+      setAcaoFila(null)
       atualizarFila()
     } catch {
-      setAlteracaoPrioridade('erro')
+      setAcaoFila({ tipo, estado: 'erro' })
     }
   }
 
@@ -196,9 +220,9 @@ function App() {
               Departamento da fila
               <select
                 value={departamentoFila}
-                disabled={!departamentos.length || alterandoPrioridade}
+                disabled={!departamentos.length || acaoEmAndamento}
                 onChange={(evento) => {
-                  setAlteracaoPrioridade(null)
+                  setAcaoFila(null)
                   setFila({ estado: 'carregando' })
                   setDepartamentoFila(evento.target.value)
                 }}
@@ -218,18 +242,23 @@ function App() {
                 <button type="button" onClick={atualizarFila}>Tentar novamente</button>
               </div>
             )}
-            {alterandoPrioridade && <p role="status">Alterando prioridade…</p>}
-            {alteracaoPrioridade === 'erro' && (
-              <p className="mensagem erro" role="alert">
-                Não foi possível alterar a prioridade. Tente novamente.
+            {acaoFila && (
+              <p
+                className={acaoFila.estado === 'erro' ? 'mensagem erro' : undefined}
+                role={acaoFila.estado === 'erro' ? 'alert' : 'status'}
+              >
+                {mensagensAcaoFila[acaoFila.tipo][acaoFila.estado]}
               </p>
             )}
             {departamentoFila && fila.estado === 'pronta' && (
               <FilaAtendimento
                 itens={fila.itens}
                 departamentos={departamentos}
-                alterandoPrioridade={alterandoPrioridade}
-                onAlterarPrioridade={salvarPrioridade}
+                acaoEmAndamento={acaoEmAndamento}
+                onAlterarPrioridade={(id, prioridade) =>
+                  executarAcaoDaFila('prioridade', () => alterarPrioridade(id, prioridade))
+                }
+                onConcluir={(id) => executarAcaoDaFila('conclusao', () => concluirSolicitacao(id))}
               />
             )}
           </div>

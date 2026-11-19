@@ -30,8 +30,16 @@ class SolicitacaoService {
 
 	@Transactional
 	void alterarPrioridade(long solicitacaoId, Prioridade novaPrioridade) {
-		Solicitacao solicitacao = repository.findById(solicitacaoId)
+		buscarPorId(solicitacaoId).alterarPrioridade(novaPrioridade);
+	}
+
+	@Transactional
+	void concluir(long solicitacaoId) {
+		buscarPorId(solicitacaoId).concluir();
+	}
+
+	private Solicitacao buscarPorId(long solicitacaoId) {
+		return repository.findById(solicitacaoId)
 			.orElseThrow(() -> new NoSuchElementException("Solicitação não encontrada: " + solicitacaoId));
-		solicitacao.alterarPrioridade(novaPrioridade);
 	}
 }

@@ -47,3 +47,21 @@ it('oferece a alteração de prioridade com a prioridade atual selecionada', () 
   expect(seletor).toContain('<option value="ALTA" selected="">Alta</option>')
   expect(seletor).toContain('<option value="URGENTE">Urgente</option>')
 })
+
+it('oferece um botão para concluir cada solicitação da fila', () => {
+  const primeira: ItemFila = {
+    id: 42,
+    descricao: 'Restaurar o acesso',
+    departamentoSolicitanteId: 10,
+    prioridade: 'URGENTE',
+    entrada: '2026-11-19T12:15:00Z',
+  }
+  const seguinte: ItemFila = { ...primeira, id: 41, descricao: 'Atualizar o cadastro', prioridade: 'BAIXA' }
+
+  const pagina = renderToStaticMarkup(<FilaAtendimento itens={[primeira, seguinte]} />)
+  const itensExibidos = pagina.match(/<li\b[^>]*>[\s\S]*?<\/li>/g) ?? []
+
+  expect(itensExibidos).toHaveLength(2)
+  expect(itensExibidos[0]).toMatch(/<button\b[^>]*aria-label="Concluir solicitação #42"[^>]*>Concluir<\/button>/)
+  expect(itensExibidos[1]).toMatch(/<button\b[^>]*aria-label="Concluir solicitação #41"[^>]*>Concluir<\/button>/)
+})

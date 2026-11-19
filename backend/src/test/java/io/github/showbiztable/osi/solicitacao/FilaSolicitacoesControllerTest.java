@@ -94,6 +94,29 @@ class FilaSolicitacoesControllerTest {
 			.andExpect(jsonPath("$[1].id").value(is(alta.getId()), Long.class));
 	}
 
+	@Test
+	void conclui_A_Primeira_Solicitacao_E_Devolve_A_Fila_Ativa() throws Exception {
+		// Given
+		Long solicitanteId = buscarIdDoFinanceiro();
+		Long responsavelId = inserirDepartamentoDaFila();
+		Clock relogio = Clock.fixed(Instant.parse("2026-11-19T12:15:00Z"), ZoneOffset.UTC);
+		Solicitacao primeira = repository.saveAndFlush(
+			Solicitacao.cadastrar("Restaurar o acesso", solicitanteId, responsavelId, Prioridade.URGENTE, relogio)
+		);
+		Solicitacao seguinte = repository.saveAndFlush(
+			Solicitacao.cadastrar("Atualizar o cadastro", solicitanteId, responsavelId, Prioridade.ALTA, relogio)
+		);
+
+		// When & Then
+		mvc.perform(patch("/api/solicitacoes/{id}/conclusao", primeira.getId()))
+			.andExpect(status().isNoContent());
+
+		mvc.perform(get("/api/solicitacoes").param("departamentoResponsavelId", responsavelId.toString()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.length()").value(1))
+			.andExpect(jsonPath("$[0].id").value(is(seguinte.getId()), Long.class));
+	}
+
 	private Long buscarIdDoFinanceiro() {
 		return jdbcClient.sql("SELECT id FROM departamento WHERE nome = 'Financeiro'")
 			.query(Long.class)

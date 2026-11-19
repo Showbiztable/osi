@@ -12,7 +12,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 @Entity
+@DynamicUpdate
 @Table(name = "solicitacao")
 class Solicitacao {
 
@@ -82,5 +85,9 @@ class Solicitacao {
 
 	void alterarPrioridade(Prioridade novaPrioridade) {
 		this.prioridade = novaPrioridade;
+	}
+
+	void concluir() {
+		this.ativa = false;
 	}
 }
