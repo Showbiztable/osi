@@ -79,4 +79,8 @@ class Solicitacao {
 		return new Solicitacao(relogio.instant(), departamentoSolicitanteId, departamentoResponsavelId,
 			prioridade, descricao);
 	}
+
+	void alterarPrioridade(Prioridade novaPrioridade) {
+		this.prioridade = novaPrioridade;
+	}
 }

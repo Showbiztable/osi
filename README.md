@@ -56,6 +56,7 @@ O volume `postgres-data` guarda os dados entre execuções.
 - **Verificações:** GitHub Actions executa os testes e o build dos dois projetos, além do lint do frontend.
 - **Cadastro:** o formulário consulta os departamentos pela API, grava a solicitação no PostgreSQL e exibe o ID gerado.
 - **Fila de atendimento:** a tela lista as solicitações ativas do departamento escolhido na ordem de atendimento e destaca a próxima.
+- **Alteração de prioridade:** a tela permite mudar a prioridade de uma solicitação e atualiza a fila após a confirmação da API.
 - **Banco de dados:** PostgreSQL local com Docker Compose e migrations do Flyway para departamentos e solicitações.
-- **Próximo passo:** permitir mudar a prioridade de uma solicitação e atualizar a fila.
+- **Próximo passo:** permitir concluir uma solicitação e retirá-la da fila ativa.
 - **Publicação:** hospedagem pendente.

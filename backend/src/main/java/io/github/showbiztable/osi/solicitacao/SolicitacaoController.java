@@ -2,10 +2,13 @@ package io.github.showbiztable.osi.solicitacao;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,6 +44,22 @@ class SolicitacaoController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new SolicitacaoCriada(id));
 	}
 
+	@PatchMapping("/api/solicitacoes/{id}/prioridade")
+	ResponseEntity<Void> alterarPrioridade(@PathVariable("id") long id, @RequestBody DadosPrioridade dados) {
+		Prioridade prioridade = dados.prioridade();
+		if (prioridade == null) {
+			return ResponseEntity.badRequest().build();
+		}
+
+		try {
+			service.alterarPrioridade(id, prioridade);
+		} catch (NoSuchElementException excecao) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return ResponseEntity.noContent().build();
+	}
+
 	record DadosCadastro(
 		String descricao, 
 		long departamentoSolicitanteId, 
@@ -49,6 +68,8 @@ class SolicitacaoController {
 	) {}
 
 	record SolicitacaoCriada(Long id) {}
+
+	record DadosPrioridade(Prioridade prioridade) {}
 
 	record ItemFila(
 		Long id,

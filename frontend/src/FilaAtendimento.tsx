@@ -4,6 +4,8 @@ import { rotulosPrioridade, type ItemFila } from './solicitacoes'
 type FilaAtendimentoProps = {
   itens: ItemFila[]
   departamentos?: Departamento[]
+  alterandoPrioridade?: boolean
+  onAlterarPrioridade?: (solicitacaoId: number, prioridade: ItemFila['prioridade']) => void
 }
 
 const formatoEntrada = new Intl.DateTimeFormat('pt-BR', {
@@ -11,7 +13,12 @@ const formatoEntrada = new Intl.DateTimeFormat('pt-BR', {
   timeStyle: 'short',
 })
 
-export function FilaAtendimento({ itens, departamentos = [] }: FilaAtendimentoProps) {
+export function FilaAtendimento({
+  itens,
+  departamentos = [],
+  alterandoPrioridade = false,
+  onAlterarPrioridade,
+}: FilaAtendimentoProps) {
   if (!itens.length) {
     return <p role="status">Nenhuma solicitação ativa neste departamento.</p>
   }
@@ -36,6 +43,19 @@ export function FilaAtendimento({ itens, departamentos = [] }: FilaAtendimentoPr
               <span>De {solicitante?.nome ?? `Departamento #${item.departamentoSolicitanteId}`}</span>
               <time dateTime={item.entrada}>{formatoEntrada.format(new Date(item.entrada))}</time>
             </p>
+            <label className="campo">
+              Alterar prioridade
+              <select
+                aria-label={`Alterar prioridade da solicitação #${item.id}`}
+                value={item.prioridade}
+                disabled={alterandoPrioridade || !onAlterarPrioridade}
+                onChange={(evento) => onAlterarPrioridade?.(item.id, evento.currentTarget.value as ItemFila['prioridade'])}
+              >
+                {Object.entries(rotulosPrioridade).map(([valor, rotulo]) => (
+                  <option key={valor} value={valor}>{rotulo}</option>
+                ))}
+              </select>
+            </label>
           </li>
         )
       })}
