@@ -2,6 +2,7 @@ package io.github.showbiztable.osi.solicitacao;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Clock;
@@ -124,5 +125,23 @@ class SolicitacaoTest {
 
 		// Then
 		assertTrue(solicitacao.isAtiva());
+	}
+
+	@Test
+	void marca_A_Solicitacao_Como_Inativa_Ao_Concluir() {
+		// Given
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			"Acesso ao sistema de notas fiscais",
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
+			Prioridade.ALTA,
+			Clock.systemUTC()
+		);
+
+		// When
+		solicitacao.concluir();
+
+		// Then
+		assertFalse(solicitacao.isAtiva());
 	}
 }

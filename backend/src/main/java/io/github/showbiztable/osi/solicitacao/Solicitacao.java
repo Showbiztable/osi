@@ -83,4 +83,7 @@ class Solicitacao {
 	void alterarPrioridade(Prioridade novaPrioridade) {
 		this.prioridade = novaPrioridade;
 	}
+
+	void concluir() {
+	}
 }
