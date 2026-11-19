@@ -5,6 +5,23 @@ export type DadosCadastro = {
   prioridade: 'BAIXA' | 'MEDIA' | 'ALTA' | 'URGENTE'
 }
 
+export type ItemFila = {
+  id: number
+  descricao: string
+  departamentoSolicitanteId: number
+  prioridade: DadosCadastro['prioridade']
+  entrada: string
+}
+
+export async function listarFila(departamentoResponsavelId: number): Promise<ItemFila[]> {
+  const resposta = await fetch(`/api/solicitacoes?departamentoResponsavelId=${departamentoResponsavelId}`)
+  if (!resposta.ok) {
+    throw new Error('Não foi possível carregar a fila do departamento.')
+  }
+
+  return resposta.json()
+}
+
 export async function cadastrarSolicitacao(dados: DadosCadastro): Promise<number> {
   const resposta = await fetch('/api/solicitacoes', {
     method: 'POST',
