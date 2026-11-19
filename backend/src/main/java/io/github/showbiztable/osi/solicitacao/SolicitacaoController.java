@@ -60,6 +60,12 @@ class SolicitacaoController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PatchMapping("/api/solicitacoes/{id}/conclusao")
+	ResponseEntity<Void> concluir(@PathVariable("id") long id) {
+		service.concluir(id);
+		return ResponseEntity.noContent().build();
+	}
+
 	record DadosCadastro(
 		String descricao, 
 		long departamentoSolicitanteId, 
