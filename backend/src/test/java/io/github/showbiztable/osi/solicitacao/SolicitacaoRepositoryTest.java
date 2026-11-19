@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.UUID;
 
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Tag;
@@ -63,9 +66,65 @@ class SolicitacaoRepositoryTest {
 		);
 	}
 
+	@Test
+	void lista_A_Fila_Ativa_Do_Departamento_Na_Ordem_De_Atendimento() {
+		// Given
+		String identificadorTeste = UUID.randomUUID().toString();
+		long departamentoId = inserirDepartamento("Responsável " + identificadorTeste);
+		long outroDepartamentoId = inserirDepartamento("Outro " + identificadorTeste);
+		OffsetDateTime entradaAntiga = OffsetDateTime.parse("2026-11-18T09:00:00Z");
+		OffsetDateTime entradaRecente = entradaAntiga.plusMinutes(15);
+
+		long baixa = inserirSolicitacao(outroDepartamentoId, departamentoId, Prioridade.BAIXA, entradaAntiga, true);
+		long media = inserirSolicitacao(outroDepartamentoId, departamentoId, Prioridade.MEDIA, entradaAntiga, true);
+		long altaRecente = inserirSolicitacao(outroDepartamentoId, departamentoId, Prioridade.ALTA, entradaRecente, true);
+		long primeiraAltaAntiga = inserirSolicitacao(
+			outroDepartamentoId, departamentoId, Prioridade.ALTA, entradaAntiga, true
+		);
+		long segundaAltaAntiga = inserirSolicitacao(
+			outroDepartamentoId, departamentoId, Prioridade.ALTA, entradaAntiga, true
+		);
+		long urgente = inserirSolicitacao(outroDepartamentoId, departamentoId, Prioridade.URGENTE, entradaRecente, true);
+		inserirSolicitacao(departamentoId, outroDepartamentoId, Prioridade.URGENTE, entradaAntiga, true);
+		inserirSolicitacao(outroDepartamentoId, departamentoId, Prioridade.URGENTE, entradaAntiga, false);
+
+		// When
+		List<Long> fila = repository.listarFilaAtivaPorDepartamentoResponsavel(departamentoId)
+			.stream()
+			.map(solicitacao -> solicitacao.getId())
+			.toList();
+
+		// Then
+		assertEquals(List.of(urgente, primeiraAltaAntiga, segundaAltaAntiga, altaRecente, media, baixa), fila);
+	}
+
 	private long buscarIdDepartamento(String nome) {
 		return jdbcClient.sql("SELECT id FROM departamento WHERE nome = :nome")
 			.param("nome", nome)
+			.query(Long.class)
+			.single();
+	}
+
+	private long inserirDepartamento(String nome) {
+		return jdbcClient.sql("INSERT INTO departamento (nome) VALUES (:nome) RETURNING id")
+			.param("nome", nome)
+			.query(Long.class)
+			.single();
+	}
+
+	private long inserirSolicitacao(long solicitanteId, long responsavelId, Prioridade prioridade,
+		OffsetDateTime entrada, boolean ativa) {
+		return jdbcClient.sql("""
+			INSERT INTO solicitacao (descricao, departamento_solicitante_id, departamento_responsavel_id,
+				prioridade, entrada, ativa)
+			VALUES ('Solicitação do teste da fila', :solicitanteId, :responsavelId, :prioridade, :entrada, :ativa)
+			RETURNING id
+			""")
+			.param("solicitanteId", solicitanteId)
+			.param("responsavelId", responsavelId)
+			.param("prioridade", prioridade.name())
+			.param("entrada", entrada)
+			.param("ativa", ativa)
 			.query(Long.class)
 			.single();
 	}
