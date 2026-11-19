@@ -80,4 +80,19 @@ class SolicitacaoControllerTest {
 		// Then
 		resposta.andExpect(status().isNotFound());
 	}
+
+	@Test
+	void responde_Com_Not_Found_Ao_Concluir_Uma_Solicitacao_Inexistente() throws Exception {
+		// Given
+		long solicitacaoId = 42L;
+		doThrow(new NoSuchElementException()).when(service).concluir(solicitacaoId);
+
+		// When
+		ResultActions resposta = assertDoesNotThrow(
+			() -> mvc.perform(patch("/api/solicitacoes/{id}/conclusao", solicitacaoId))
+		);
+
+		// Then
+		resposta.andExpect(status().isNotFound());
+	}
 }

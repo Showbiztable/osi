@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,12 +52,7 @@ class SolicitacaoController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		try {
-			service.alterarPrioridade(id, prioridade);
-		} catch (NoSuchElementException excecao) {
-			return ResponseEntity.notFound().build();
-		}
-
+		service.alterarPrioridade(id, prioridade);
 		return ResponseEntity.noContent().build();
 	}
 
@@ -64,6 +60,11 @@ class SolicitacaoController {
 	ResponseEntity<Void> concluir(@PathVariable("id") long id) {
 		service.concluir(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@ExceptionHandler(NoSuchElementException.class)
+	ResponseEntity<Void> responderSolicitacaoInexistente() {
+		return ResponseEntity.notFound().build();
 	}
 
 	record DadosCadastro(
