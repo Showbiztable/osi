@@ -2,6 +2,7 @@ package io.github.showbiztable.osi.solicitacao;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,17 @@ class SolicitacaoController {
 
 	@PatchMapping("/api/solicitacoes/{id}/prioridade")
 	ResponseEntity<Void> alterarPrioridade(@PathVariable("id") long id, @RequestBody DadosPrioridade dados) {
-		service.alterarPrioridade(id, dados.prioridade());
+		Prioridade prioridade = dados.prioridade();
+		if (prioridade == null) {
+			return ResponseEntity.badRequest().build();
+		}
+
+		try {
+			service.alterarPrioridade(id, prioridade);
+		} catch (NoSuchElementException excecao) {
+			return ResponseEntity.notFound().build();
+		}
+
 		return ResponseEntity.noContent().build();
 	}
 
