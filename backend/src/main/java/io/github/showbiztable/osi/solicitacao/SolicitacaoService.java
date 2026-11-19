@@ -2,8 +2,10 @@ package io.github.showbiztable.osi.solicitacao;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class SolicitacaoService {
@@ -24,5 +26,12 @@ class SolicitacaoService {
 			descricao, departamentoSolicitanteId, departamentoResponsavelId, prioridade, Clock.systemUTC()
 		);
 		return repository.save(solicitacao).getId();
+	}
+
+	@Transactional
+	void alterarPrioridade(long solicitacaoId, Prioridade novaPrioridade) {
+		Solicitacao solicitacao = repository.findById(solicitacaoId)
+			.orElseThrow(() -> new NoSuchElementException("Solicitação não encontrada: " + solicitacaoId));
+		solicitacao.alterarPrioridade(novaPrioridade);
 	}
 }
