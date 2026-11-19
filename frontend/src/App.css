@@ -23,7 +23,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.875rem;
-  max-width: 70rem;
+  max-width: 76rem;
   margin: 0 auto;
   padding: 0.875rem 1.5rem;
   font-size: 0.875rem;
@@ -39,7 +39,11 @@ body {
 }
 
 .conteudo {
-  max-width: 52rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 1.25rem;
+  max-width: 76rem;
   margin: 0 auto;
   padding: clamp(1.5rem, 6vw, 4.25rem) clamp(1rem, 4vw, 1.5rem);
 }
@@ -62,11 +66,16 @@ body {
   border-bottom: 1px solid #e2ebe6;
 }
 
-h1 {
+h1,
+h2 {
   margin: 0 0 0.5rem;
   font-size: clamp(1.65rem, 4vw, 2.2rem);
   letter-spacing: -0.045em;
   line-height: 1.15;
+}
+
+.painel-cabecalho h2 {
+  margin-bottom: 0;
 }
 
 p {
@@ -175,6 +184,84 @@ button:disabled {
   background: #e0e9e3;
   color: #465e51;
   cursor: default;
+}
+
+.lista-fila {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item-fila {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid #d7e3dc;
+  border-radius: 0.625rem;
+}
+
+.proxima-da-fila {
+  border-color: #80b09c;
+  border-inline-start: 0.25rem solid #287c5e;
+  background: #eef7f1;
+}
+
+.item-fila-cabecalho,
+.metadados-fila,
+.fila-erro {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.75rem;
+}
+
+.item-fila h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.proxima-etiqueta,
+.prioridade {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.proxima-etiqueta {
+  color: #145641;
+}
+
+.prioridade {
+  margin-inline-start: auto;
+  padding: 0.2rem 0.55rem;
+  border-radius: 1rem;
+  background: #edf1ee;
+  color: #354c42;
+}
+
+.prioridade[data-prioridade='ALTA'] {
+  background: #fff0db;
+  color: #754500;
+}
+
+.prioridade[data-prioridade='URGENTE'] {
+  background: #fee9e5;
+  color: #8f3024;
+}
+
+.metadados-fila {
+  font-size: 0.8rem;
+}
+
+@media (max-width: 60rem) {
+  .conteudo {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 52rem;
+  }
 }
 
 @media (max-width: 36rem) {

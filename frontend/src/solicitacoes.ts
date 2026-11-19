@@ -1,8 +1,15 @@
+export const rotulosPrioridade = {
+  BAIXA: 'Baixa',
+  MEDIA: 'Média',
+  ALTA: 'Alta',
+  URGENTE: 'Urgente',
+} as const
+
 export type DadosCadastro = {
   descricao: string
   departamentoSolicitanteId: number
   departamentoResponsavelId: number
-  prioridade: 'BAIXA' | 'MEDIA' | 'ALTA' | 'URGENTE'
+  prioridade: keyof typeof rotulosPrioridade
 }
 
 export type ItemFila = {
