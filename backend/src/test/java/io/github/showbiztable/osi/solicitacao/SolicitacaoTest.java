@@ -71,6 +71,29 @@ class SolicitacaoTest {
 	}
 
 	@Test
+	void altera_A_Prioridade_Preservando_O_Instante_De_Entrada() {
+		// Given
+		Instant instanteDoCadastro = Instant.parse("2026-11-18T12:15:00Z");
+		Clock relogio = Clock.fixed(instanteDoCadastro, ZoneOffset.UTC);
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			"Acesso ao sistema de notas fiscais",
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
+			Prioridade.BAIXA,
+			relogio
+		);
+
+		// When
+		solicitacao.alterarPrioridade(Prioridade.ALTA);
+
+		// Then
+		assertAll(
+			() -> assertEquals(Prioridade.ALTA, solicitacao.getPrioridade()),
+			() -> assertEquals(instanteDoCadastro, solicitacao.getEntrada())
+		);
+	}
+
+	@Test
 	void registra_A_Descricao_Informada_No_Cadastro() {
 		// Given
 		String descricaoInformada = "O sistema de notas fiscais não abre.";
