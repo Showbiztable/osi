@@ -1,8 +1,32 @@
+export const rotulosPrioridade = {
+  BAIXA: 'Baixa',
+  MEDIA: 'Média',
+  ALTA: 'Alta',
+  URGENTE: 'Urgente',
+} as const
+
 export type DadosCadastro = {
   descricao: string
   departamentoSolicitanteId: number
   departamentoResponsavelId: number
-  prioridade: 'BAIXA' | 'MEDIA' | 'ALTA' | 'URGENTE'
+  prioridade: keyof typeof rotulosPrioridade
+}
+
+export type ItemFila = {
+  id: number
+  descricao: string
+  departamentoSolicitanteId: number
+  prioridade: DadosCadastro['prioridade']
+  entrada: string
+}
+
+export async function listarFila(departamentoResponsavelId: number): Promise<ItemFila[]> {
+  const resposta = await fetch(`/api/solicitacoes?departamentoResponsavelId=${departamentoResponsavelId}`)
+  if (!resposta.ok) {
+    throw new Error('Não foi possível carregar a fila do departamento.')
+  }
+
+  return resposta.json()
 }
 
 export async function cadastrarSolicitacao(dados: DadosCadastro): Promise<number> {

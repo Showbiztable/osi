@@ -1,9 +1,14 @@
 package io.github.showbiztable.osi.solicitacao;
 
+import java.time.Instant;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -13,6 +18,19 @@ class SolicitacaoController {
 
 	SolicitacaoController(SolicitacaoService service) {
 		this.service = service;
+	}
+
+	@GetMapping("/api/solicitacoes")
+	List<ItemFila> listarFila(@RequestParam("departamentoResponsavelId") long departamentoResponsavelId) {
+		return service.listarFila(departamentoResponsavelId).stream()
+			.map(solicitacao -> new ItemFila(
+				solicitacao.getId(),
+				solicitacao.getDescricao(),
+				solicitacao.getDepartamentoSolicitanteId(),
+				solicitacao.getPrioridade(),
+				solicitacao.getEntrada()
+			))
+			.toList();
 	}
 
 	@PostMapping("/api/solicitacoes")
@@ -31,4 +49,12 @@ class SolicitacaoController {
 	) {}
 
 	record SolicitacaoCriada(Long id) {}
+
+	record ItemFila(
+		Long id,
+		String descricao,
+		long departamentoSolicitanteId,
+		Prioridade prioridade,
+		Instant entrada
+	) {}
 }

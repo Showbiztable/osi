@@ -1,6 +1,7 @@
 package io.github.showbiztable.osi.solicitacao;
 
 import java.time.Clock;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,10 @@ class SolicitacaoService {
 
 	SolicitacaoService(SolicitacaoRepository repository) {
 		this.repository = repository;
+	}
+
+	List<Solicitacao> listarFila(long departamentoResponsavelId) {
+		return repository.listarFilaAtivaPorDepartamentoResponsavel(departamentoResponsavelId);
 	}
 
 	Long cadastrar(String descricao, long departamentoSolicitanteId, long departamentoResponsavelId,
