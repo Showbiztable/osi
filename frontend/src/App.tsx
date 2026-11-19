@@ -1,7 +1,7 @@
 import { useEffect, useState, type SubmitEvent } from 'react'
 import { FilaAtendimento } from './FilaAtendimento'
 import { listarDepartamentos, type Departamento } from './departamentos'
-import { cadastrarSolicitacao, listarFila, rotulosPrioridade, type DadosCadastro, type ItemFila } from './solicitacoes'
+import { alterarPrioridade, cadastrarSolicitacao, listarFila, rotulosPrioridade, type DadosCadastro, type ItemFila } from './solicitacoes'
 import './App.css'
 
 const camposDepartamento = [
@@ -28,8 +28,10 @@ function App() {
   const [departamentoFila, setDepartamentoFila] = useState('')
   const [fila, setFila] = useState<Fila>({ estado: 'carregando' })
   const [revisaoFila, setRevisaoFila] = useState(0)
+  const [alteracaoPrioridade, setAlteracaoPrioridade] = useState<'enviando' | 'erro' | null>(null)
   const departamentos = catalogo.estado === 'pronto' ? catalogo.departamentos : []
   const enviando = envio?.estado === 'enviando'
+  const alterandoPrioridade = alteracaoPrioridade === 'enviando'
 
   useEffect(() => {
     let desmontado = false
@@ -93,6 +95,18 @@ function App() {
   function atualizarFila() {
     setFila({ estado: 'carregando' })
     setRevisaoFila((anterior) => anterior + 1)
+  }
+
+  async function salvarPrioridade(solicitacaoId: number, prioridade: ItemFila['prioridade']) {
+    setAlteracaoPrioridade('enviando')
+
+    try {
+      await alterarPrioridade(solicitacaoId, prioridade)
+      setAlteracaoPrioridade(null)
+      atualizarFila()
+    } catch {
+      setAlteracaoPrioridade('erro')
+    }
   }
 
   return (
@@ -182,8 +196,9 @@ function App() {
               Departamento da fila
               <select
                 value={departamentoFila}
-                disabled={!departamentos.length}
+                disabled={!departamentos.length || alterandoPrioridade}
                 onChange={(evento) => {
+                  setAlteracaoPrioridade(null)
                   setFila({ estado: 'carregando' })
                   setDepartamentoFila(evento.target.value)
                 }}
@@ -203,8 +218,19 @@ function App() {
                 <button type="button" onClick={atualizarFila}>Tentar novamente</button>
               </div>
             )}
+            {alterandoPrioridade && <p role="status">Alterando prioridade…</p>}
+            {alteracaoPrioridade === 'erro' && (
+              <p className="mensagem erro" role="alert">
+                Não foi possível alterar a prioridade. Tente novamente.
+              </p>
+            )}
             {departamentoFila && fila.estado === 'pronta' && (
-              <FilaAtendimento itens={fila.itens} departamentos={departamentos} />
+              <FilaAtendimento
+                itens={fila.itens}
+                departamentos={departamentos}
+                alterandoPrioridade={alterandoPrioridade}
+                onAlterarPrioridade={salvarPrioridade}
+              />
             )}
           </div>
         </section>
