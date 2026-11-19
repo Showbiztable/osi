@@ -29,6 +29,8 @@ jobs:
         run: npm ci
       - name: Executar lint
         run: npm run lint
+      - name: Executar testes
+        run: npm test
       - name: Gerar build
         run: npm run build
 
