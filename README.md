@@ -53,8 +53,8 @@ O volume `postgres-data` guarda os dados entre execuções.
 
 - **Concluído:** escopo, tecnologias, [regras da fila de atendimento](docs/regras-da-fila.md) e [arquitetura inicial](docs/arquitetura.md) definidos.
 - **Estrutura inicial:** backend Spring Boot com Maven Wrapper e frontend React com Vite.
-- **Verificações:** GitHub Actions configurado para rodar lint e build do frontend, além dos testes e build do backend.
-- **Cadastro:** o modelo Java registra a descrição, os departamentos, a prioridade e o instante de entrada. A solicitação começa ativa.
-- **Banco de dados:** PostgreSQL local com Docker Compose e migration do Flyway para o catálogo inicial de departamentos.
-- **Próximo passo:** integrar a persistência ao cadastro.
+- **Verificações:** GitHub Actions executa os testes e o build dos dois projetos, além do lint do frontend.
+- **Cadastro:** o formulário consulta os departamentos pela API, grava a solicitação no PostgreSQL e exibe o ID gerado.
+- **Banco de dados:** PostgreSQL local com Docker Compose e migrations do Flyway para departamentos e solicitações.
+- **Próximo passo:** listar a fila ativa por departamento responsável e destacar a próxima solicitação.
 - **Publicação:** hospedagem pendente.
