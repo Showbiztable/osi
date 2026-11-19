@@ -85,5 +85,6 @@ class Solicitacao {
 	}
 
 	void concluir() {
+		this.ativa = false;
 	}
 }
