@@ -58,3 +58,11 @@ export async function alterarPrioridade(
     throw new Error('Não foi possível alterar a prioridade da solicitação.')
   }
 }
+
+export async function concluirSolicitacao(solicitacaoId: number): Promise<void> {
+  const resposta = await fetch(`/api/solicitacoes/${solicitacaoId}/conclusao`, { method: 'PATCH' })
+
+  if (!resposta.ok) {
+    throw new Error('Não foi possível concluir a solicitação.')
+  }
+}

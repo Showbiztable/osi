@@ -1,5 +1,12 @@
 import { afterEach, expect, it, vi } from 'vitest'
-import { alterarPrioridade, cadastrarSolicitacao, listarFila, type DadosCadastro, type ItemFila } from './solicitacoes'
+import {
+  alterarPrioridade,
+  cadastrarSolicitacao,
+  concluirSolicitacao,
+  listarFila,
+  type DadosCadastro,
+  type ItemFila,
+} from './solicitacoes'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -75,5 +82,25 @@ it('sinaliza erro quando a API rejeita a alteração de prioridade', async () =>
 
   await expect(alterarPrioridade(solicitacaoId, 'URGENTE')).rejects.toThrow(
     'Não foi possível alterar a prioridade da solicitação.',
+  )
+})
+
+it('envia o pedido de conclusão sem corpo e aceita a resposta 204', async () => {
+  const solicitacaoId = 42
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 204 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(concluirSolicitacao(solicitacaoId)).resolves.toBeUndefined()
+
+  expect(fetchMock).toHaveBeenCalledWith('/api/solicitacoes/42/conclusao', { method: 'PATCH' })
+})
+
+it('sinaliza erro quando a API rejeita a conclusão', async () => {
+  const solicitacaoId = 42
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 404 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(concluirSolicitacao(solicitacaoId)).rejects.toThrow(
+    'Não foi possível concluir a solicitação.',
   )
 })
