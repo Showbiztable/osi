@@ -29,12 +29,28 @@ jobs:
         run: npm ci
       - name: Executar lint
         run: npm run lint
+      - name: Executar testes
+        run: npm test
       - name: Gerar build
         run: npm run build
 
   backend:
     name: Backend
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: osi
+          POSTGRES_USER: osi
+          POSTGRES_PASSWORD: osi_local
+        ports:
+          - '5432:5432'
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U osi -d osi"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 20
     defaults:
       run:
         working-directory: backend

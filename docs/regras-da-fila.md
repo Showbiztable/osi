@@ -4,12 +4,32 @@
 - O primeiro item da fila aparece em destaque como o próximo a ser atendido. 
 - Se a fila estiver vazia, não há próxima solicitação.
 
+## Cadastro de uma solicitação
+
+Quem cadastra a solicitação informa a descrição, o departamento solicitante, o departamento responsável pelo atendimento e a prioridade (baixa, média, alta ou urgente).  
+O sistema registra a data e a hora do cadastro como entrada.  
+A solicitação entra na fila ativa do departamento responsável com a prioridade informada.
+
+Por exemplo, em 18/11/2026 às 09:15, o Financeiro solicita à TI acesso ao sistema de notas fiscais e escolhe a prioridade alta.  
+A solicitação entra na fila da TI com prioridade alta e entrada em 18/11/2026 às 09:15.  
+O Financeiro aparece como departamento solicitante.
+
+### Escolha dos departamentos
+
+O formulário oferece dois seletores, um para o departamento solicitante e outro para o responsável.  
+Ambos usam a mesma lista de departamentos, consultada pela API.  
+Uma migration do banco cria os registros iniciais, incluindo Financeiro e TI.
+
+O formulário envia o identificador de cada departamento escolhido.  
+O sistema só registra a solicitação se os dois identificadores corresponderem a departamentos cadastrados.  
+Usar uma lista única evita que variações de escrita, como «TI» e «T.I.», criem filas diferentes para o mesmo departamento.
+
 ## Ordem de atendimento
 
 A fila segue estes critérios, na ordem:
 
 1. **Prioridade atual:** urgente, alta, média e baixa.
-2. **Data e hora de entrada:** entre solicitações de mesma prioridade, a mais antiga vem primeiro. A data e a hora seram registradas automaticamente durante o cadastro.
+2. **Data e hora de entrada:** entre solicitações de mesma prioridade, a mais antiga vem primeiro.
 3. **Identificador:** se a prioridade e o tempo de entrada forem iguais, o menor identificador numérico vem primeiro para garantir uma ordem estável.
 
 A prioridade permite atender casos urgentes primeiro.  
