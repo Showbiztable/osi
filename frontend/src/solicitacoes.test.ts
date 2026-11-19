@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest'
-import { cadastrarSolicitacao, listarFila, type DadosCadastro, type ItemFila } from './solicitacoes'
+import { alterarPrioridade, cadastrarSolicitacao, listarFila, type DadosCadastro, type ItemFila } from './solicitacoes'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -52,4 +52,28 @@ it('consulta a fila do departamento responsável na ordem devolvida pela API', a
 
   expect(resultado).toEqual(fila)
   expect(fetchMock).toHaveBeenCalledWith('/api/solicitacoes?departamentoResponsavelId=20')
+})
+
+it('envia a nova prioridade e aceita uma resposta sem corpo', async () => {
+  const solicitacaoId = 42
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 204 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(alterarPrioridade(solicitacaoId, 'URGENTE')).resolves.toBeUndefined()
+
+  expect(fetchMock).toHaveBeenCalledWith('/api/solicitacoes/42/prioridade', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prioridade: 'URGENTE' }),
+  })
+})
+
+it('sinaliza erro quando a API rejeita a alteração de prioridade', async () => {
+  const solicitacaoId = 42
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 404 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(alterarPrioridade(solicitacaoId, 'URGENTE')).rejects.toThrow(
+    'Não foi possível alterar a prioridade da solicitação.',
+  )
 })

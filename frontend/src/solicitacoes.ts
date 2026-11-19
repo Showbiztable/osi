@@ -43,3 +43,18 @@ export async function cadastrarSolicitacao(dados: DadosCadastro): Promise<number
   const solicitacao: { id: number } = await resposta.json()
   return solicitacao.id
 }
+
+export async function alterarPrioridade(
+  solicitacaoId: number,
+  prioridade: DadosCadastro['prioridade'],
+): Promise<void> {
+  const resposta = await fetch(`/api/solicitacoes/${solicitacaoId}/prioridade`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prioridade }),
+  })
+
+  if (!resposta.ok) {
+    throw new Error('Não foi possível alterar a prioridade da solicitação.')
+  }
+}
