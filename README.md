@@ -57,6 +57,6 @@ O volume `postgres-data` guarda os dados entre execuções.
 - **Cadastro:** o formulário consulta os departamentos pela API, grava a solicitação no PostgreSQL e exibe o ID gerado.
 - **Fila de atendimento:** a tela lista as solicitações ativas do departamento escolhido na ordem de atendimento e destaca a próxima.
 - **Alteração de prioridade:** a tela permite mudar a prioridade de uma solicitação e atualiza a fila após a confirmação da API.
+- **Conclusão de solicitações** pelo botão da fila. A solicitação permanece registrada e sai da fila ativa.
 - **Banco de dados:** PostgreSQL local com Docker Compose e migrations do Flyway para departamentos e solicitações.
-- **Próximo passo:** permitir concluir uma solicitação e retirá-la da fila ativa.
 - **Publicação:** hospedagem pendente.
