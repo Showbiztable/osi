@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 class AcessoDemoController {
 
 	static final String ROTA_ENTRADA = "/api/acesso";
+	private static final int LIMITE_INATIVIDADE_EM_SEGUNDOS = 10 * 60;
 	private final String codigoConfigurado;
 
 	AcessoDemoController(@Value("${osi.demo.codigo:}") String codigoConfigurado) {
@@ -34,6 +35,7 @@ class AcessoDemoController {
 
 		HttpSession sessao = requisicao.getSession();
 		requisicao.changeSessionId();
+		sessao.setMaxInactiveInterval(LIMITE_INATIVIDADE_EM_SEGUNDOS);
 		sessao.setAttribute(ConfiguracaoSessaoDemo.SESSAO_AUTENTICADA, true);
 		return ResponseEntity.noContent().build();
 	}
