@@ -1,6 +1,7 @@
-import { useEffect, useState, type SubmitEvent } from 'react'
+import { useCallback, useEffect, useState, type SubmitEvent } from 'react'
 import { FilaAtendimento } from './FilaAtendimento'
 import { TelaAcesso } from './TelaAcesso'
+import { SessaoExpiradaError } from './acesso'
 import { listarDepartamentos, type Departamento } from './departamentos'
 import {
   alterarPrioridade,
@@ -47,6 +48,10 @@ type AcaoFila = {
   estado: 'enviando' | 'erro'
 }
 
+type PainelSolicitacoesProps = { aoExpirarSessao: () => void }
+
+type SessaoDemo = { estado: 'acesso' | 'ativa' | 'expirada' }
+
 function Cabecalho() {
   return (
     <header className="barra-topo">
@@ -58,7 +63,7 @@ function Cabecalho() {
   )
 }
 
-export function PainelSolicitacoes() {
+export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps) {
   const [catalogo, setCatalogo] = useState<Catalogo>({ estado: 'carregando' })
   const [envio, setEnvio] = useState<Envio | null>(null)
   const [departamentoFila, setDepartamentoFila] = useState('')
@@ -69,20 +74,27 @@ export function PainelSolicitacoes() {
   const enviando = envio?.estado === 'enviando'
   const acaoEmAndamento = acaoFila?.estado === 'enviando'
 
+  const tratarSessaoExpirada = useCallback((erro: unknown) => {
+    if (!(erro instanceof SessaoExpiradaError)) return false
+    aoExpirarSessao()
+    return true
+  }, [aoExpirarSessao])
+
   useEffect(() => {
     let desmontado = false
     listarDepartamentos().then(
       (departamentos) => {
         if (!desmontado) setCatalogo({ estado: 'pronto', departamentos })
       },
-      () => {
-        if (!desmontado) setCatalogo({ estado: 'erro' })
+      (erro) => {
+        if (desmontado || tratarSessaoExpirada(erro)) return
+        setCatalogo({ estado: 'erro' })
       },
     )
     return () => {
       desmontado = true
     }
-  }, [])
+  }, [tratarSessaoExpirada])
 
   useEffect(() => {
     if (!departamentoFila) return
@@ -92,14 +104,15 @@ export function PainelSolicitacoes() {
       (itens) => {
         if (!substituida) setFila({ estado: 'pronta', itens })
       },
-      () => {
-        if (!substituida) setFila({ estado: 'erro' })
+      (erro) => {
+        if (substituida || tratarSessaoExpirada(erro)) return
+        setFila({ estado: 'erro' })
       },
     )
     return () => {
       substituida = true
     }
-  }, [departamentoFila, revisaoFila])
+  }, [departamentoFila, revisaoFila, tratarSessaoExpirada])
 
   async function enviarCadastro(evento: SubmitEvent<HTMLFormElement>) {
     evento.preventDefault()
@@ -123,7 +136,8 @@ export function PainelSolicitacoes() {
       formulario.reset()
       setEnvio({ estado: 'sucesso', id })
       atualizarFila()
-    } catch {
+    } catch (erro) {
+      if (tratarSessaoExpirada(erro)) return
       setEnvio({ estado: 'erro', mensagem: 'Não foi possível cadastrar. Tente novamente.' })
     }
   }
@@ -140,7 +154,8 @@ export function PainelSolicitacoes() {
       await executar()
       setAcaoFila(null)
       atualizarFila()
-    } catch {
+    } catch (erro) {
+      if (tratarSessaoExpirada(erro)) return
       setAcaoFila({ tipo, estado: 'erro' })
     }
   }
@@ -276,14 +291,21 @@ export function PainelSolicitacoes() {
 }
 
 function App() {
-  const [autenticado, setAutenticado] = useState(false)
+  const [sessao, setSessao] = useState<SessaoDemo>({ estado: 'acesso' })
+  const expirarSessao = useCallback(() => {
+    // Uma resposta atrasada só pode encerrar a sessão que originou a chamada.
+    setSessao((atual) => atual === sessao ? { estado: 'expirada' } : atual)
+  }, [sessao])
 
-  if (autenticado) return <PainelSolicitacoes />
+  if (sessao.estado === 'ativa') return <PainelSolicitacoes aoExpirarSessao={expirarSessao} />
 
   return (
     <>
       <Cabecalho />
-      <TelaAcesso aoEntrar={() => setAutenticado(true)} />
+      <TelaAcesso
+        aoEntrar={() => setSessao({ estado: 'ativa' })}
+        sessaoExpirada={sessao.estado === 'expirada'}
+      />
     </>
   )
 }

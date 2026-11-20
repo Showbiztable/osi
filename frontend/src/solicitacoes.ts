@@ -1,3 +1,5 @@
+import { requisitarComSessao } from './acesso'
+
 export const rotulosPrioridade = {
   BAIXA: 'Baixa',
   MEDIA: 'Média',
@@ -21,7 +23,7 @@ export type ItemFila = {
 }
 
 export async function listarFila(departamentoResponsavelId: number): Promise<ItemFila[]> {
-  const resposta = await fetch(`/api/solicitacoes?departamentoResponsavelId=${departamentoResponsavelId}`)
+  const resposta = await requisitarComSessao(`/api/solicitacoes?departamentoResponsavelId=${departamentoResponsavelId}`)
   if (!resposta.ok) {
     throw new Error('Não foi possível carregar a fila do departamento.')
   }
@@ -30,7 +32,7 @@ export async function listarFila(departamentoResponsavelId: number): Promise<Ite
 }
 
 export async function cadastrarSolicitacao(dados: DadosCadastro): Promise<number> {
-  const resposta = await fetch('/api/solicitacoes', {
+  const resposta = await requisitarComSessao('/api/solicitacoes', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dados),
@@ -48,7 +50,7 @@ export async function alterarPrioridade(
   solicitacaoId: number,
   prioridade: DadosCadastro['prioridade'],
 ): Promise<void> {
-  const resposta = await fetch(`/api/solicitacoes/${solicitacaoId}/prioridade`, {
+  const resposta = await requisitarComSessao(`/api/solicitacoes/${solicitacaoId}/prioridade`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prioridade }),
@@ -60,7 +62,7 @@ export async function alterarPrioridade(
 }
 
 export async function concluirSolicitacao(solicitacaoId: number): Promise<void> {
-  const resposta = await fetch(`/api/solicitacoes/${solicitacaoId}/conclusao`, { method: 'PATCH' })
+  const resposta = await requisitarComSessao(`/api/solicitacoes/${solicitacaoId}/conclusao`, { method: 'PATCH' })
 
   if (!resposta.ok) {
     throw new Error('Não foi possível concluir a solicitação.')

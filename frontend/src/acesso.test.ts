@@ -1,5 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest'
 import { entrarNaDemo, verificarConexao } from './acesso'
+import { listarDepartamentos } from './departamentos'
+import { alterarPrioridade, cadastrarSolicitacao, concluirSolicitacao, listarFila } from './solicitacoes'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -75,4 +77,22 @@ it('indica indisponibilidade quando a requisição falha', async () => {
 
   await expect(verificarConexao()).resolves.toBe(false)
   expect(fetchMock).toHaveBeenCalledTimes(1)
+})
+
+it.each([
+  ['listar departamentos', listarDepartamentos],
+  ['consultar a fila', () => listarFila(20)],
+  ['cadastrar uma solicitação', () => cadastrarSolicitacao({
+    descricao: 'Restaurar o acesso',
+    departamentoSolicitanteId: 10,
+    departamentoResponsavelId: 20,
+    prioridade: 'ALTA',
+  })],
+  ['alterar a prioridade', () => alterarPrioridade(42, 'URGENTE')],
+  ['concluir uma solicitação', () => concluirSolicitacao(42)],
+] as const)('sinaliza sessão expirada ao %s quando a API responde 401', async (_operacao, executar) => {
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 401 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(executar()).rejects.toMatchObject({ name: 'SessaoExpiradaError' })
 })

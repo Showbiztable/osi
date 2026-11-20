@@ -1,3 +1,18 @@
+export class SessaoExpiradaError extends Error {
+  constructor() {
+    super('Sessão expirada.')
+    this.name = 'SessaoExpiradaError'
+  }
+}
+
+export async function requisitarComSessao(...argumentos: Parameters<typeof fetch>): Promise<Response> {
+  const resposta = await fetch(...argumentos)
+  if (resposta.status === 401) {
+    throw new SessaoExpiradaError()
+  }
+  return resposta
+}
+
 export async function entrarNaDemo(codigo: string): Promise<void> {
   const resposta = await fetch('/api/acesso', {
     method: 'POST',

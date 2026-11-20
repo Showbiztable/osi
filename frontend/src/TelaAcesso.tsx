@@ -1,15 +1,20 @@
 import { useState, type SubmitEvent } from 'react'
 import { entrarNaDemo, verificarConexao } from './acesso'
 
-type TelaAcessoProps = { aoEntrar: () => void }
+type TelaAcessoProps = {
+  aoEntrar: () => void
+  sessaoExpirada: boolean
+}
 
 type RetornoAcesso = {
   estado: 'aguardando' | 'erro' | 'sucesso'
   mensagem: string
 }
 
-export function TelaAcesso({ aoEntrar }: TelaAcessoProps) {
-  const [retorno, setRetorno] = useState<RetornoAcesso | null>(null)
+export function TelaAcesso({ aoEntrar, sessaoExpirada }: TelaAcessoProps) {
+  const [retorno, setRetorno] = useState<RetornoAcesso | null>(
+    sessaoExpirada ? { estado: 'erro', mensagem: 'Sua sessão expirou. Informe o código para entrar novamente.' } : null,
+  )
   const aguardando = retorno?.estado === 'aguardando'
 
   async function enviarCodigo(evento: SubmitEvent<HTMLFormElement>) {
