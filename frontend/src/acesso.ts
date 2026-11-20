@@ -37,14 +37,20 @@ export async function entrarNaDemo(codigo: string): Promise<void> {
 }
 
 export async function verificarConexao(): Promise<boolean> {
+  const controle = new AbortController()
+  const temporizador = setTimeout(() => controle.abort(), 10_000)
+
   try {
     const resposta = await fetch('/api/saude', {
       method: 'GET',
       cache: 'no-store',
       credentials: 'omit',
+      signal: controle.signal,
     })
     return resposta.status === 204
   } catch {
     return false
+  } finally {
+    clearTimeout(temporizador)
   }
 }
