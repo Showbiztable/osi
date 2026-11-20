@@ -1,0 +1,42 @@
+package io.github.showbiztable.osi.acesso;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.security.MessageDigest;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+class AcessoDemoController {
+
+	static final String ROTA_ENTRADA = "/api/acesso";
+	private final String codigoConfigurado;
+
+	AcessoDemoController(@Value("${osi.demo.codigo:}") String codigoConfigurado) {
+		this.codigoConfigurado = codigoConfigurado;
+	}
+
+	@PostMapping(ROTA_ENTRADA)
+	ResponseEntity<Void> entrar(@RequestBody DadosAcesso dados, HttpServletRequest requisicao) {
+		String codigoRecebido = dados.codigo();
+		if (codigoConfigurado.isBlank() || codigoRecebido == null || !MessageDigest.isEqual(
+			codigoConfigurado.getBytes(UTF_8), codigoRecebido.getBytes(UTF_8)
+		)) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+
+		HttpSession sessao = requisicao.getSession();
+		requisicao.changeSessionId();
+		sessao.setAttribute(ConfiguracaoSessaoDemo.SESSAO_AUTENTICADA, true);
+		return ResponseEntity.noContent().build();
+	}
+
+	record DadosAcesso(String codigo) {}
+}

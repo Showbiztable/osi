@@ -27,6 +27,12 @@ public class ConfiguracaoSessaoDemo {
 	private static class FiltroSessaoDemo extends OncePerRequestFilter {
 
 		@Override
+		protected boolean shouldNotFilter(HttpServletRequest requisicao) {
+			return "POST".equals(requisicao.getMethod())
+				&& (requisicao.getContextPath() + AcessoDemoController.ROTA_ENTRADA).equals(requisicao.getRequestURI());
+		}
+
+		@Override
 		protected void doFilterInternal(HttpServletRequest requisicao, HttpServletResponse resposta, FilterChain cadeia)
 			throws ServletException, IOException {
 			HttpSession sessao = requisicao.getSession(false);
