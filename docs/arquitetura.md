@@ -50,6 +50,7 @@ A publicação está pronta quando for possível abrir o link em uma janela anô
 
 ### Acesso e disponibilidade da demo
 
-- A tela inicial pede um código de acesso compartilhado com os avaliadores. A API valida o código, mantido nas variáveis de ambiente do backend, e limita tentativas de entrada. O backend exige uma sessão válida nas rotas de consulta e alteração dos dados da demo.
+- A tela inicial pede um código de acesso compartilhado com os avaliadores. A API valida o código, mantido nas variáveis de ambiente do backend, e exige uma sessão válida nas rotas de consulta e alteração dos dados da demo.
+- A primeira tentativa com código incorreto abre uma janela de um minuto para o IP de origem. Após cinco tentativas incorretas, novas tentativas desse IP recebem `429 Too Many Requests` até a janela terminar. O cabeçalho `Retry-After` informa quantos segundos aguardar.
 - A sessão é mantida pelo backend, com um cookie de sessão protegido em produção. O prazo inicial proposto é de 10 minutos sem requisições autenticadas. Depois disso, a API responde `401` às rotas protegidas e a interface retorna à tela de acesso. O código permanece válido para iniciar outra sessão até ser trocado. [Gerenciamento de sessões da OWASP](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
 - O botão **Verificar conexão** na tela de acesso faz uma requisição pública de disponibilidade, que também inicia a API se ela estiver em pausa. A tela indica que a conexão está sendo verificada e permite nova tentativa se o serviço estiver indisponível. A verificação é manual para evitar tráfego em segundo plano. [Pausa por inatividade no Render](https://render.com/docs/free#spinning-down-on-idle)

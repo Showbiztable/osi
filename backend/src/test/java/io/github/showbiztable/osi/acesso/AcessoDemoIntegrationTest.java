@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.Duration;
@@ -13,11 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 @Tag("integration")
 @SpringBootTest(properties = "osi.demo.codigo=" + AcessoDemoIntegrationTest.CODIGO_DE_TESTE)
@@ -63,14 +67,40 @@ class AcessoDemoIntegrationTest {
 		assertEquals(limiteDeInatividade.toSeconds(), sessao.getMaxInactiveInterval());
 	}
 
+	@Test
+	void bloqueia_A_Sexta_Tentativa_Do_Mesmo_Ip_Apos_Cinco_Codigos_Incorretos() throws Exception {
+		// Given
+		String codigoIncorreto = "codigo-incorreto";
+		RequestPostProcessor mesmaOrigem = requisicao -> {
+			requisicao.setRemoteAddr("192.0.2.13");
+			return requisicao;
+		};
+		int tentativasPermitidas = 5;
+		for (int tentativa = 0; tentativa < tentativasPermitidas; tentativa++) {
+			mvc.perform(pedidoDeAcesso(codigoIncorreto).with(mesmaOrigem))
+				.andExpect(status().isUnauthorized());
+		}
+
+		// When & Then
+		mvc.perform(pedidoDeAcesso(codigoIncorreto).with(mesmaOrigem))
+			.andExpect(status().isTooManyRequests())
+			.andExpect(header().exists(HttpHeaders.RETRY_AFTER));
+		mvc.perform(pedidoDeAcesso(CODIGO_DE_TESTE))
+			.andExpect(status().isNoContent());
+	}
+
 	private MockHttpSession abrirSessaoComCodigoValido() throws Exception {
-		MvcResult acesso = mvc.perform(post("/api/acesso")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("""
-					{"codigo": "%s"}
-					""".formatted(CODIGO_DE_TESTE)))
+		MvcResult acesso = mvc.perform(pedidoDeAcesso(CODIGO_DE_TESTE))
 			.andExpect(status().isNoContent())
 			.andReturn();
 		return assertInstanceOf(MockHttpSession.class, acesso.getRequest().getSession(false));
+	}
+
+	private MockHttpServletRequestBuilder pedidoDeAcesso(String codigo) {
+		return post("/api/acesso")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("""
+				{"codigo": "%s"}
+				""".formatted(codigo));
 	}
 }
