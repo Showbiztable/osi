@@ -17,6 +17,8 @@ it('mostra a tela de acesso antes do painel de solicitações', () => {
 it('oferece os campos e a ação para cadastrar uma solicitação', () => {
   const pagina = renderToStaticMarkup(<PainelSolicitacoes aoExpirarSessao={() => {}} />)
 
+  expect(pagina).toContain('href="#titulo-cadastro"')
+  expect(pagina).toContain('id="titulo-cadastro"')
   expect(pagina).toContain('<form')
   expect(pagina).toContain('name="descricao"')
   expect(pagina).toContain('name="departamentoSolicitanteId"')

@@ -40,7 +40,7 @@ body {
 
 .conteudo {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.6fr) minmax(20rem, 1fr);
   align-items: start;
   gap: 1.25rem;
   max-width: 76rem;
@@ -79,8 +79,37 @@ h2 {
   line-height: 1.15;
 }
 
-.painel-cabecalho h2 {
+.cabecalho-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+.cabecalho-fila h1 {
   margin-bottom: 0;
+}
+
+.painel-fila > .campos {
+  background: #edf3ef;
+}
+
+.atalho-cadastro {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #bccfc5;
+  border-radius: 0.5rem;
+  color: #145641;
+  font-size: 0.875rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.atalho-cadastro:hover {
+  background: #eef7f1;
 }
 
 p {
@@ -100,7 +129,7 @@ p {
 
 .departamentos {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: 1rem;
 }
 
@@ -142,7 +171,8 @@ textarea::placeholder {
   color: #596d63;
 }
 
-:is(input, textarea, select, button):focus-visible {
+:is(input, textarea, select, button, .atalho-cadastro):focus-visible,
+#titulo-cadastro:focus-visible {
   outline: 2px solid #11664f;
   outline-offset: 2px;
 }
@@ -230,10 +260,6 @@ button:disabled {
 }
 
 @media (max-width: 36rem) {
-  .departamentos {
-    grid-template-columns: 1fr;
-  }
-
   .acoes > * {
     width: 100%;
   }
