@@ -41,6 +41,15 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - **Alterar a prioridade:** a solicitação muda de posição conforme a nova prioridade, preservando a data e a hora de entrada originais.
 - **Concluir uma solicitação:** ela sai da fila ativa e permanece registrada como concluída. Se era a primeira da fila, a próxima da fila assume o destaque.
 
+## Quadro de solicitações previsto
+
+- O quadro abre com as solicitações de todos os departamentos responsáveis nas colunas **Ativas** e **Concluídas**. Cada cartão identifica o departamento solicitante e o responsável.
+- O filtro permite selecionar um ou mais departamentos responsáveis e se aplica às duas colunas. Sem seleção, o quadro mostra todos os departamentos.
+- A coluna **Ativas** usa a ordem de atendimento definida acima. A primeira solicitação ativa de cada departamento visível recebe o destaque de próxima, mesmo quando vários departamentos aparecem juntos.
+- O botão **Concluir** e o arraste de um cartão ativo para **Concluídas** executam a mesma ação. Após a confirmação, o cartão muda de coluna e a próxima solicitação daquele departamento assume o destaque. O cartão concluído exibe a prioridade registrada.
+- **Nova solicitação** abre o formulário no quadro. Cancelar fecha o formulário e um cadastro confirmado atualiza o quadro.
+- A aba **Departamentos** lista os departamentos e permite cadastrar um nome. O cadastro remove espaços nas extremidades e rejeita nomes vazios e duplicatas que diferem apenas por maiúsculas e minúsculas. O novo departamento aparece nas opções do formulário e do filtro.
+
 ## Exemplo
 
 Estas solicitações foram cadastradas no mesmo dia.  
