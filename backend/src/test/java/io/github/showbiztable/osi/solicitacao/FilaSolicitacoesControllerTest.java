@@ -1,5 +1,6 @@
 package io.github.showbiztable.osi.solicitacao;
 
+import static io.github.showbiztable.osi.acesso.ConfiguracaoSessaoDemo.SESSAO_AUTENTICADA;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -53,7 +54,9 @@ class FilaSolicitacoesControllerTest {
 		);
 
 		// When & Then
-		mvc.perform(get("/api/solicitacoes").param("departamentoResponsavelId", responsavelId.toString()))
+		mvc.perform(get("/api/solicitacoes")
+				.sessionAttr(SESSAO_AUTENTICADA, true)
+				.param("departamentoResponsavelId", responsavelId.toString()))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.length()").value(2))
 			.andExpect(jsonPath("$[0].id").value(is(urgente.getId()), Long.class))
@@ -80,13 +83,16 @@ class FilaSolicitacoesControllerTest {
 
 		// When & Then
 		mvc.perform(patch("/api/solicitacoes/{id}/prioridade", baixa.getId())
+				.sessionAttr(SESSAO_AUTENTICADA, true)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("""
 					{"prioridade": "URGENTE"}
 					"""))
 			.andExpect(status().isNoContent());
 
-		mvc.perform(get("/api/solicitacoes").param("departamentoResponsavelId", responsavelId.toString()))
+		mvc.perform(get("/api/solicitacoes")
+				.sessionAttr(SESSAO_AUTENTICADA, true)
+				.param("departamentoResponsavelId", responsavelId.toString()))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$[0].id").value(is(baixa.getId()), Long.class))
 			.andExpect(jsonPath("$[0].prioridade").value("URGENTE"))
@@ -108,10 +114,13 @@ class FilaSolicitacoesControllerTest {
 		);
 
 		// When & Then
-		mvc.perform(patch("/api/solicitacoes/{id}/conclusao", primeira.getId()))
+		mvc.perform(patch("/api/solicitacoes/{id}/conclusao", primeira.getId())
+				.sessionAttr(SESSAO_AUTENTICADA, true))
 			.andExpect(status().isNoContent());
 
-		mvc.perform(get("/api/solicitacoes").param("departamentoResponsavelId", responsavelId.toString()))
+		mvc.perform(get("/api/solicitacoes")
+				.sessionAttr(SESSAO_AUTENTICADA, true)
+				.param("departamentoResponsavelId", responsavelId.toString()))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.length()").value(1))
 			.andExpect(jsonPath("$[0].id").value(is(seguinte.getId()), Long.class));
