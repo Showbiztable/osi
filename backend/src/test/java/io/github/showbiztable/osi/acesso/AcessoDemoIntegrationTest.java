@@ -1,9 +1,12 @@
 package io.github.showbiztable.osi.acesso;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.Duration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -39,6 +42,28 @@ class AcessoDemoIntegrationTest {
 			.single();
 
 		// When
+		MockHttpSession sessao = abrirSessaoComCodigoValido();
+
+		// Then
+		mvc.perform(get("/api/solicitacoes")
+				.session(sessao)
+				.param("departamentoResponsavelId", departamentoId.toString()))
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	void configura_A_Expiracao_Apos_Dez_Minutos_De_Inatividade() throws Exception {
+		// Given
+		Duration limiteDeInatividade = Duration.ofMinutes(10);
+
+		// When
+		MockHttpSession sessao = abrirSessaoComCodigoValido();
+
+		// Then
+		assertEquals(limiteDeInatividade.toSeconds(), sessao.getMaxInactiveInterval());
+	}
+
+	private MockHttpSession abrirSessaoComCodigoValido() throws Exception {
 		MvcResult acesso = mvc.perform(post("/api/acesso")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("""
@@ -46,12 +71,6 @@ class AcessoDemoIntegrationTest {
 					""".formatted(CODIGO_DE_TESTE)))
 			.andExpect(status().isNoContent())
 			.andReturn();
-
-		// Then
-		MockHttpSession sessao = assertInstanceOf(MockHttpSession.class, acesso.getRequest().getSession(false));
-		mvc.perform(get("/api/solicitacoes")
-				.session(sessao)
-				.param("departamentoResponsavelId", departamentoId.toString()))
-			.andExpect(status().isOk());
+		return assertInstanceOf(MockHttpSession.class, acesso.getRequest().getSession(false));
 	}
 }
