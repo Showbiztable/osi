@@ -28,3 +28,20 @@ it('rejeita uma página HTML de inicialização com status 200', async () => {
 
   await expect(entrarNaDemo('codigo-ficticio-da-demo')).rejects.toThrow()
 })
+
+it('informa que o código está incorreto quando a API responde 401', async () => {
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 401 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(entrarNaDemo('codigo-incorreto')).rejects.toThrow('Código de acesso incorreto.')
+})
+
+it('informa o tempo de espera quando a API bloqueia novas tentativas', async () => {
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, {
+    status: 429,
+    headers: { 'Retry-After': '30' },
+  }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(entrarNaDemo('codigo-ficticio-da-demo')).rejects.toThrow('Aguarde 30 segundos')
+})
