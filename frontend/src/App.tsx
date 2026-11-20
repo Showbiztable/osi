@@ -1,5 +1,6 @@
 import { useEffect, useState, type SubmitEvent } from 'react'
 import { FilaAtendimento } from './FilaAtendimento'
+import { TelaAcesso } from './TelaAcesso'
 import { listarDepartamentos, type Departamento } from './departamentos'
 import {
   alterarPrioridade,
@@ -46,7 +47,18 @@ type AcaoFila = {
   estado: 'enviando' | 'erro'
 }
 
-function App() {
+function Cabecalho() {
+  return (
+    <header className="barra-topo">
+      <div className="marca">
+        <span className="marca-sigla">OSI</span>
+        <span>Organização de Solicitações Internas</span>
+      </div>
+    </header>
+  )
+}
+
+export function PainelSolicitacoes() {
   const [catalogo, setCatalogo] = useState<Catalogo>({ estado: 'carregando' })
   const [envio, setEnvio] = useState<Envio | null>(null)
   const [departamentoFila, setDepartamentoFila] = useState('')
@@ -135,12 +147,7 @@ function App() {
 
   return (
     <>
-      <header className="barra-topo">
-        <div className="marca">
-          <span className="marca-sigla">OSI</span>
-          <span>Organização de Solicitações Internas</span>
-        </div>
-      </header>
+      <Cabecalho />
 
       <main className="conteudo">
         <section className="painel" aria-labelledby="titulo-cadastro">
@@ -264,6 +271,19 @@ function App() {
           </div>
         </section>
       </main>
+    </>
+  )
+}
+
+function App() {
+  const [autenticado, setAutenticado] = useState(false)
+
+  if (autenticado) return <PainelSolicitacoes />
+
+  return (
+    <>
+      <Cabecalho />
+      <TelaAcesso aoEntrar={() => setAutenticado(true)} />
     </>
   )
 }
