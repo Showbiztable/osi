@@ -215,67 +215,11 @@ button:disabled {
   list-style: none;
 }
 
-.item-fila {
-  display: grid;
-  gap: 0.5rem;
-  padding: 0.875rem 1rem;
-  border: 1px solid #d7e3dc;
-  border-radius: 0.625rem;
-}
-
-.proxima-da-fila {
-  border-color: #80b09c;
-  border-inline-start: 0.25rem solid #287c5e;
-  background: #eef7f1;
-}
-
-.item-fila-cabecalho,
-.metadados-fila,
 .fila-erro {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.45rem 0.75rem;
-}
-
-.item-fila h3 {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-
-.proxima-etiqueta,
-.prioridade {
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.proxima-etiqueta {
-  color: #145641;
-}
-
-.prioridade {
-  margin-inline-start: auto;
-  padding: 0.2rem 0.55rem;
-  border-radius: 1rem;
-  background: #edf1ee;
-  color: #354c42;
-}
-
-.prioridade[data-prioridade='ALTA'] {
-  background: #fff0db;
-  color: #754500;
-}
-
-.prioridade[data-prioridade='URGENTE'] {
-  background: #fee9e5;
-  color: #8f3024;
-}
-
-.metadados-fila {
-  font-size: 0.8rem;
 }
 
 @media (max-width: 60rem) {
