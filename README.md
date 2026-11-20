@@ -14,7 +14,7 @@ Aplicação web desenvolvida como etapa de desafio técnico para organizar solic
 - Frontend com React, TypeScript e Vite, com testes usando Vitest.
 - Backend com Java 25 e Spring Boot, expondo uma API REST.
 - Banco de dados PostgreSQL, com evolução do esquema por migrations.
-- O ambiente local utilizará Docker e Docker Compose, mas no futuro a hospedagem planejada utilizará Render para o frontend e API, e Neon para o banco de dados.
+- O PostgreSQL local roda com Docker Compose. Na demo, o Render hospeda o frontend estático e a API em Docker, com PostgreSQL no Neon.
 
 ## Banco de dados local
 
@@ -26,7 +26,7 @@ docker compose up -d --wait db
 
 O PostgreSQL fica acessível em `127.0.0.1:5432`.  
 O banco e o usuário se chamam `osi`, e a senha `osi_local` serve para o desenvolvimento local.  
-Na hospedagem, a API receberá as credenciais do Neon por variáveis de ambiente.
+Na demo, a API recebe as credenciais do Neon por variáveis de ambiente.
 
 Com o banco em execução, valide o backend a partir da raiz do repositório.  
 O teste de inicialização do Spring aplica as migrations do Flyway no PostgreSQL local.
@@ -59,4 +59,4 @@ O volume `postgres-data` guarda os dados entre execuções.
 - **Alteração de prioridade:** a tela permite mudar a prioridade de uma solicitação e atualiza a fila após a confirmação da API.
 - **Conclusão de solicitações** pelo botão da fila. A solicitação permanece registrada e sai da fila ativa.
 - **Banco de dados:** PostgreSQL local com Docker Compose e migrations do Flyway para departamentos e solicitações.
-- **Publicação:** hospedagem pendente.
+- **Publicação:** [Demo da OSI](https://osi-demo.onrender.com/) com acesso por código. Use **Verificar conexão** na tela de acesso se a API estiver em pausa.
