@@ -1,5 +1,6 @@
 package io.github.showbiztable.osi.departamento;
 
+import static io.github.showbiztable.osi.acesso.ConfiguracaoSessaoDemo.SESSAO_AUTENTICADA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +34,7 @@ class DepartamentoControllerTest {
 		long tiId = buscarIdDepartamento("TI");
 
 		// When & Then
-		mvc.perform(get("/api/departamentos"))
+		mvc.perform(get("/api/departamentos").sessionAttr(SESSAO_AUTENTICADA, true))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$[?(@.nome == 'Financeiro' && @.id == %d)]", financeiroId).isNotEmpty())
 			.andExpect(jsonPath("$[?(@.nome == 'TI' && @.id == %d)]", tiId).isNotEmpty());

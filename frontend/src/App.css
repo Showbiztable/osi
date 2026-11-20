@@ -48,6 +48,11 @@ body {
   padding: clamp(1.5rem, 6vw, 4.25rem) clamp(1rem, 4vw, 1.5rem);
 }
 
+.conteudo.conteudo-acesso {
+  grid-template-columns: minmax(0, 32rem);
+  justify-content: center;
+}
+
 .painel {
   overflow: hidden;
   background: #fff;
@@ -107,12 +112,14 @@ p {
   font-weight: 650;
 }
 
+input,
 textarea,
 select,
 button {
   font: inherit;
 }
 
+input,
 textarea,
 select {
   width: 100%;
@@ -135,7 +142,7 @@ textarea::placeholder {
   color: #596d63;
 }
 
-:is(textarea, select, button):focus-visible {
+:is(input, textarea, select, button):focus-visible {
   outline: 2px solid #11664f;
   outline-offset: 2px;
 }
@@ -184,6 +191,20 @@ button:disabled {
   background: #e0e9e3;
   color: #465e51;
   cursor: default;
+}
+
+.botao-secundario {
+  margin-inline-start: 0;
+}
+
+.botao-secundario:enabled {
+  border-color: #bccfc5;
+  background: #fff;
+  color: #145641;
+}
+
+.botao-secundario:hover:enabled {
+  background: #eef7f1;
 }
 
 .lista-fila {
