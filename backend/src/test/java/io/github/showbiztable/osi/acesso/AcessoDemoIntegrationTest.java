@@ -2,6 +2,7 @@ package io.github.showbiztable.osi.acesso;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -36,6 +37,15 @@ class AcessoDemoIntegrationTest {
 	AcessoDemoIntegrationTest(MockMvc mvc, JdbcClient jdbcClient) {
 		this.mvc = mvc;
 		this.jdbcClient = jdbcClient;
+	}
+
+	@Test
+	void informa_A_Disponibilidade_Da_Api_Sem_Abrir_Sessao() throws Exception {
+		// When & Then
+		mvc.perform(get("/api/saude"))
+			.andExpect(status().isNoContent())
+			.andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
+			.andExpect(resultado -> assertNull(resultado.getRequest().getSession(false)));
 	}
 
 	@Test
