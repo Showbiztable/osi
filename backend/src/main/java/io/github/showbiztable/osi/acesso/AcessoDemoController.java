@@ -7,9 +7,11 @@ import java.security.MessageDigest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,12 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 class AcessoDemoController {
 
 	static final String ROTA_ENTRADA = "/api/acesso";
+	static final String ROTA_SAUDE = "/api/saude";
 	private static final int LIMITE_INATIVIDADE_EM_SEGUNDOS = 10 * 60;
 	private final String codigoConfigurado;
 	private final LimitadorTentativasAcesso limitador = new LimitadorTentativasAcesso(System::nanoTime);
 
 	AcessoDemoController(@Value("${osi.demo.codigo:}") String codigoConfigurado) {
 		this.codigoConfigurado = codigoConfigurado;
+	}
+
+	@GetMapping(ROTA_SAUDE)
+	ResponseEntity<Void> verificarDisponibilidade() {
+		return ResponseEntity.noContent().cacheControl(CacheControl.noStore()).build();
 	}
 
 	@PostMapping(ROTA_ENTRADA)

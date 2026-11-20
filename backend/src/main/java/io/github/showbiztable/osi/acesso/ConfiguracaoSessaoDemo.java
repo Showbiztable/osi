@@ -28,8 +28,11 @@ public class ConfiguracaoSessaoDemo {
 
 		@Override
 		protected boolean shouldNotFilter(HttpServletRequest requisicao) {
-			return "POST".equals(requisicao.getMethod())
-				&& (requisicao.getContextPath() + AcessoDemoController.ROTA_ENTRADA).equals(requisicao.getRequestURI());
+			String metodo = requisicao.getMethod();
+			String contexto = requisicao.getContextPath();
+			String uri = requisicao.getRequestURI();
+			return ("POST".equals(metodo) && (contexto + AcessoDemoController.ROTA_ENTRADA).equals(uri))
+				|| ("GET".equals(metodo) && (contexto + AcessoDemoController.ROTA_SAUDE).equals(uri));
 		}
 
 		@Override
