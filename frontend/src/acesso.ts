@@ -20,3 +20,5 @@ export async function entrarNaDemo(codigo: string): Promise<void> {
 
   throw new Error('Não foi possível entrar na demo.')
 }
+
+export const verificarConexao: () => Promise<boolean> = () => Promise.resolve(false)
