@@ -4,6 +4,7 @@ import { listarDepartamentos } from './departamentos'
 import { alterarPrioridade, cadastrarSolicitacao, concluirSolicitacao, listarFila } from './solicitacoes'
 
 afterEach(() => {
+  vi.useRealTimers()
   vi.unstubAllGlobals()
 })
 
@@ -57,6 +58,7 @@ it('confirma a conexão com a resposta 204 da API', async () => {
     method: 'GET',
     cache: 'no-store',
     credentials: 'omit',
+    signal: expect.any(AbortSignal),
   })
 })
 
@@ -77,6 +79,25 @@ it('indica indisponibilidade quando a requisição falha', async () => {
 
   await expect(verificarConexao()).resolves.toBe(false)
   expect(fetchMock).toHaveBeenCalledTimes(1)
+})
+
+it('indica indisponibilidade após dez segundos sem resposta da API', async () => {
+  vi.useFakeTimers()
+  const fetchPendente = vi.fn<typeof fetch>().mockImplementation((_recurso, { signal } = {}) =>
+    new Promise<Response>((_resolver, rejeitar) => {
+      signal?.addEventListener('abort', () => rejeitar(signal.reason), { once: true })
+    }),
+  )
+  vi.stubGlobal('fetch', fetchPendente)
+
+  const registrarDisponibilidade = vi.fn()
+  void verificarConexao().then(registrarDisponibilidade)
+
+  await vi.advanceTimersByTimeAsync(9_999)
+  expect(registrarDisponibilidade).not.toHaveBeenCalled()
+
+  await vi.advanceTimersByTimeAsync(1)
+  expect(registrarDisponibilidade).toHaveBeenCalledExactlyOnceWith(false)
 })
 
 it.each([
