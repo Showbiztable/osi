@@ -21,4 +21,15 @@ export async function entrarNaDemo(codigo: string): Promise<void> {
   throw new Error('Não foi possível entrar na demo.')
 }
 
-export const verificarConexao: () => Promise<boolean> = () => Promise.resolve(false)
+export async function verificarConexao(): Promise<boolean> {
+  try {
+    const resposta = await fetch('/api/saude', {
+      method: 'GET',
+      cache: 'no-store',
+      credentials: 'omit',
+    })
+    return resposta.status === 204
+  } catch {
+    return false
+  }
+}
