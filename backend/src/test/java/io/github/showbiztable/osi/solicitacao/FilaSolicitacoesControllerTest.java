@@ -2,8 +2,10 @@ package io.github.showbiztable.osi.solicitacao;
 
 import static io.github.showbiztable.osi.acesso.ConfiguracaoSessaoDemo.SESSAO_AUTENTICADA;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -23,6 +25,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 @Tag("integration")
@@ -40,6 +43,77 @@ class FilaSolicitacoesControllerTest {
 		this.mvc = mvc;
 		this.jdbcClient = jdbcClient;
 		this.repository = repository;
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"", "\"descricao\": null,", "\"descricao\": \" \\t \","})
+	void rejeita_O_Cadastro_Sem_Descricao_Valida(String campoDescricao) throws Exception {
+		// Given
+		long solicitanteId = buscarIdDoFinanceiro();
+		long responsavelId = inserirDepartamentoDaFila();
+		String corpo = """
+			{%s "departamentoSolicitanteId": %d, "departamentoResponsavelId": %d, "prioridade": "ALTA"}
+			""".formatted(campoDescricao, solicitanteId, responsavelId);
+
+		// When & Then
+		cadastrar(corpo).andExpect(status().isBadRequest());
+		verificarQueNaoCadastrouSolicitacao(responsavelId);
+	}
+
+	@Test
+	void rejeita_O_Cadastro_Sem_Prioridade() throws Exception {
+		// Given
+		long solicitanteId = buscarIdDoFinanceiro();
+		long responsavelId = inserirDepartamentoDaFila();
+		String corpo = """
+			{"descricao": "Restaurar o acesso", "departamentoSolicitanteId": %d, "departamentoResponsavelId": %d}
+			""".formatted(solicitanteId, responsavelId);
+
+		// When & Then
+		cadastrar(corpo).andExpect(status().isBadRequest());
+		verificarQueNaoCadastrouSolicitacao(responsavelId);
+	}
+
+	@ParameterizedTest
+	@ValueSource(booleans = {true, false})
+	void rejeita_O_Cadastro_Quando_Um_Departamento_Nao_Existe(boolean solicitanteAusente) throws Exception {
+		// Given
+		long departamentoValido = inserirDepartamentoDaFila();
+		long departamentoInexistente = Long.MAX_VALUE;
+		long solicitanteId = solicitanteAusente ? departamentoInexistente : departamentoValido;
+		long responsavelId = solicitanteAusente ? departamentoValido : departamentoInexistente;
+		String corpo = """
+			{"descricao": "Restaurar o acesso", "departamentoSolicitanteId": %d,
+			 "departamentoResponsavelId": %d, "prioridade": "ALTA"}
+			""".formatted(solicitanteId, responsavelId);
+
+		// When & Then
+		cadastrar(corpo).andExpect(status().isBadRequest());
+		verificarQueNaoCadastrouSolicitacao(departamentoValido);
+	}
+
+	@Test
+	void cadastra_Uma_Solicitacao_Com_A_Descricao_Normalizada() throws Exception {
+		// Given
+		long solicitanteId = buscarIdDoFinanceiro();
+		long responsavelId = inserirDepartamentoDaFila();
+		String corpo = """
+			{"descricao": "  Restaurar o acesso  ", "departamentoSolicitanteId": %d,
+			 "departamentoResponsavelId": %d, "prioridade": "ALTA"}
+			""".formatted(solicitanteId, responsavelId);
+
+		// When
+		ResultActions resposta = cadastrar(corpo);
+
+		// Then
+		Long idGravado = jdbcClient.sql("""
+			SELECT id FROM solicitacao WHERE departamento_responsavel_id = :departamentoId AND descricao = :descricao
+			""")
+			.param("departamentoId", responsavelId)
+			.param("descricao", "Restaurar o acesso")
+			.query(Long.class)
+			.single();
+		resposta.andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(is(idGravado), Long.class));
 	}
 
 	@Test
@@ -299,6 +373,24 @@ class FilaSolicitacoesControllerTest {
 		return jdbcClient.sql("SELECT id FROM departamento WHERE nome = 'Financeiro'")
 			.query(Long.class)
 			.single();
+	}
+
+	private ResultActions cadastrar(String corpo) throws Exception {
+		return mvc.perform(post("/api/solicitacoes")
+			.sessionAttr(SESSAO_AUTENTICADA, true)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(corpo));
+	}
+
+	private void verificarQueNaoCadastrouSolicitacao(long departamentoId) {
+		Long total = jdbcClient.sql("""
+			SELECT COUNT(*) FROM solicitacao
+			WHERE departamento_solicitante_id = :id OR departamento_responsavel_id = :id
+			""")
+			.param("id", departamentoId)
+			.query(Long.class)
+			.single();
+		assertEquals(0L, total);
 	}
 
 	private Long inserirDepartamentoDaFila() {

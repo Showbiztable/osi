@@ -7,13 +7,17 @@ import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.showbiztable.osi.departamento.ConsultaDepartamentos;
+
 @Service
 class SolicitacaoService {
 
 	private final SolicitacaoRepository repository;
+	private final ConsultaDepartamentos departamentos;
 
-	SolicitacaoService(SolicitacaoRepository repository) {
+	SolicitacaoService(SolicitacaoRepository repository, ConsultaDepartamentos departamentos) {
 		this.repository = repository;
+		this.departamentos = departamentos;
 	}
 
 	List<Solicitacao> listarFila(long departamentoResponsavelId) {
@@ -28,11 +32,15 @@ class SolicitacaoService {
 		return repository.listarConcluidas();
 	}
 
+	@Transactional
 	Long cadastrar(String descricao, long departamentoSolicitanteId, long departamentoResponsavelId,
 		Prioridade prioridade) {
 		Solicitacao solicitacao = Solicitacao.cadastrar(
 			descricao, departamentoSolicitanteId, departamentoResponsavelId, prioridade, Clock.systemUTC()
 		);
+		if (!departamentos.existe(departamentoSolicitanteId) || !departamentos.existe(departamentoResponsavelId)) {
+			throw new IllegalArgumentException("Os departamentos da solicitação precisam estar cadastrados.");
+		}
 		return repository.save(solicitacao).getId();
 	}
 
