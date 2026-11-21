@@ -15,6 +15,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -221,6 +223,75 @@ class FilaSolicitacoesControllerTest {
 		// When & Then
 		mvc.perform(patch("/api/solicitacoes/{id}/reabertura", idInexistente)
 				.sessionAttr(SESSAO_AUTENTICADA, true))
+			.andExpect(status().isNotFound());
+	}
+
+	@ParameterizedTest
+	@ValueSource(booleans = {true, false})
+	void persiste_A_Descricao_Editada_Preservando_Os_Demais_Campos(boolean ativa) throws Exception {
+		// Given
+		Long solicitanteId = buscarIdDoFinanceiro();
+		Long responsavelId = inserirDepartamentoDaFila();
+		Instant entrada = Instant.parse("2026-11-19T12:15:00Z");
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			"Restaurar o acesso", solicitanteId, responsavelId, Prioridade.ALTA, Clock.fixed(entrada, ZoneOffset.UTC)
+		);
+		if (!ativa) {
+			solicitacao.concluir();
+		}
+		Long solicitacaoId = repository.saveAndFlush(solicitacao).getId();
+
+		// When
+		mvc.perform(patch("/api/solicitacoes/{id}/descricao", solicitacaoId)
+				.sessionAttr(SESSAO_AUTENTICADA, true)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+					{"descricao": "  Restaurar o acesso ao portal  "}
+					"""))
+			.andExpect(status().isNoContent());
+		repository.flush();
+
+		// Then
+		String consulta = ativa ? "/api/solicitacoes" : "/api/solicitacoes/concluidas";
+		String itemPreservado = """
+			$[?(@.id == %d && @.departamentoSolicitanteId == %d && @.departamentoResponsavelId == %d \
+			&& @.prioridade == 'ALTA' && @.entrada == '%s' && @.descricao == 'Restaurar o acesso ao portal')]
+			""".strip().formatted(solicitacaoId, solicitanteId, responsavelId, entrada);
+		mvc.perform(get(consulta).sessionAttr(SESSAO_AUTENTICADA, true))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath(itemPreservado).isNotEmpty());
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"{}", "{\"descricao\":null}", "{\"descricao\":\" \\t \"}"})
+	void rejeita_Uma_Edicao_De_Descricao_Sem_Texto(String corpo) throws Exception {
+		// Given
+		Long solicitanteId = buscarIdDoFinanceiro();
+		Long responsavelId = inserirDepartamentoDaFila();
+		Long solicitacaoId = repository.saveAndFlush(Solicitacao.cadastrar(
+			"Restaurar o acesso", solicitanteId, responsavelId, Prioridade.ALTA, Clock.systemUTC()
+		)).getId();
+
+		// When & Then
+		mvc.perform(patch("/api/solicitacoes/{id}/descricao", solicitacaoId)
+				.sessionAttr(SESSAO_AUTENTICADA, true)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(corpo))
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void responde_Com_Not_Found_Ao_Editar_A_Descricao_De_Uma_Solicitacao_Inexistente() throws Exception {
+		// Given
+		long idInexistente = Long.MAX_VALUE;
+
+		// When & Then
+		mvc.perform(patch("/api/solicitacoes/{id}/descricao", idInexistente)
+				.sessionAttr(SESSAO_AUTENTICADA, true)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+					{"descricao": "Restaurar o acesso ao portal"}
+					"""))
 			.andExpect(status().isNotFound());
 	}
 

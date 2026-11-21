@@ -58,6 +58,16 @@ class SolicitacaoController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PatchMapping("/api/solicitacoes/{id}/descricao")
+	ResponseEntity<Void> alterarDescricao(@PathVariable("id") long id, @RequestBody DadosDescricao dados) {
+		try {
+			service.alterarDescricao(id, dados.descricao());
+		} catch (IllegalArgumentException erro) {
+			return ResponseEntity.badRequest().build();
+		}
+		return ResponseEntity.noContent().build();
+	}
+
 	@PatchMapping("/api/solicitacoes/{id}/conclusao")
 	ResponseEntity<Void> concluir(@PathVariable("id") long id) {
 		service.concluir(id);
@@ -98,6 +108,8 @@ class SolicitacaoController {
 	record SolicitacaoCriada(Long id) {}
 
 	record DadosPrioridade(Prioridade prioridade) {}
+
+	record DadosDescricao(String descricao) {}
 
 	record ItemFila(
 		Long id,

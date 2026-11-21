@@ -42,6 +42,11 @@ class SolicitacaoService {
 	}
 
 	@Transactional
+	void alterarDescricao(long solicitacaoId, String novaDescricao) {
+		buscarPorId(solicitacaoId).alterarDescricao(novaDescricao);
+	}
+
+	@Transactional
 	void concluir(long solicitacaoId) {
 		buscarPorId(solicitacaoId).concluir();
 	}
