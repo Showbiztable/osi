@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type DragEvent } from 'react'
 import { rotulosPrioridade, type ItemFila } from './solicitacoes'
 import './CartaoSolicitacao.css'
 
@@ -11,6 +11,9 @@ type CartaoSolicitacaoProps = {
   acaoEmAndamento?: boolean
   onAlterarPrioridade?: (solicitacaoId: number, prioridade: ItemFila['prioridade']) => void
   onConcluir?: (solicitacaoId: number) => void
+  onReabrir?: (solicitacaoId: number) => void
+  onArrastar?: (evento: DragEvent<HTMLLIElement>) => void
+  onTerminarArraste?: () => void
 }
 
 const formatoEntrada = new Intl.DateTimeFormat('pt-BR', {
@@ -27,6 +30,9 @@ export function CartaoSolicitacao({
   acaoEmAndamento = false,
   onAlterarPrioridade,
   onConcluir,
+  onReabrir,
+  onArrastar,
+  onTerminarArraste,
 }: CartaoSolicitacaoProps) {
   const previa = useRef<HTMLHeadingElement>(null)
   const dialogo = useRef<HTMLDialogElement>(null)
@@ -48,7 +54,12 @@ export function CartaoSolicitacao({
   }, [item.descricao])
 
   return (
-    <li className={proxima ? 'item-fila proxima-da-fila' : 'item-fila'}>
+    <li
+      className={proxima ? 'item-fila proxima-da-fila' : 'item-fila'}
+      draggable={onArrastar ? true : undefined}
+      onDragStart={onArrastar}
+      onDragEnd={onTerminarArraste}
+    >
       <div className="item-fila-cabecalho">
         {proxima && (
           <span className="proxima-etiqueta">Próxima solicitação da fila de {departamentoResponsavel}</span>
@@ -106,6 +117,19 @@ export function CartaoSolicitacao({
             onClick={() => onConcluir?.(item.id)}
           >
             Concluir
+          </button>
+        </div>
+      )}
+      {concluida && onReabrir && (
+        <div className="item-fila-acoes">
+          <button
+            type="button"
+            className="botao-secundario"
+            aria-label={`Reabrir solicitação #${item.id}`}
+            disabled={acaoEmAndamento}
+            onClick={() => onReabrir(item.id)}
+          >
+            Reabrir
           </button>
         </div>
       )}

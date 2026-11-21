@@ -20,6 +20,15 @@
   background: #f4faf6;
 }
 
+.item-fila[draggable='true'] {
+  cursor: grab;
+}
+
+.coluna-fila[data-destino-arraste='ativo'] {
+  outline: 2px dashed #287c5e;
+  outline-offset: 2px;
+}
+
 .item-fila-cabecalho {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

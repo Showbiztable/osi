@@ -11,6 +11,7 @@ import {
   concluirSolicitacao,
   listarConcluidas,
   listarFila,
+  reabrirSolicitacao,
   type ItemFila,
 } from './solicitacoes'
 import './App.css'
@@ -23,6 +24,10 @@ const mensagensAcaoFila = {
   conclusao: {
     enviando: 'Concluindo solicitação…',
     erro: 'Não foi possível concluir a solicitação. Tente novamente.',
+  },
+  reabertura: {
+    enviando: 'Reabrindo solicitação…',
+    erro: 'Não foi possível reabrir a solicitação. Tente novamente.',
   },
 }
 
@@ -220,6 +225,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
                   executarAcaoDaFila('prioridade', () => alterarPrioridade(id, prioridade))
                 }
                 onConcluir={(id) => executarAcaoDaFila('conclusao', () => concluirSolicitacao(id))}
+                onReabrir={(id) => executarAcaoDaFila('reabertura', () => reabrirSolicitacao(id))}
               />
             )}
           </div>

@@ -215,3 +215,29 @@ it('oferece um botão para concluir cada solicitação da fila', () => {
   expect(itensExibidos[0]).toMatch(/<button\b[^>]*aria-label="Concluir solicitação #42"[^>]*>Concluir<\/button>/)
   expect(itensExibidos[1]).toMatch(/<button\b[^>]*aria-label="Concluir solicitação #41"[^>]*>Concluir<\/button>/)
 })
+
+it('oferece arraste nos dois sentidos e um botão para reabrir a solicitação concluída', () => {
+  const ativa: ItemFila = {
+    id: 42,
+    descricao: 'Restaurar o acesso',
+    departamentoSolicitanteId: 10,
+    departamentoResponsavelId,
+    prioridade: 'URGENTE',
+    entrada: '2026-11-19T12:15:00Z',
+  }
+  const concluida: ItemFila = { ...ativa, id: 41, descricao: 'Atualizar o cadastro' }
+  const painel = (acaoEmAndamento: boolean) => renderToStaticMarkup(
+    <FilaAtendimento
+      itens={[ativa]}
+      concluidas={[concluida]}
+      acaoEmAndamento={acaoEmAndamento}
+      onConcluir={() => {}}
+      onReabrir={() => {}}
+    />,
+  )
+
+  const pagina = painel(false)
+  expect(pagina.match(/<li\b[^>]*draggable="true"/g) ?? []).toHaveLength(2)
+  expect(pagina).toMatch(/<button\b[^>]*aria-label="Reabrir solicitação #41"[^>]*>Reabrir<\/button>/)
+  expect(painel(true)).not.toContain('draggable="true"')
+})

@@ -64,8 +64,8 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - [x] Adicionar um favicon da OSI para identificar a aplicação na aba do navegador.
 - [x] Padronizar a altura dos cartões em cada coluna. Limitar a descrição a três linhas e oferecer **Ver descrição completa** quando o texto for cortado.
 - [x] Alinhar as etiquetas de prioridade e próxima solicitação pelo topo. A etiqueta de próxima pode quebrar em várias linhas.
-- [ ] Permitir arrastar cartões de **Ativas** para **Concluídas**, reaproveitando a ação do botão **Concluir**.
-- [ ] Permitir arrastar cartões de **Concluídas** para **Ativas** para reabrir a solicitação com a regra de ordenação acima. Oferecer também a ação **Reabrir** no cartão concluído.
+- [x] Permitir arrastar cartões de **Ativas** para **Concluídas**, reaproveitando a ação do botão **Concluir**.
+- [x] Permitir arrastar cartões de **Concluídas** para **Ativas** para reabrir a solicitação com a regra de ordenação acima. Oferecer também a ação **Reabrir** no cartão concluído.
 
 ## Revisão técnica antes da entrega
 
