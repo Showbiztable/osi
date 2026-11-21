@@ -15,8 +15,7 @@
 }
 
 .item-fila-cabecalho,
-.metadados-fila,
-.item-fila-acoes {
+.metadados-fila {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -105,24 +104,15 @@
 }
 
 .item-fila-acoes {
-  align-items: flex-end;
+  display: grid;
   gap: 0.75rem;
   margin-block-start: 0.25rem;
   padding-block-start: 0.75rem;
   border-block-start: 1px solid #d7e3dc;
 }
 
-.item-fila-acoes .campo {
-  flex: 1 1 9rem;
-  min-inline-size: 0;
-}
-
 .item-fila-acoes button {
+  justify-self: center;
+  margin-inline: 0;
   min-block-size: 2.75rem;
-}
-
-@media (max-width: 28rem) {
-  .item-fila-acoes > * {
-    flex-basis: 100%;
-  }
 }
