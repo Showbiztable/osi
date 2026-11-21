@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest'
 import {
+  alterarDescricao,
   alterarPrioridade,
   cadastrarSolicitacao,
   concluirSolicitacao,
@@ -163,4 +164,17 @@ it('envia o pedido de reabertura sem corpo e aceita a resposta 204', async () =>
   await expect(reabrirSolicitacao(solicitacaoId)).resolves.toBeUndefined()
 
   expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes/42/reabertura', { method: 'PATCH' })
+})
+
+it('envia a nova descrição sem alterar os outros dados da solicitação', async () => {
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 204 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(alterarDescricao(42, 'Restaurar o acesso ao portal')).resolves.toBeUndefined()
+
+  expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes/42/descricao', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ descricao: 'Restaurar o acesso ao portal' }),
+  })
 })

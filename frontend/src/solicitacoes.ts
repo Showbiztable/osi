@@ -90,3 +90,15 @@ export async function reabrirSolicitacao(solicitacaoId: number): Promise<void> {
     throw new Error('Não foi possível reabrir a solicitação.')
   }
 }
+
+export async function alterarDescricao(solicitacaoId: number, descricao: string): Promise<void> {
+  const resposta = await requisitarComSessao(`/api/solicitacoes/${solicitacaoId}/descricao`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ descricao }),
+  })
+
+  if (!resposta.ok) {
+    throw new Error('Não foi possível alterar a descrição da solicitação.')
+  }
+}
