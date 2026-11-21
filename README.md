@@ -91,16 +91,16 @@ Cada departamento responsável tem uma fila de solicitações ativas. A ordem se
 2. **Data e hora de entrada** — na mesma prioridade, a solicitação mais antiga vem primeiro.
 3. **Identificador** — se a prioridade e o instante de entrada forem iguais, o menor ID vem primeiro para manter a ordem estável.
 
-A fila destaca o primeiro item como a próxima solicitação. Alterar a prioridade reorganiza a fila preservando a data de entrada. Concluir retira o item da fila ativa. [Regras da fila e exemplo](docs/regras-da-fila.md)
+A fila destaca a próxima solicitação de cada departamento. Alterar a prioridade reorganiza a fila preservando a data de entrada. Concluir move o cartão para **Concluídas**. Reabrir devolve o cartão à fila com a prioridade e a data de entrada registradas. [Regras da fila e exemplo](docs/regras-da-fila.md)
 
 ## Estado do projeto
 
 - **Concluído:** escopo, tecnologias, [regras da fila de atendimento](docs/regras-da-fila.md) e [arquitetura inicial](docs/arquitetura.md) definidos.
 - **Estrutura inicial:** backend Spring Boot com Maven Wrapper e frontend React com Vite.
 - **Verificações:** GitHub Actions executa os testes e o build dos dois projetos, além do lint do frontend.
-- **Cadastro:** o formulário consulta os departamentos pela API, grava a solicitação no PostgreSQL e exibe o ID gerado.
-- **Fila de atendimento:** a tela lista as solicitações ativas do departamento escolhido na ordem de atendimento e destaca a próxima.
-- **Alteração de prioridade:** a tela permite mudar a prioridade de uma solicitação e atualiza a fila após a confirmação da API.
-- **Conclusão de solicitações** pelo botão da fila. A solicitação permanece registrada e sai da fila ativa.
+- **Cadastro:** o formulário consulta os departamentos pela API, grava a solicitação no PostgreSQL e confirma o ID em uma notificação temporária.
+- **Fila de atendimento:** o quadro mostra ativas e concluídas de todos os departamentos, com filtro por responsáveis e destaque da próxima de cada departamento. Descrições longas podem ser abertas na íntegra.
+- **Ações da fila:** alterar a prioridade, concluir e reabrir solicitações. As duas últimas estão disponíveis pelo botão do cartão e por arraste entre colunas.
+- **Departamentos:** a tela lista e cadastra departamentos. O catálogo também alimenta o filtro e o formulário de solicitações.
 - **Banco de dados:** PostgreSQL local com Docker Compose e migrations do Flyway para departamentos e solicitações.
 - **Publicação:** [Demo da OSI](https://osi-demo.onrender.com/) com acesso por código. Use **Verificar conexão** na tela de acesso se a API estiver em pausa.

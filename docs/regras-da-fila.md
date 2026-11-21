@@ -69,9 +69,9 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 
 ## Revisão técnica antes da entrega
 
-- [ ] Revisar o frontend com foco em responsabilidades dos componentes, estado, acessibilidade e testes dos fluxos principais.
-- [ ] Revisar o backend com foco em responsabilidades das camadas, validação das regras de negócio, testes, migrations e configuração da API.
-- [ ] Registrar os achados com exemplos do código e priorizar as melhorias pelo impacto na entrega.
+- [x] Revisar o frontend com foco em responsabilidades dos componentes, estado, acessibilidade e testes dos fluxos principais.
+- [x] Revisar o backend com foco em responsabilidades das camadas, validação das regras de negócio, testes, migrations e configuração da API.
+- [x] Registrar os achados e as prioridades. [Revisão técnica](revisao-tecnica.md)
 
 ## Exemplo
 
