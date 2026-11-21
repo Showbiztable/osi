@@ -85,7 +85,7 @@
 }
 
 .proxima-etiqueta,
-.item-fila [data-prioridade='BAIXA'] {
+.prioridade {
   padding: 0.2rem 0.55rem;
   border-radius: 1rem;
   font-size: 0.75rem;
@@ -99,7 +99,7 @@
   color: #145641;
 }
 
-.prioridade {
+.item-fila [data-prioridade='BAIXA'] {
   background: #edf1ee;
   color: #354c42;
 }
