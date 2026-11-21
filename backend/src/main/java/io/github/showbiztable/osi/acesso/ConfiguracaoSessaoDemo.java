@@ -32,7 +32,8 @@ public class ConfiguracaoSessaoDemo {
 			String contexto = requisicao.getContextPath();
 			String uri = requisicao.getRequestURI();
 			return ("POST".equals(metodo) && (contexto + AcessoDemoController.ROTA_ENTRADA).equals(uri))
-				|| ("GET".equals(metodo) && (contexto + AcessoDemoController.ROTA_SAUDE).equals(uri));
+				|| ("GET".equals(metodo) && ((contexto + AcessoDemoController.ROTA_SAUDE).equals(uri)
+					|| (contexto + AcessoDemoController.ROTA_PRONTIDAO).equals(uri)));
 		}
 
 		@Override

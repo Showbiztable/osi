@@ -49,6 +49,15 @@ class AcessoDemoIntegrationTest {
 	}
 
 	@Test
+	void informa_A_Prontidao_Do_Banco_Sem_Abrir_Sessao() throws Exception {
+		// When & Then
+		mvc.perform(get("/api/prontidao"))
+			.andExpect(status().isNoContent())
+			.andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
+			.andExpect(resultado -> assertNull(resultado.getRequest().getSession(false)));
+	}
+
+	@Test
 	void abre_Uma_Sessao_Com_Codigo_Valido_E_Libera_A_Consulta_Da_Fila() throws Exception {
 		// Given
 		Long departamentoId = jdbcClient.sql("SELECT id FROM departamento WHERE nome = 'TI'")

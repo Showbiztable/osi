@@ -3,6 +3,10 @@ package io.github.showbiztable.osi.acesso;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.security.MessageDigest;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -21,17 +25,33 @@ class AcessoDemoController {
 
 	static final String ROTA_ENTRADA = "/api/acesso";
 	static final String ROTA_SAUDE = "/api/saude";
+	static final String ROTA_PRONTIDAO = "/api/prontidao";
 	private static final int LIMITE_INATIVIDADE_EM_SEGUNDOS = 10 * 60;
+	private static final int LIMITE_VALIDACAO_CONEXAO_EM_SEGUNDOS = 2;
 	private final String codigoConfigurado;
+	private final DataSource dataSource;
 	private final LimitadorTentativasAcesso limitador = new LimitadorTentativasAcesso(System::nanoTime);
 
-	AcessoDemoController(@Value("${osi.demo.codigo:}") String codigoConfigurado) {
+	AcessoDemoController(@Value("${osi.demo.codigo:}") String codigoConfigurado, DataSource dataSource) {
 		this.codigoConfigurado = codigoConfigurado;
+		this.dataSource = dataSource;
 	}
 
 	@GetMapping(ROTA_SAUDE)
 	ResponseEntity<Void> verificarDisponibilidade() {
 		return ResponseEntity.noContent().cacheControl(CacheControl.noStore()).build();
+	}
+
+	@GetMapping(ROTA_PRONTIDAO)
+	ResponseEntity<Void> verificarProntidao() {
+		boolean pronta;
+		try (Connection conexao = dataSource.getConnection()) {
+			pronta = conexao.isValid(LIMITE_VALIDACAO_CONEXAO_EM_SEGUNDOS);
+		} catch (SQLException erro) {
+			pronta = false;
+		}
+		HttpStatus status = pronta ? HttpStatus.NO_CONTENT : HttpStatus.SERVICE_UNAVAILABLE;
+		return ResponseEntity.status(status).cacheControl(CacheControl.noStore()).build();
 	}
 
 	@PostMapping(ROTA_ENTRADA)
