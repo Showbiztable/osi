@@ -148,6 +148,30 @@ class FilaSolicitacoesControllerTest {
 			.andExpect(jsonPath("$[0].id").value(is(seguinte.getId()), Long.class));
 	}
 
+	@Test
+	void devolve_As_Solicitacoes_Concluidas_Com_A_Prioridade_E_O_Responsavel() throws Exception {
+		// Given
+		Long solicitanteId = buscarIdDoFinanceiro();
+		Long responsavelId = inserirDepartamentoDaFila();
+		Clock relogio = Clock.fixed(Instant.parse("2026-11-19T12:15:00Z"), ZoneOffset.UTC);
+		Solicitacao concluida = Solicitacao.cadastrar(
+			"Restaurar o acesso", solicitanteId, responsavelId, Prioridade.ALTA, relogio
+		);
+		concluida.concluir();
+		Long concluidaId = repository.saveAndFlush(concluida).getId();
+		Long ativaId = repository.saveAndFlush(
+			Solicitacao.cadastrar("Atualizar o cadastro", solicitanteId, responsavelId, Prioridade.ALTA, relogio)
+		).getId();
+		String itemComPrioridadeEResponsavel =
+			"$[?(@.id == %d && @.departamentoResponsavelId == %d && @.prioridade == 'ALTA')]";
+
+		// When & Then
+		mvc.perform(get("/api/solicitacoes/concluidas").sessionAttr(SESSAO_AUTENTICADA, true))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath(itemComPrioridadeEResponsavel.formatted(concluidaId, responsavelId)).isNotEmpty())
+			.andExpect(jsonPath("$[?(@.id == %d)]".formatted(ativaId)).isEmpty());
+	}
+
 	private Long buscarIdDoFinanceiro() {
 		return jdbcClient.sql("SELECT id FROM departamento WHERE nome = 'Financeiro'")
 			.query(Long.class)

@@ -24,6 +24,10 @@ class SolicitacaoService {
 		return repository.listarFilaAtiva();
 	}
 
+	List<Solicitacao> listarConcluidas() {
+		return repository.listarConcluidas();
+	}
+
 	Long cadastrar(String descricao, long departamentoSolicitanteId, long departamentoResponsavelId,
 		Prioridade prioridade) {
 		Solicitacao solicitacao = Solicitacao.cadastrar(

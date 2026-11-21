@@ -31,16 +31,12 @@ class SolicitacaoController {
 		List<Solicitacao> fila = departamentoResponsavelId == null
 			? service.listarFilaGeral()
 			: service.listarFila(departamentoResponsavelId);
-		return fila.stream()
-			.map(solicitacao -> new ItemFila(
-				solicitacao.getId(),
-				solicitacao.getDescricao(),
-				solicitacao.getDepartamentoSolicitanteId(),
-				solicitacao.getDepartamentoResponsavelId(),
-				solicitacao.getPrioridade(),
-				solicitacao.getEntrada()
-			))
-			.toList();
+		return paraItensDaFila(fila);
+	}
+
+	@GetMapping("/api/solicitacoes/concluidas")
+	List<ItemFila> listarConcluidas() {
+		return paraItensDaFila(service.listarConcluidas());
 	}
 
 	@PostMapping("/api/solicitacoes")
@@ -71,6 +67,19 @@ class SolicitacaoController {
 	@ExceptionHandler(NoSuchElementException.class)
 	ResponseEntity<Void> responderSolicitacaoInexistente() {
 		return ResponseEntity.notFound().build();
+	}
+
+	private static List<ItemFila> paraItensDaFila(List<Solicitacao> solicitacoes) {
+		return solicitacoes.stream()
+			.map(solicitacao -> new ItemFila(
+				solicitacao.getId(),
+				solicitacao.getDescricao(),
+				solicitacao.getDepartamentoSolicitanteId(),
+				solicitacao.getDepartamentoResponsavelId(),
+				solicitacao.getPrioridade(),
+				solicitacao.getEntrada()
+			))
+			.toList();
 	}
 
 	record DadosCadastro(
