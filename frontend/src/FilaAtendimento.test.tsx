@@ -202,8 +202,10 @@ it('oferece a alteração de prioridade com a prioridade atual selecionada', () 
   const seletor = pagina.match(/<select\b[^>]*aria-label="Alterar prioridade da solicitação #42"[^>]*>[\s\S]*?<\/select>/)?.[0]
 
   expect(seletor, 'A solicitação deve oferecer um seletor de prioridade').toBeDefined()
-  expect(seletor).toContain('<option value="ALTA" selected="">Alta</option>')
-  expect(seletor).toContain('<option value="URGENTE">Urgente</option>')
+  expect(seletor).toMatch(/<option\b[^>]*value="ALTA"[^>]*selected=""[^>]*>Alta<\/option>/)
+  for (const prioridade of ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE']) {
+    expect(seletor).toContain(`data-prioridade="${prioridade}"`)
+  }
 })
 
 it('oferece um botão para concluir cada solicitação da fila', () => {

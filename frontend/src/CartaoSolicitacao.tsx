@@ -83,16 +83,17 @@ export function CartaoSolicitacao({
       <time className="entrada-cartao" dateTime={item.entrada}>{formatoEntrada.format(new Date(item.entrada))}</time>
       <div className="item-fila-acoes">
         {!concluida && (
-          <label className="campo">
-            Alterar prioridade
+          <label className="campo prioridade-cartao-campo">
+            <span>Prioridade</span>
             <select
+              className="prioridade-cartao-seletor"
               aria-label={`Alterar prioridade da solicitação #${item.id}`}
               value={item.prioridade}
               disabled={acaoEmAndamento || !onAlterarPrioridade}
               onChange={(evento) => onAlterarPrioridade?.(item.id, evento.currentTarget.value as ItemFila['prioridade'])}
             >
               {Object.entries(rotulosPrioridade).map(([valor, rotulo]) => (
-                <option key={valor} value={valor}>{rotulo}</option>
+                <option key={valor} value={valor} data-prioridade={valor}>{rotulo}</option>
               ))}
             </select>
           </label>

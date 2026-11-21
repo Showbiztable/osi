@@ -85,7 +85,7 @@
 }
 
 .proxima-etiqueta,
-.prioridade {
+.item-fila [data-prioridade='BAIXA'] {
   padding: 0.2rem 0.55rem;
   border-radius: 1rem;
   font-size: 0.75rem;
@@ -104,17 +104,17 @@
   color: #354c42;
 }
 
-.prioridade[data-prioridade='MEDIA'] {
+.item-fila [data-prioridade='MEDIA'] {
   background: #e7efff;
   color: #254479;
 }
 
-.prioridade[data-prioridade='ALTA'] {
+.item-fila [data-prioridade='ALTA'] {
   background: #fff0db;
   color: #754500;
 }
 
-.prioridade[data-prioridade='URGENTE'] {
+.item-fila [data-prioridade='URGENTE'] {
   background: #fee9e5;
   color: #8f3024;
 }
@@ -158,6 +158,37 @@
   margin-block-start: auto;
   padding-block-start: 0.75rem;
   border-block-start: 1px solid #d7e3dc;
+}
+
+.prioridade-cartao-campo {
+  grid-template-columns: auto minmax(0, 7.75rem);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prioridade-cartao-seletor {
+  min-inline-size: 0;
+}
+
+@supports (appearance: base-select) {
+  .prioridade-cartao-seletor,
+  .prioridade-cartao-seletor::picker(select) {
+    appearance: base-select;
+  }
+
+  .prioridade-cartao-seletor::picker(select) {
+    border: 1px solid #bccfc5;
+    border-radius: 0.5rem;
+  }
+
+  .prioridade-cartao-seletor option {
+    padding: 0.5rem 0.625rem;
+  }
+
+  .prioridade-cartao-seletor option:is(:hover, :focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
 }
 
 .item-fila-botoes {
