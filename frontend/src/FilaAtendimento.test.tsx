@@ -35,6 +35,36 @@ it('destaca apenas a primeira solicitação na ordem recebida', () => {
   expect(itensExibidos[1]).not.toContain('Próxima solicitação')
 })
 
+it('destaca a primeira solicitação de cada departamento responsável na fila geral', () => {
+  const outroDepartamentoResponsavelId = 30
+  const primeira: ItemFila = {
+    id: 42,
+    descricao: 'Restaurar o acesso',
+    departamentoSolicitanteId: 10,
+    departamentoResponsavelId,
+    prioridade: 'URGENTE',
+    entrada: '2026-11-19T12:15:00Z',
+  }
+  const primeiraDoOutroDepartamento: ItemFila = {
+    ...primeira,
+    id: 40,
+    descricao: 'Conferir os relatórios',
+    departamentoResponsavelId: outroDepartamentoResponsavelId,
+    prioridade: 'MEDIA',
+  }
+  const itens: ItemFila[] = [
+    primeira,
+    { ...primeira, id: 41, descricao: 'Atualizar o cadastro', prioridade: 'ALTA' },
+    primeiraDoOutroDepartamento,
+    { ...primeiraDoOutroDepartamento, id: 39, descricao: 'Organizar os arquivos', prioridade: 'BAIXA' },
+  ]
+
+  const pagina = renderToStaticMarkup(<FilaAtendimento itens={itens} />)
+  const itensExibidos = pagina.match(/<li\b[^>]*>[\s\S]*?<\/li>/g) ?? []
+
+  expect(itensExibidos.map((item) => item.includes('Próxima solicitação'))).toEqual([true, false, true, false])
+})
+
 it('oferece a alteração de prioridade com a prioridade atual selecionada', () => {
   const item: ItemFila = {
     id: 42,

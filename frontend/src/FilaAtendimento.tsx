@@ -21,9 +21,13 @@ export function FilaAtendimento({
     return <p role="status">Nenhuma solicitação ativa neste departamento.</p>
   }
 
+  const departamentosJaExibidos = new Set<number>()
+
   return (
     <ol className="lista-fila" aria-label="Ordem de atendimento" role="list">
-      {itens.map((item, posicao) => {
+      {itens.map((item) => {
+        const proxima = !departamentosJaExibidos.has(item.departamentoResponsavelId)
+        departamentosJaExibidos.add(item.departamentoResponsavelId)
         const solicitante = departamentos.find(({ id }) => id === item.departamentoSolicitanteId)
 
         return (
@@ -31,7 +35,7 @@ export function FilaAtendimento({
             key={item.id}
             item={item}
             departamentoSolicitante={solicitante?.nome ?? `Departamento #${item.departamentoSolicitanteId}`}
-            proxima={posicao === 0}
+            proxima={proxima}
             acaoEmAndamento={acaoEmAndamento}
             onAlterarPrioridade={onAlterarPrioridade}
             onConcluir={onConcluir}
