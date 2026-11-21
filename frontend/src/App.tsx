@@ -3,6 +3,7 @@ import { FilaAtendimento } from './FilaAtendimento'
 import { FiltroDepartamentos } from './FiltroDepartamentos'
 import { FormularioSolicitacao } from './FormularioSolicitacao'
 import { TelaAcesso } from './TelaAcesso'
+import { TelaDepartamentos } from './TelaDepartamentos'
 import { SessaoExpiradaError } from './acesso'
 import { listarDepartamentos, type Departamento } from './departamentos'
 import {
@@ -42,18 +43,33 @@ type PainelSolicitacoesProps = { aoExpirarSessao: () => void }
 
 type SessaoDemo = { estado: 'acesso' | 'ativa' | 'expirada' }
 
-function Cabecalho() {
+type Pagina = 'fila' | 'departamentos'
+
+function paginaDaUrl(): Pagina {
+  return typeof window !== 'undefined' && window.location.hash === '#departamentos' ? 'departamentos' : 'fila'
+}
+
+function Cabecalho({ pagina }: { pagina?: Pagina }) {
   return (
     <header className="barra-topo">
-      <div className="marca">
-        <span className="marca-sigla">OSI</span>
-        <span>Organização de Solicitações Internas</span>
+      <div className="barra-topo-conteudo">
+        <div className="marca">
+          <span className="marca-sigla">OSI</span>
+          <span>Organização de Solicitações Internas</span>
+        </div>
+        {pagina && (
+          <nav className="navegacao-topo" aria-label="Navegação principal">
+            <a href="#fila" aria-current={pagina === 'fila' ? 'page' : undefined}>Fila de atendimento</a>
+            <a href="#departamentos" aria-current={pagina === 'departamentos' ? 'page' : undefined}>Departamentos</a>
+          </nav>
+        )}
       </div>
     </header>
   )
 }
 
 export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps) {
+  const [pagina, setPagina] = useState(paginaDaUrl)
   const [catalogo, setCatalogo] = useState<Catalogo>({ estado: 'carregando' })
   const [departamentosSelecionados, setDepartamentosSelecionados] = useState<number[]>([])
   const [fila, setFila] = useState<Fila>({ estado: 'carregando' })
@@ -61,6 +77,12 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
   const [acaoFila, setAcaoFila] = useState<AcaoFila | null>(null)
   const departamentos = catalogo.estado === 'pronto' ? catalogo.departamentos : []
   const acaoEmAndamento = acaoFila?.estado === 'enviando'
+
+  useEffect(() => {
+    const atualizarPagina = () => setPagina(paginaDaUrl())
+    window.addEventListener('hashchange', atualizarPagina)
+    return () => window.removeEventListener('hashchange', atualizarPagina)
+  }, [])
 
   const tratarSessaoExpirada = useCallback((erro: unknown) => {
     if (!(erro instanceof SessaoExpiradaError)) return false
@@ -131,9 +153,32 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
     }
   }
 
+  function adicionarDepartamento(departamento: Departamento) {
+    setCatalogo((atual) => {
+      if (atual.estado !== 'pronto') return atual
+      const departamentos = [...atual.departamentos, departamento]
+      departamentos.sort((primeiro, segundo) => primeiro.nome.localeCompare(segundo.nome, 'pt-BR'))
+      return { estado: 'pronto', departamentos }
+    })
+  }
+
+  if (pagina === 'departamentos') {
+    return (
+      <>
+        <Cabecalho pagina={pagina} />
+        <TelaDepartamentos
+          departamentos={departamentos}
+          estadoCatalogo={catalogo.estado}
+          aoCadastrar={adicionarDepartamento}
+          aoExpirarSessao={aoExpirarSessao}
+        />
+      </>
+    )
+  }
+
   return (
     <>
-      <Cabecalho />
+      <Cabecalho pagina={pagina} />
 
       <main className="conteudo">
         <section className="painel painel-fila" aria-labelledby="titulo-fila">

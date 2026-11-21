@@ -19,13 +19,21 @@ body {
   color: #f6fbf8;
 }
 
+.barra-topo-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0.875rem 1.5rem;
+}
+
 .marca {
   display: flex;
   align-items: center;
   gap: 0.875rem;
-  max-width: 76rem;
-  margin: 0 auto;
-  padding: 0.875rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 600;
 }
@@ -36,6 +44,34 @@ body {
   padding: 0.35rem 0.5rem;
   font-size: 1rem;
   font-weight: 750;
+}
+
+.navegacao-topo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.navegacao-topo a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  color: inherit;
+  font-size: 0.875rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.navegacao-topo a:hover,
+.navegacao-topo a[aria-current='page'] {
+  background: #28574a;
+}
+
+.navegacao-topo a:focus-visible {
+  outline: 2px solid #e1f2e8;
+  outline-offset: 2px;
 }
 
 .conteudo {

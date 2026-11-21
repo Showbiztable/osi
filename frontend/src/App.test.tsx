@@ -1,5 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server'
-import { expect, it } from 'vitest'
+import { expect, it, vi } from 'vitest'
 import App, { PainelSolicitacoes } from './App'
 
 it('mostra a tela de acesso antes do painel de solicitações', () => {
@@ -12,6 +12,7 @@ it('mostra a tela de acesso antes do painel de solicitações', () => {
   expect(pagina).toContain('>Verificar conexão</button>')
   expect(pagina).not.toContain('name="descricao"')
   expect(pagina).not.toContain('id="titulo-fila"')
+  expect(pagina).not.toContain('href="#departamentos"')
 })
 
 it('oferece o formulário de cadastro direto no painel, sem atalho duplicado', () => {
@@ -33,4 +34,20 @@ it('mostra o carregamento da fila geral ao abrir o painel', () => {
   expect(pagina.includes('Carregando fila…'), 'O painel deve abrir com a fila em carregamento').toBe(true)
   expect(pagina).toContain('<legend>Departamentos responsáveis</legend>')
   expect(pagina).toContain('>Todos os departamentos</p>')
+})
+
+it('abre a tela de departamentos na navegação do painel autenticado', () => {
+  vi.stubGlobal('window', { location: { hash: '#departamentos' } })
+
+  try {
+    const pagina = renderToStaticMarkup(<PainelSolicitacoes aoExpirarSessao={() => {}} />)
+
+    expect(pagina).toContain('href="#fila"')
+    expect(pagina).toContain('href="#departamentos" aria-current="page"')
+    expect(pagina).toContain('>Departamentos</h1>')
+    expect(pagina).toContain('>Cadastrar departamento</button>')
+    expect(pagina).not.toContain('id="titulo-fila"')
+  } finally {
+    vi.unstubAllGlobals()
+  }
 })
