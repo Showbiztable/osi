@@ -1,0 +1,47 @@
+.cabecalho-acesso {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.cabecalho-acesso > div {
+  flex: 1 1 14rem;
+  min-inline-size: 0;
+}
+
+.disponibilidade-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 1rem;
+  padding: 0.25rem 0.625rem;
+  background: #edf1ee;
+  color: #354c42;
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.disponibilidade-demo::before {
+  content: '';
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.disponibilidade-demo[data-disponibilidade='preparando'] {
+  background: #fff0db;
+  color: #754500;
+}
+
+.disponibilidade-demo[data-disponibilidade='disponivel'] {
+  background: #e4f3e9;
+  color: #194d34;
+}
+
+.disponibilidade-demo[data-disponibilidade='indisponivel'] {
+  background: #fef1ed;
+  color: #8f3024;
+}
