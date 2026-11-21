@@ -41,6 +41,7 @@ it('consulta a fila do departamento responsável na ordem devolvida pela API', a
       id: 42,
       descricao: 'Restaurar o acesso',
       departamentoSolicitanteId: 10,
+      departamentoResponsavelId,
       prioridade: 'URGENTE',
       entrada: '2026-11-19T12:15:00Z',
     },
@@ -48,6 +49,7 @@ it('consulta a fila do departamento responsável na ordem devolvida pela API', a
       id: 41,
       descricao: 'Atualizar o cadastro',
       departamentoSolicitanteId: 10,
+      departamentoResponsavelId,
       prioridade: 'BAIXA',
       entrada: '2026-11-19T12:00:00Z',
     },
@@ -59,6 +61,34 @@ it('consulta a fila do departamento responsável na ordem devolvida pela API', a
 
   expect(resultado).toEqual(fila)
   expect(fetchMock).toHaveBeenCalledWith('/api/solicitacoes?departamentoResponsavelId=20')
+})
+
+it('consulta a fila geral sem filtro e recebe o departamento responsável de cada item', async () => {
+  const fila: ItemFila[] = [
+    {
+      id: 42,
+      descricao: 'Restaurar o acesso',
+      departamentoSolicitanteId: 10,
+      departamentoResponsavelId: 20,
+      prioridade: 'URGENTE',
+      entrada: '2026-11-19T12:15:00Z',
+    },
+    {
+      id: 41,
+      descricao: 'Atualizar o cadastro',
+      departamentoSolicitanteId: 20,
+      departamentoResponsavelId: 10,
+      prioridade: 'ALTA',
+      entrada: '2026-11-19T12:00:00Z',
+    },
+  ]
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(Response.json(fila))
+  vi.stubGlobal('fetch', fetchMock)
+
+  const resultado = await listarFila()
+
+  expect(resultado).toEqual(fila)
+  expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes')
 })
 
 it('envia a nova prioridade e aceita uma resposta sem corpo', async () => {

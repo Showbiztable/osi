@@ -18,14 +18,19 @@ export type ItemFila = {
   id: number
   descricao: string
   departamentoSolicitanteId: number
+  departamentoResponsavelId: number
   prioridade: DadosCadastro['prioridade']
   entrada: string
 }
 
-export async function listarFila(departamentoResponsavelId: number): Promise<ItemFila[]> {
-  const resposta = await requisitarComSessao(`/api/solicitacoes?departamentoResponsavelId=${departamentoResponsavelId}`)
+export async function listarFila(departamentoResponsavelId?: number): Promise<ItemFila[]> {
+  const recurso = '/api/solicitacoes'
+  const endereco = departamentoResponsavelId === undefined
+    ? recurso
+    : `${recurso}?departamentoResponsavelId=${departamentoResponsavelId}`
+  const resposta = await requisitarComSessao(endereco)
   if (!resposta.ok) {
-    throw new Error('Não foi possível carregar a fila do departamento.')
+    throw new Error('Não foi possível carregar a fila.')
   }
 
   return resposta.json()

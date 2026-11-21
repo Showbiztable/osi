@@ -3,12 +3,15 @@ import { expect, it } from 'vitest'
 import { FilaAtendimento } from './FilaAtendimento'
 import type { ItemFila } from './solicitacoes'
 
+const departamentoResponsavelId = 20
+
 it('destaca apenas a primeira solicitação na ordem recebida', () => {
   const itens: ItemFila[] = [
     {
       id: 42,
       descricao: 'Restaurar o acesso',
       departamentoSolicitanteId: 10,
+      departamentoResponsavelId,
       prioridade: 'URGENTE',
       entrada: '2026-11-19T12:15:00Z',
     },
@@ -16,6 +19,7 @@ it('destaca apenas a primeira solicitação na ordem recebida', () => {
       id: 41,
       descricao: 'Atualizar o cadastro',
       departamentoSolicitanteId: 10,
+      departamentoResponsavelId,
       prioridade: 'BAIXA',
       entrada: '2026-11-19T12:00:00Z',
     },
@@ -36,6 +40,7 @@ it('oferece a alteração de prioridade com a prioridade atual selecionada', () 
     id: 42,
     descricao: 'Restaurar o acesso',
     departamentoSolicitanteId: 10,
+    departamentoResponsavelId,
     prioridade: 'ALTA',
     entrada: '2026-11-19T12:15:00Z',
   }
@@ -53,6 +58,7 @@ it('oferece um botão para concluir cada solicitação da fila', () => {
     id: 42,
     descricao: 'Restaurar o acesso',
     departamentoSolicitanteId: 10,
+    departamentoResponsavelId,
     prioridade: 'URGENTE',
     entrada: '2026-11-19T12:15:00Z',
   }
