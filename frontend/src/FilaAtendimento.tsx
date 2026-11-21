@@ -28,19 +28,21 @@ export function FilaAtendimento({
   }
 
   const departamentosJaExibidos = new Set<number>()
+  const nomesDepartamentos = new Map(departamentos.map(({ id, nome }) => [id, nome]))
+  const nomeDepartamento = (id: number) => nomesDepartamentos.get(id) ?? `Departamento #${id}`
 
   return (
     <ol className="lista-fila" aria-label="Ordem de atendimento" role="list">
       {itensVisiveis.map((item) => {
         const proxima = !departamentosJaExibidos.has(item.departamentoResponsavelId)
         departamentosJaExibidos.add(item.departamentoResponsavelId)
-        const solicitante = departamentos.find(({ id }) => id === item.departamentoSolicitanteId)
 
         return (
           <CartaoSolicitacao
             key={item.id}
             item={item}
-            departamentoSolicitante={solicitante?.nome ?? `Departamento #${item.departamentoSolicitanteId}`}
+            departamentoSolicitante={nomeDepartamento(item.departamentoSolicitanteId)}
+            departamentoResponsavel={nomeDepartamento(item.departamentoResponsavelId)}
             proxima={proxima}
             acaoEmAndamento={acaoEmAndamento}
             onAlterarPrioridade={onAlterarPrioridade}

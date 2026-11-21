@@ -4,6 +4,7 @@ import './CartaoSolicitacao.css'
 type CartaoSolicitacaoProps = {
   item: ItemFila
   departamentoSolicitante: string
+  departamentoResponsavel: string
   proxima: boolean
   acaoEmAndamento: boolean
   onAlterarPrioridade?: (solicitacaoId: number, prioridade: ItemFila['prioridade']) => void
@@ -18,6 +19,7 @@ const formatoEntrada = new Intl.DateTimeFormat('pt-BR', {
 export function CartaoSolicitacao({
   item,
   departamentoSolicitante,
+  departamentoResponsavel,
   proxima,
   acaoEmAndamento,
   onAlterarPrioridade,
@@ -35,6 +37,7 @@ export function CartaoSolicitacao({
       <p className="metadados-fila">
         <span>#{item.id}</span>
         <span>De {departamentoSolicitante}</span>
+        <span>Para {departamentoResponsavel}</span>
         <time dateTime={item.entrada}>{formatoEntrada.format(new Date(item.entrada))}</time>
       </p>
       <div className="item-fila-acoes">
