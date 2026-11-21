@@ -20,6 +20,10 @@ class SolicitacaoService {
 		return repository.listarFilaAtivaPorDepartamentoResponsavel(departamentoResponsavelId);
 	}
 
+	List<Solicitacao> listarFilaGeral() {
+		return repository.listarFilaAtiva();
+	}
+
 	Long cadastrar(String descricao, long departamentoSolicitanteId, long departamentoResponsavelId,
 		Prioridade prioridade) {
 		Solicitacao solicitacao = Solicitacao.cadastrar(

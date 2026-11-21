@@ -25,12 +25,18 @@ class SolicitacaoController {
 	}
 
 	@GetMapping("/api/solicitacoes")
-	List<ItemFila> listarFila(@RequestParam("departamentoResponsavelId") long departamentoResponsavelId) {
-		return service.listarFila(departamentoResponsavelId).stream()
+	List<ItemFila> listarFila(
+		@RequestParam(name = "departamentoResponsavelId", required = false) Long departamentoResponsavelId
+	) {
+		List<Solicitacao> fila = departamentoResponsavelId == null
+			? service.listarFilaGeral()
+			: service.listarFila(departamentoResponsavelId);
+		return fila.stream()
 			.map(solicitacao -> new ItemFila(
 				solicitacao.getId(),
 				solicitacao.getDescricao(),
 				solicitacao.getDepartamentoSolicitanteId(),
+				solicitacao.getDepartamentoResponsavelId(),
 				solicitacao.getPrioridade(),
 				solicitacao.getEntrada()
 			))
@@ -82,6 +88,7 @@ class SolicitacaoController {
 		Long id,
 		String descricao,
 		long departamentoSolicitanteId,
+		long departamentoResponsavelId,
 		Prioridade prioridade,
 		Instant entrada
 	) {}

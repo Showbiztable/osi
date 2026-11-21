@@ -68,6 +68,28 @@ class FilaSolicitacoesControllerTest {
 	}
 
 	@Test
+	void devolve_A_Fila_Geral_Com_O_Departamento_Responsavel_De_Cada_Solicitacao() throws Exception {
+		// Given
+		Long solicitanteId = buscarIdDoFinanceiro();
+		Long primeiroResponsavelId = inserirDepartamentoDaFila();
+		Long segundoResponsavelId = inserirDepartamentoDaFila();
+		Clock relogio = Clock.fixed(Instant.parse("2026-11-19T12:15:00Z"), ZoneOffset.UTC);
+		Solicitacao primeira = repository.saveAndFlush(
+			Solicitacao.cadastrar("Restaurar o acesso", solicitanteId, primeiroResponsavelId, Prioridade.URGENTE, relogio)
+		);
+		Solicitacao segunda = repository.saveAndFlush(
+			Solicitacao.cadastrar("Atualizar o cadastro", solicitanteId, segundoResponsavelId, Prioridade.ALTA, relogio)
+		);
+		String itemComResponsavel = "$[?(@.id == %d && @.departamentoResponsavelId == %d)]";
+
+		// When & Then
+		mvc.perform(get("/api/solicitacoes").sessionAttr(SESSAO_AUTENTICADA, true))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath(itemComResponsavel.formatted(primeira.getId(), primeiroResponsavelId)).isNotEmpty())
+			.andExpect(jsonPath(itemComResponsavel.formatted(segunda.getId(), segundoResponsavelId)).isNotEmpty());
+	}
+
+	@Test
 	void altera_A_Prioridade_E_Devolve_A_Fila_Na_Nova_Ordem() throws Exception {
 		// Given
 		Long solicitanteId = buscarIdDoFinanceiro();
