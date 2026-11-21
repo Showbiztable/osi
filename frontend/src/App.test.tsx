@@ -1,8 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { expect, it, vi } from 'vitest'
 import App, { PainelSolicitacoes } from './App'
-import { FormularioSolicitacao } from './FormularioSolicitacao'
-import { TelaDepartamentos } from './TelaDepartamentos'
+import { FormularioSolicitacao } from './solicitacoes/FormularioSolicitacao'
+import { TelaDepartamentos } from './departamentos/TelaDepartamentos'
 
 it('mostra a tela de acesso antes do painel de solicitações', () => {
   const pagina = renderToStaticMarkup(<App />)

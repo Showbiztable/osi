@@ -1,4 +1,4 @@
-import { requisitarComSessao } from './acesso'
+import { requisitarComSessao } from '../acesso/acesso'
 
 export const rotulosPrioridade = {
   BAIXA: 'Baixa',

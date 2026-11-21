@@ -1,7 +1,7 @@
 import { useCallback, useState, type SubmitEvent } from 'react'
-import { SessaoExpiradaError } from './acesso'
+import { SessaoExpiradaError } from '../acesso/acesso'
 import { cadastrarDepartamento, ErroCadastroDepartamento, type Departamento } from './departamentos'
-import { Notificacao, type Aviso } from './Notificacao'
+import { Notificacao, type Aviso } from '../componentes/Notificacao'
 import './TelaDepartamentos.css'
 
 type TelaDepartamentosProps = {

@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest'
 import { entrarNaDemo, verificarConexao } from './acesso'
-import { listarDepartamentos } from './departamentos'
-import { alterarPrioridade, cadastrarSolicitacao, concluirSolicitacao, listarFila } from './solicitacoes'
+import { listarDepartamentos } from '../departamentos/departamentos'
+import { alterarPrioridade, cadastrarSolicitacao, concluirSolicitacao, listarFila } from '../solicitacoes/solicitacoes'
 
 afterEach(() => {
   vi.useRealTimers()

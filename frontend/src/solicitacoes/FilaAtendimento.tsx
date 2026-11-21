@@ -1,6 +1,6 @@
 import { useState, type DragEvent } from 'react'
 import { CartaoSolicitacao } from './CartaoSolicitacao'
-import type { Departamento } from './departamentos'
+import type { Departamento } from '../departamentos/departamentos'
 import type { ItemFila } from './solicitacoes'
 
 type FilaAtendimentoProps = {
