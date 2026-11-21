@@ -40,6 +40,7 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 
 - **Alterar a prioridade:** a solicitação muda de posição conforme a nova prioridade, preservando a data e a hora de entrada originais.
 - **Concluir uma solicitação:** ela sai da fila ativa e permanece registrada como concluída. Se era a primeira da fila, a próxima da fila assume o destaque.
+- **Reabrir uma solicitação:** ela volta à fila do mesmo departamento com o mesmo identificador, a prioridade registrada e a data de entrada original. A ordem de atendimento determina sua posição e qual solicitação fica em destaque. Repetir a reabertura de uma solicitação já ativa preserva seus dados e sua posição.
 
 ## Quadro de solicitações previsto
 
@@ -64,7 +65,7 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - [ ] Padronizar a altura dos cartões em cada coluna. Limitar a descrição do cartão a uma prévia com número fixo de linhas e oferecer **Ver descrição completa** quando o texto for cortado.
 - [ ] Alinhar as etiquetas de prioridade e próxima solicitação. Mantê-las na mesma linha quando couberem e usar um alinhamento consistente quando precisarem ocupar duas linhas.
 - [ ] Permitir arrastar cartões de **Ativas** para **Concluídas**, reaproveitando a ação do botão **Concluir**.
-- [ ] Permitir arrastar cartões de **Concluídas** para **Ativas** para reabrir a solicitação. Antes de implementar, definir como a reabertura afeta a prioridade, a data de entrada usada na ordenação e o destaque de próxima da fila.
+- [ ] Permitir arrastar cartões de **Concluídas** para **Ativas** para reabrir a solicitação com a regra de ordenação acima. Oferecer também a ação **Reabrir** no cartão concluído.
 
 ## Revisão técnica antes da entrega
 
