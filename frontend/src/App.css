@@ -289,7 +289,7 @@ button:disabled {
   list-style: none;
 }
 
-.fila-erro {
+.erro-carregamento {
   display: flex;
   align-items: center;
   flex-wrap: wrap;

@@ -7,6 +7,7 @@ it('lista os departamentos do catálogo e oferece o campo de cadastro', () => {
     <TelaDepartamentos
       departamentos={[{ id: 10, nome: 'Financeiro' }, { id: 20, nome: 'TI' }]}
       estadoCatalogo="pronto"
+      aoRecarregarCatalogo={() => {}}
       aoCadastrar={() => {}}
       aoExpirarSessao={() => {}}
     />,

@@ -1,6 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { expect, it, vi } from 'vitest'
 import App, { PainelSolicitacoes } from './App'
+import { FormularioSolicitacao } from './FormularioSolicitacao'
+import { TelaDepartamentos } from './TelaDepartamentos'
 
 it('mostra a tela de acesso antes do painel de solicitações', () => {
   const pagina = renderToStaticMarkup(<App />)
@@ -56,4 +58,22 @@ it('abre a tela de departamentos na navegação do painel autenticado', () => {
   } finally {
     vi.unstubAllGlobals()
   }
+})
+
+it.each([
+  ['no formulário de solicitação', FormularioSolicitacao],
+  ['na tela de departamentos', TelaDepartamentos],
+] as const)('oferece nova tentativa local quando o catálogo falha %s', (_tela, Componente) => {
+  const props = {
+    departamentos: [],
+    estadoCatalogo: 'erro' as const,
+    aoRecarregarCatalogo: () => {},
+    aoCadastrar: () => {},
+    aoExpirarSessao: () => {},
+  }
+
+  const pagina = renderToStaticMarkup(<Componente {...props} />)
+
+  expect(pagina).toContain('Não foi possível carregar os departamentos.')
+  expect(pagina).toMatch(/<button\b[^>]*type="button"[^>]*>Tentar novamente<\/button>/)
 })
