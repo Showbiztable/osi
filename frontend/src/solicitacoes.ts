@@ -36,6 +36,15 @@ export async function listarFila(departamentoResponsavelId?: number): Promise<It
   return resposta.json()
 }
 
+export async function listarConcluidas(): Promise<ItemFila[]> {
+  const resposta = await requisitarComSessao('/api/solicitacoes/concluidas')
+  if (!resposta.ok) {
+    throw new Error('Não foi possível carregar as solicitações concluídas.')
+  }
+
+  return resposta.json()
+}
+
 export async function cadastrarSolicitacao(dados: DadosCadastro): Promise<number> {
   const resposta = await requisitarComSessao('/api/solicitacoes', {
     method: 'POST',

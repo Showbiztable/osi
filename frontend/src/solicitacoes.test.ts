@@ -3,6 +3,7 @@ import {
   alterarPrioridade,
   cadastrarSolicitacao,
   concluirSolicitacao,
+  listarConcluidas,
   listarFila,
   type DadosCadastro,
   type ItemFila,
@@ -89,6 +90,24 @@ it('consulta a fila geral sem filtro e recebe o departamento responsável de cad
 
   expect(resultado).toEqual(fila)
   expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes')
+})
+
+it('consulta as solicitações concluídas e devolve os dados do cartão', async () => {
+  const concluidas: ItemFila[] = [{
+    id: 42,
+    descricao: 'Restaurar o acesso',
+    departamentoSolicitanteId: 10,
+    departamentoResponsavelId: 20,
+    prioridade: 'ALTA',
+    entrada: '2026-11-19T12:15:00Z',
+  }]
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(Response.json(concluidas))
+  vi.stubGlobal('fetch', fetchMock)
+
+  const resultado = await listarConcluidas()
+
+  expect(resultado).toEqual(concluidas)
+  expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes/concluidas')
 })
 
 it('envia a nova prioridade e aceita uma resposta sem corpo', async () => {
