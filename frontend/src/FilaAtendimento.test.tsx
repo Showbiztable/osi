@@ -102,7 +102,7 @@ it('filtra por múltiplos departamentos responsáveis e mantém a ordem da fila'
   expect(descricoes).toEqual([solicitacaoTi.descricao, solicitacaoRh.descricao])
 })
 
-it('identifica o departamento solicitante e o responsável no cartão', () => {
+it('distingue os departamentos no cartão e identifica a fila da próxima solicitação', () => {
   const financeiro = { id: 10, nome: 'Financeiro' }
   const ti = { id: departamentoResponsavelId, nome: 'TI' }
   const item: ItemFila = {
@@ -116,8 +116,9 @@ it('identifica o departamento solicitante e o responsável no cartão', () => {
 
   const pagina = renderToStaticMarkup(<FilaAtendimento itens={[item]} departamentos={[ti, financeiro]} />)
 
-  expect(pagina).toContain('De Financeiro')
-  expect(pagina.includes('Para TI'), 'O cartão deve identificar TI como responsável').toBe(true)
+  expect(pagina).toContain('Próxima solicitação da fila de TI')
+  expect(pagina).toContain('<dt>De</dt><dd>Financeiro</dd>')
+  expect(pagina).toContain('<dt>Para</dt><dd>TI</dd>')
 })
 
 it('mostra as concluídas do departamento responsável selecionado mesmo sem solicitações ativas', () => {

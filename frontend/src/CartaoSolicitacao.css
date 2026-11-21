@@ -25,7 +25,7 @@
 
 .item-fila h3 {
   margin: 0;
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   line-height: 1.35;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
@@ -40,6 +40,8 @@
 }
 
 .proxima-etiqueta {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
   background: #e1f2e8;
   color: #145641;
 }
@@ -63,6 +65,39 @@
 .prioridade[data-prioridade='URGENTE'] {
   background: #fee9e5;
   color: #8f3024;
+}
+
+.departamentos-cartao {
+  display: grid;
+  gap: 0.25rem;
+  min-inline-size: 0;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.departamentos-cartao > div {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+}
+
+.departamentos-cartao dt {
+  color: #4c6057;
+  font-weight: 600;
+}
+
+.departamentos-cartao dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.responsavel-cartao {
+  border-radius: 0.375rem;
+  background: #e1f2e8;
+  color: #145641;
+  font-weight: 700;
 }
 
 .metadados-fila {

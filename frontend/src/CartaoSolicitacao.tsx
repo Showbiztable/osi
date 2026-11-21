@@ -30,16 +30,26 @@ export function CartaoSolicitacao({
   return (
     <li className={proxima ? 'item-fila proxima-da-fila' : 'item-fila'}>
       <div className="item-fila-cabecalho">
-        {proxima && <span className="proxima-etiqueta">Próxima solicitação</span>}
+        {proxima && (
+          <span className="proxima-etiqueta">Próxima solicitação da fila de {departamentoResponsavel}</span>
+        )}
         <span className="prioridade" data-prioridade={item.prioridade}>
           {rotulosPrioridade[item.prioridade]}
         </span>
       </div>
       <h3>{item.descricao}</h3>
+      <dl className="departamentos-cartao">
+        <div>
+          <dt>De</dt>
+          <dd>{departamentoSolicitante}</dd>
+        </div>
+        <div className="responsavel-cartao">
+          <dt>Para</dt>
+          <dd>{departamentoResponsavel}</dd>
+        </div>
+      </dl>
       <p className="metadados-fila">
         <span>#{item.id}</span>
-        <span>De {departamentoSolicitante}</span>
-        <span>Para {departamentoResponsavel}</span>
         <time dateTime={item.entrada}>{formatoEntrada.format(new Date(item.entrada))}</time>
       </p>
       {!concluida && (
