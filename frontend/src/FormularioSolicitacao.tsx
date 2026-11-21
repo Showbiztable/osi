@@ -1,6 +1,7 @@
-import { useState, type SubmitEvent } from 'react'
+import { useCallback, useState, type SubmitEvent } from 'react'
 import { SessaoExpiradaError } from './acesso'
 import type { Departamento } from './departamentos'
+import { Notificacao, type Aviso } from './Notificacao'
 import { cadastrarSolicitacao, rotulosPrioridade, type DadosCadastro } from './solicitacoes'
 
 type FormularioSolicitacaoProps = {
@@ -15,19 +16,15 @@ const camposDepartamento = [
   { nome: 'departamentoResponsavelId', rotulo: 'Departamento responsável' },
 ] as const
 
-type Envio =
-  | { estado: 'enviando' }
-  | { estado: 'erro'; mensagem: string }
-  | { estado: 'sucesso'; id: number }
-
 export function FormularioSolicitacao({
   departamentos,
   estadoCatalogo,
   aoCadastrar,
   aoExpirarSessao,
 }: FormularioSolicitacaoProps) {
-  const [envio, setEnvio] = useState<Envio | null>(null)
-  const enviando = envio?.estado === 'enviando'
+  const [enviando, setEnviando] = useState(false)
+  const [aviso, setAviso] = useState<Aviso | null>(null)
+  const dispensarAviso = useCallback(() => setAviso(null), [])
 
   async function enviarCadastro(evento: SubmitEvent<HTMLFormElement>) {
     evento.preventDefault()
@@ -36,11 +33,12 @@ export function FormularioSolicitacao({
     const descricao = String(dados.get('descricao') ?? '').trim()
 
     if (!descricao) {
-      setEnvio({ estado: 'erro', mensagem: 'Informe a descrição da solicitação.' })
+      setAviso({ tipo: 'erro', mensagem: 'Informe a descrição da solicitação.' })
       return
     }
 
-    setEnvio({ estado: 'enviando' })
+    setAviso(null)
+    setEnviando(true)
     try {
       const id = await cadastrarSolicitacao({
         descricao,
@@ -49,14 +47,16 @@ export function FormularioSolicitacao({
         prioridade: dados.get('prioridade') as DadosCadastro['prioridade'],
       })
       formulario.reset()
-      setEnvio({ estado: 'sucesso', id })
+      setAviso({ tipo: 'sucesso', mensagem: `Solicitação #${id} cadastrada com sucesso.` })
       aoCadastrar()
     } catch (erro) {
       if (erro instanceof SessaoExpiradaError) {
         aoExpirarSessao()
         return
       }
-      setEnvio({ estado: 'erro', mensagem: 'Não foi possível cadastrar. Tente novamente.' })
+      setAviso({ tipo: 'erro', mensagem: 'Não foi possível cadastrar. Tente novamente.' })
+    } finally {
+      setEnviando(false)
     }
   }
 
@@ -115,19 +115,12 @@ export function FormularioSolicitacao({
         </fieldset>
 
         <div className="acoes acoes-cadastro">
-          {envio?.estado === 'erro' && (
-            <p className="mensagem erro" role="alert">{envio.mensagem}</p>
-          )}
-          {envio?.estado === 'sucesso' && (
-            <p className="mensagem sucesso" role="status">
-              Solicitação #{envio.id} cadastrada com sucesso.
-            </p>
-          )}
           <button type="submit" disabled={enviando || !departamentos.length}>
             {enviando ? 'Cadastrando…' : 'Cadastrar solicitação'}
           </button>
         </div>
       </form>
+      <Notificacao aviso={aviso} aoDispensar={dispensarAviso} />
     </section>
   )
 }
