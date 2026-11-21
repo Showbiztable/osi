@@ -29,4 +29,7 @@ interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long> {
 
 	@Query(value = SOLICITACOES_ATIVAS + ORDEM_DE_ATENDIMENTO, nativeQuery = true)
 	List<Solicitacao> listarFilaAtiva();
+
+	@Query("SELECT s FROM Solicitacao s WHERE s.ativa = false")
+	List<Solicitacao> listarConcluidas();
 }
