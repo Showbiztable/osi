@@ -2,7 +2,8 @@ import { useCallback, useState, type SubmitEvent } from 'react'
 import { SessaoExpiradaError } from './acesso'
 import type { Departamento } from './departamentos'
 import { Notificacao, type Aviso } from './Notificacao'
-import { cadastrarSolicitacao, rotulosPrioridade, type DadosCadastro } from './solicitacoes'
+import { SeletorPrioridade } from './SeletorPrioridade'
+import { cadastrarSolicitacao, type DadosCadastro } from './solicitacoes'
 
 type FormularioSolicitacaoProps = {
   departamentos: Departamento[]
@@ -105,12 +106,7 @@ export function FormularioSolicitacao({
 
           <label className="campo">
             Prioridade
-            <select name="prioridade" defaultValue="" required>
-              <option value="" disabled>Selecione a prioridade</option>
-              {Object.entries(rotulosPrioridade).map(([valor, rotulo]) => (
-                <option key={valor} value={valor}>{rotulo}</option>
-              ))}
-            </select>
+            <SeletorPrioridade name="prioridade" defaultValue="" rotuloVazio="Selecione a prioridade" required />
           </label>
         </fieldset>
 

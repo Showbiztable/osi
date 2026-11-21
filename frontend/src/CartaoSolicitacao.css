@@ -99,26 +99,6 @@
   color: #145641;
 }
 
-.item-fila [data-prioridade='BAIXA'] {
-  background: #edf1ee;
-  color: #354c42;
-}
-
-.item-fila [data-prioridade='MEDIA'] {
-  background: #e7efff;
-  color: #254479;
-}
-
-.item-fila [data-prioridade='ALTA'] {
-  background: #fff0db;
-  color: #754500;
-}
-
-.item-fila [data-prioridade='URGENTE'] {
-  background: #fee9e5;
-  color: #8f3024;
-}
-
 .departamentos-cartao {
   display: grid;
   gap: 0.25rem;
@@ -164,31 +144,6 @@
   grid-template-columns: auto minmax(0, 7.75rem);
   align-items: center;
   justify-content: space-between;
-}
-
-.prioridade-cartao-seletor {
-  min-inline-size: 0;
-}
-
-@supports (appearance: base-select) {
-  .prioridade-cartao-seletor,
-  .prioridade-cartao-seletor::picker(select) {
-    appearance: base-select;
-  }
-
-  .prioridade-cartao-seletor::picker(select) {
-    border: 1px solid #bccfc5;
-    border-radius: 0.5rem;
-  }
-
-  .prioridade-cartao-seletor option {
-    padding: 0.5rem 0.625rem;
-  }
-
-  .prioridade-cartao-seletor option:is(:hover, :focus-visible) {
-    outline: 2px solid currentColor;
-    outline-offset: -2px;
-  }
 }
 
 .item-fila-botoes {

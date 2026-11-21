@@ -1,5 +1,6 @@
 import { useId, useRef, type DragEvent } from 'react'
 import { rotulosPrioridade, type ItemFila } from './solicitacoes'
+import { SeletorPrioridade } from './SeletorPrioridade'
 import './CartaoSolicitacao.css'
 
 type CartaoSolicitacaoProps = {
@@ -69,17 +70,12 @@ export function CartaoSolicitacao({
         {!concluida && (
           <label className="campo prioridade-cartao-campo">
             <span>Prioridade</span>
-            <select
-              className="prioridade-cartao-seletor"
+            <SeletorPrioridade
               aria-label={`Alterar prioridade da solicitação #${item.id}`}
               value={item.prioridade}
               disabled={acaoEmAndamento || !onAlterarPrioridade}
               onChange={(evento) => onAlterarPrioridade?.(item.id, evento.currentTarget.value as ItemFila['prioridade'])}
-            >
-              {Object.entries(rotulosPrioridade).map(([valor, rotulo]) => (
-                <option key={valor} value={valor} data-prioridade={valor}>{rotulo}</option>
-              ))}
-            </select>
+            />
           </label>
         )}
         <div className="item-fila-botoes">

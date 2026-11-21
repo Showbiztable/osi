@@ -23,7 +23,11 @@ it('oferece o formulário de cadastro direto no painel, sem atalho duplicado', (
   expect(pagina).toContain('name="descricao"')
   expect(pagina).toContain('name="departamentoSolicitanteId"')
   expect(pagina).toContain('name="departamentoResponsavelId"')
-  expect(pagina).toContain('name="prioridade"')
+  const prioridades = pagina.match(/<select\b[^>]*name="prioridade"[^>]*>[\s\S]*?<\/select>/)?.[0]
+  expect(prioridades).toBeDefined()
+  for (const prioridade of ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE']) {
+    expect(prioridades).toContain(`data-prioridade="${prioridade}"`)
+  }
   expect(pagina).toContain('type="submit"')
   expect(pagina).not.toMatch(/<(?:a|button)\b[^>]*>Nova solicitação<\/(?:a|button)>/)
 })
