@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { FilaAtendimento } from './FilaAtendimento'
-import { FiltroDepartamentos } from './FiltroDepartamentos'
-import { FormularioSolicitacao } from './FormularioSolicitacao'
-import { TelaAcesso } from './TelaAcesso'
-import { TelaDepartamentos } from './TelaDepartamentos'
-import { SessaoExpiradaError } from './acesso'
-import { listarDepartamentos, type Departamento } from './departamentos'
+import { FilaAtendimento } from './solicitacoes/FilaAtendimento'
+import { FiltroDepartamentos } from './departamentos/FiltroDepartamentos'
+import { FormularioSolicitacao } from './solicitacoes/FormularioSolicitacao'
+import { TelaAcesso } from './acesso/TelaAcesso'
+import { TelaDepartamentos } from './departamentos/TelaDepartamentos'
+import { SessaoExpiradaError } from './acesso/acesso'
+import { listarDepartamentos, type Departamento } from './departamentos/departamentos'
 import {
   alterarDescricao,
   alterarPrioridade,
@@ -14,7 +14,7 @@ import {
   listarFila,
   reabrirSolicitacao,
   type ItemFila,
-} from './solicitacoes'
+} from './solicitacoes/solicitacoes'
 import './App.css'
 
 const mensagensAcaoFila = {

@@ -1,7 +1,7 @@
 import { useCallback, useState, type SubmitEvent } from 'react'
-import { SessaoExpiradaError } from './acesso'
-import type { Departamento } from './departamentos'
-import { Notificacao, type Aviso } from './Notificacao'
+import { SessaoExpiradaError } from '../acesso/acesso'
+import type { Departamento } from '../departamentos/departamentos'
+import { Notificacao, type Aviso } from '../componentes/Notificacao'
 import { SeletorPrioridade } from './SeletorPrioridade'
 import { cadastrarSolicitacao, type DadosCadastro } from './solicitacoes'
 
