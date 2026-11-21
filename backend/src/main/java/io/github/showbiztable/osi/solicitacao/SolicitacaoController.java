@@ -64,6 +64,12 @@ class SolicitacaoController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PatchMapping("/api/solicitacoes/{id}/reabertura")
+	ResponseEntity<Void> reabrir(@PathVariable("id") long id) {
+		service.reabrir(id);
+		return ResponseEntity.noContent().build();
+	}
+
 	@ExceptionHandler(NoSuchElementException.class)
 	ResponseEntity<Void> responderSolicitacaoInexistente() {
 		return ResponseEntity.notFound().build();

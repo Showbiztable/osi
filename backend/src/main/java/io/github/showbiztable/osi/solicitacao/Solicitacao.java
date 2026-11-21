@@ -90,4 +90,8 @@ class Solicitacao {
 	void concluir() {
 		this.ativa = false;
 	}
+
+	void reabrir() {
+		this.ativa = true;
+	}
 }

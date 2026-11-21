@@ -144,4 +144,28 @@ class SolicitacaoTest {
 		// Then
 		assertFalse(solicitacao.isAtiva());
 	}
+
+	@Test
+	void reabre_A_Solicitacao_Preservando_A_Prioridade_E_A_Entrada() {
+		// Given
+		Instant entrada = Instant.parse("2026-11-18T12:15:00Z");
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			"Acesso ao sistema de notas fiscais",
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
+			Prioridade.ALTA,
+			Clock.fixed(entrada, ZoneOffset.UTC)
+		);
+		solicitacao.concluir();
+
+		// When
+		solicitacao.reabrir();
+
+		// Then
+		assertAll(
+			() -> assertTrue(solicitacao.isAtiva()),
+			() -> assertEquals(Prioridade.ALTA, solicitacao.getPrioridade()),
+			() -> assertEquals(entrada, solicitacao.getEntrada())
+		);
+	}
 }

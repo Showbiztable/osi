@@ -46,6 +46,11 @@ class SolicitacaoService {
 		buscarPorId(solicitacaoId).concluir();
 	}
 
+	@Transactional
+	void reabrir(long solicitacaoId) {
+		buscarPorId(solicitacaoId).reabrir();
+	}
+
 	private Solicitacao buscarPorId(long solicitacaoId) {
 		return repository.findById(solicitacaoId)
 			.orElseThrow(() -> new NoSuchElementException("Solicitação não encontrada: " + solicitacaoId));

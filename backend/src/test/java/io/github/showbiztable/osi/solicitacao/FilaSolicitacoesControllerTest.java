@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.UUID;
@@ -170,6 +171,57 @@ class FilaSolicitacoesControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath(itemComPrioridadeEResponsavel.formatted(concluidaId, responsavelId)).isNotEmpty())
 			.andExpect(jsonPath("$[?(@.id == %d)]".formatted(ativaId)).isEmpty());
+	}
+
+	@Test
+	void devolve_A_Solicitacao_Reaberta_A_Fila_Em_Sua_Posicao_Original() throws Exception {
+		// Given
+		Long solicitanteId = buscarIdDoFinanceiro();
+		Long responsavelId = inserirDepartamentoDaFila();
+		Instant entrada = Instant.parse("2026-11-19T12:15:00Z");
+		Clock relogio = Clock.fixed(entrada, ZoneOffset.UTC);
+		Solicitacao concluida = Solicitacao.cadastrar(
+			"Restaurar o acesso", solicitanteId, responsavelId, Prioridade.ALTA, relogio
+		);
+		concluida.concluir();
+		Long concluidaId = repository.saveAndFlush(concluida).getId();
+		Long seguinteId = repository.saveAndFlush(Solicitacao.cadastrar(
+			"Atualizar o cadastro", solicitanteId, responsavelId, Prioridade.ALTA,
+			Clock.offset(relogio, Duration.ofMinutes(30))
+		)).getId();
+
+		// When
+		mvc.perform(patch("/api/solicitacoes/{id}/reabertura", concluidaId)
+				.sessionAttr(SESSAO_AUTENTICADA, true))
+			.andExpect(status().isNoContent());
+		mvc.perform(patch("/api/solicitacoes/{id}/reabertura", concluidaId)
+				.sessionAttr(SESSAO_AUTENTICADA, true))
+			.andExpect(status().isNoContent());
+
+		// Then
+		mvc.perform(get("/api/solicitacoes")
+				.sessionAttr(SESSAO_AUTENTICADA, true)
+				.param("departamentoResponsavelId", responsavelId.toString()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.length()").value(2))
+			.andExpect(jsonPath("$[0].id").value(is(concluidaId), Long.class))
+			.andExpect(jsonPath("$[0].prioridade").value("ALTA"))
+			.andExpect(jsonPath("$[0].entrada").value(entrada.toString()))
+			.andExpect(jsonPath("$[1].id").value(is(seguinteId), Long.class));
+		mvc.perform(get("/api/solicitacoes/concluidas").sessionAttr(SESSAO_AUTENTICADA, true))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$[?(@.id == %d)]".formatted(concluidaId)).isEmpty());
+	}
+
+	@Test
+	void responde_Com_Not_Found_Ao_Reabrir_Uma_Solicitacao_Inexistente() throws Exception {
+		// Given
+		long idInexistente = Long.MAX_VALUE;
+
+		// When & Then
+		mvc.perform(patch("/api/solicitacoes/{id}/reabertura", idInexistente)
+				.sessionAttr(SESSAO_AUTENTICADA, true))
+			.andExpect(status().isNotFound());
 	}
 
 	private Long buscarIdDoFinanceiro() {
