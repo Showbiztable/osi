@@ -61,26 +61,15 @@ export function CartaoSolicitacao({
       onDragEnd={onTerminarArraste}
     >
       <div className="item-fila-cabecalho">
-        {proxima && (
-          <span className="proxima-etiqueta">Próxima solicitação da fila de {departamentoResponsavel}</span>
-        )}
+        <span className="numero-cartao">#{item.id}</span>
         <span className="prioridade" data-prioridade={item.prioridade}>
           {rotulosPrioridade[item.prioridade]}
         </span>
       </div>
-      <div className="descricao-cartao">
-        <h3 ref={previa}>{item.descricao}</h3>
-        <button
-          type="button"
-          className="botao-secundario"
-          hidden={!descricaoCortada}
-          aria-haspopup="dialog"
-          aria-controls={dialogoId}
-          onClick={() => dialogo.current?.showModal()}
-        >
-          Ver descrição completa
-        </button>
-      </div>
+      {proxima && (
+        <span className="proxima-etiqueta">Próxima solicitação da fila de {departamentoResponsavel}</span>
+      )}
+      <h3 ref={previa}>{item.descricao}</h3>
       <dl className="departamentos-cartao">
         <div>
           <dt>De</dt>
@@ -91,12 +80,9 @@ export function CartaoSolicitacao({
           <dd>{departamentoResponsavel}</dd>
         </div>
       </dl>
-      <p className="metadados-fila">
-        <span>#{item.id}</span>
-        <time dateTime={item.entrada}>{formatoEntrada.format(new Date(item.entrada))}</time>
-      </p>
-      {!concluida && (
-        <div className="item-fila-acoes">
+      <time className="entrada-cartao" dateTime={item.entrada}>{formatoEntrada.format(new Date(item.entrada))}</time>
+      <div className="item-fila-acoes">
+        {!concluida && (
           <label className="campo">
             Alterar prioridade
             <select
@@ -110,29 +96,40 @@ export function CartaoSolicitacao({
               ))}
             </select>
           </label>
-          <button
-            type="button"
-            aria-label={`Concluir solicitação #${item.id}`}
-            disabled={acaoEmAndamento || !onConcluir}
-            onClick={() => onConcluir?.(item.id)}
-          >
-            Concluir
-          </button>
-        </div>
-      )}
-      {concluida && onReabrir && (
-        <div className="item-fila-acoes">
+        )}
+        <div className="item-fila-botoes">
           <button
             type="button"
             className="botao-secundario"
-            aria-label={`Reabrir solicitação #${item.id}`}
-            disabled={acaoEmAndamento}
-            onClick={() => onReabrir(item.id)}
+            hidden={!descricaoCortada}
+            aria-haspopup="dialog"
+            aria-controls={dialogoId}
+            onClick={() => dialogo.current?.showModal()}
           >
-            Reabrir
+            Ver descrição completa
           </button>
+          {concluida ? onReabrir && (
+            <button
+              type="button"
+              className="botao-secundario"
+              aria-label={`Reabrir solicitação #${item.id}`}
+              disabled={acaoEmAndamento}
+              onClick={() => onReabrir(item.id)}
+            >
+              Reabrir
+            </button>
+          ) : (
+            <button
+              type="button"
+              aria-label={`Concluir solicitação #${item.id}`}
+              disabled={acaoEmAndamento || !onConcluir}
+              onClick={() => onConcluir?.(item.id)}
+            >
+              Concluir
+            </button>
+          )}
         </div>
-      )}
+      </div>
       <dialog ref={dialogo} id={dialogoId} className="descricao-completa" aria-labelledby={`${dialogoId}-titulo`}>
         <h4 id={`${dialogoId}-titulo`}>Descrição da solicitação #{item.id}</h4>
         <p>{item.descricao}</p>

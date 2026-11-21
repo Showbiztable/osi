@@ -56,14 +56,14 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - [x] Remover o atalho **Nova solicitação** do cabeçalho do quadro. O formulário já está visível na tela da fila.
 - [x] Aumentar a legibilidade de **De** e **Para** nos cartões e dar mais destaque ao departamento responsável. A indicação de próxima solicitação deve deixar claro a qual departamento ela pertence.
 - [x] Reorganizar o conteúdo dos cartões para destacar descrição, prioridade e departamentos. Manter o identificador e a data de entrada em segundo plano, com contraste suficiente para leitura.
-- [x] Centralizar o botão **Concluir** em uma linha própria, abaixo do seletor de prioridade do cartão ativo.
+- [x] Alinhar as ações no rodapé do cartão, com **Ver descrição completa** à esquerda de **Concluir** ou **Reabrir** quando houver texto cortado.
 - [x] Centralizar o botão **Cadastrar solicitação** no rodapé do formulário, ocupando a largura disponível em telas estreitas.
 - [x] Exibir o sucesso ou erro do cadastro em uma notificação temporária no canto superior direito, fora do rodapé do formulário. O componente pode ser reutilizado em outras ações do painel.
 - [x] Adicionar **Fila de atendimento** e **Departamentos** à navegação do topo. A tela de departamentos tem sua própria listagem e formulário de cadastro.
 - [x] Reunir a seleção de departamentos no botão **Filtro**. Manter a seleção múltipla e oferecer **Limpar filtros** para voltar a exibir todos os departamentos nas duas colunas.
 - [x] Adicionar um favicon da OSI para identificar a aplicação na aba do navegador.
 - [x] Padronizar a altura dos cartões em cada coluna. Limitar a descrição a três linhas e oferecer **Ver descrição completa** quando o texto for cortado.
-- [x] Alinhar as etiquetas de prioridade e próxima solicitação pelo topo. A etiqueta de próxima pode quebrar em várias linhas.
+- [x] Exibir o número à esquerda e a prioridade à direita na primeira linha do cartão. Mostrar o destaque de próxima solicitação e a data de entrada em linhas próprias. Usar o mesmo fundo para **De** e **Para**.
 - [x] Permitir arrastar cartões de **Ativas** para **Concluídas**, reaproveitando a ação do botão **Concluir**.
 - [x] Permitir arrastar cartões de **Concluídas** para **Ativas** para reabrir a solicitação com a regra de ordenação acima. Oferecer também a ação **Reabrir** no cartão concluído.
 

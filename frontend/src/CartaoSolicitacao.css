@@ -3,9 +3,8 @@
 }
 
 .item-fila {
-  display: grid;
-  grid-template-rows: auto auto auto 1fr;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
   gap: 0.625rem;
   min-inline-size: 0;
   padding: 0.875rem 1rem;
@@ -30,23 +29,16 @@
 }
 
 .item-fila-cabecalho {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
 }
 
-.metadados-fila {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.45rem 0.75rem;
-}
-
-.descricao-cartao {
-  display: grid;
-  grid-template-rows: auto minmax(2.75rem, auto);
-  gap: 0.25rem;
+.numero-cartao,
+.entrada-cartao {
+  color: #4c6057;
+  font-size: 0.8125rem;
 }
 
 .item-fila h3 {
@@ -54,18 +46,13 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   block-size: 3lh;
+  flex: none;
   margin: 0;
   overflow: hidden;
   font-size: 1.125rem;
   line-height: 1.35;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
-}
-
-.descricao-cartao button {
-  justify-self: start;
-  min-block-size: 2.75rem;
-  text-align: start;
 }
 
 .descricao-completa {
@@ -106,15 +93,13 @@
 }
 
 .proxima-etiqueta {
-  justify-self: start;
+  align-self: start;
   overflow-wrap: anywhere;
   background: #e1f2e8;
   color: #145641;
 }
 
 .prioridade {
-  grid-column: 2;
-  grid-row: 1;
   background: #edf1ee;
   color: #354c42;
 }
@@ -148,6 +133,8 @@
   grid-template-columns: 2.25rem minmax(0, 1fr);
   gap: 0.5rem;
   padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  background: #e1f2e8;
 }
 
 .departamentos-cartao dt {
@@ -161,26 +148,32 @@
 }
 
 .responsavel-cartao {
-  border-radius: 0.375rem;
-  background: #e1f2e8;
   color: #145641;
   font-weight: 700;
-}
-
-.metadados-fila {
-  font-size: 0.8125rem;
 }
 
 .item-fila-acoes {
   display: grid;
   gap: 0.75rem;
-  margin-block-start: 0.25rem;
+  margin-block-start: auto;
   padding-block-start: 0.75rem;
   border-block-start: 1px solid #d7e3dc;
 }
 
-.item-fila-acoes button {
-  justify-self: center;
-  margin-inline: 0;
+.item-fila-botoes {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.item-fila-botoes button {
+  min-inline-size: 0;
   min-block-size: 2.75rem;
+  margin-inline: 0;
+  padding-inline: 0.625rem;
+  overflow-wrap: anywhere;
+}
+
+.item-fila-botoes button:last-child {
+  flex: none;
 }
