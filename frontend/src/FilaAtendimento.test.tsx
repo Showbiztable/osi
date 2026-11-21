@@ -121,6 +121,27 @@ it('distingue os departamentos no cartão e identifica a fila da próxima solici
   expect(pagina).toContain('<dt>Para</dt><dd>TI</dd>')
 })
 
+it('vincula a ação de leitura à descrição completa da solicitação', () => {
+  const descricao = 'Restaurar o acesso ao sistema de notas fiscais e confirmar a permissão do Financeiro. '.repeat(4).trim()
+  const item: ItemFila = {
+    id: 42,
+    descricao,
+    departamentoSolicitanteId: 10,
+    departamentoResponsavelId,
+    prioridade: 'ALTA',
+    entrada: '2026-11-19T12:15:00Z',
+  }
+
+  const pagina = renderToStaticMarkup(<FilaAtendimento itens={[item]} />)
+  const dialogo = pagina.match(/<dialog\b[^>]*id="([^"]+)"[^>]*>[\s\S]*?<\/dialog>/)
+  const acao = pagina.match(/<button\b[^>]*>Ver descrição completa<\/button>/)?.[0]
+
+  expect(dialogo).not.toBeNull()
+  expect(dialogo?.[0]).toContain(`<p>${descricao}</p>`)
+  expect(acao).toContain('aria-haspopup="dialog"')
+  expect(acao).toContain(`aria-controls="${dialogo?.[1]}"`)
+})
+
 it('mostra as concluídas do departamento responsável selecionado mesmo sem solicitações ativas', () => {
   const financeiro = { id: 10, nome: 'Financeiro' }
   const ti = { id: departamentoResponsavelId, nome: 'TI' }

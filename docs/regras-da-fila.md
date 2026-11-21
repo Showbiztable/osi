@@ -62,8 +62,8 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - [ ] Adicionar **Fila de atendimento** e **Departamentos** à navegação do topo. A tela de departamentos terá sua própria listagem e formulário de cadastro.
 - [x] Reunir a seleção de departamentos no botão **Filtro**. Manter a seleção múltipla e oferecer **Limpar filtros** para voltar a exibir todos os departamentos nas duas colunas.
 - [x] Adicionar um favicon da OSI para identificar a aplicação na aba do navegador.
-- [ ] Padronizar a altura dos cartões em cada coluna. Limitar a descrição do cartão a uma prévia com número fixo de linhas e oferecer **Ver descrição completa** quando o texto for cortado.
-- [ ] Alinhar as etiquetas de prioridade e próxima solicitação. Mantê-las na mesma linha quando couberem e usar um alinhamento consistente quando precisarem ocupar duas linhas.
+- [x] Padronizar a altura dos cartões em cada coluna. Limitar a descrição a três linhas e oferecer **Ver descrição completa** quando o texto for cortado.
+- [x] Alinhar as etiquetas de prioridade e próxima solicitação pelo topo. A etiqueta de próxima pode quebrar em várias linhas.
 - [ ] Permitir arrastar cartões de **Ativas** para **Concluídas**, reaproveitando a ação do botão **Concluir**.
 - [ ] Permitir arrastar cartões de **Concluídas** para **Ativas** para reabrir a solicitação com a regra de ordenação acima. Oferecer também a ação **Reabrir** no cartão concluído.
 

@@ -1,3 +1,4 @@
+import { useEffect, useId, useRef, useState } from 'react'
 import { rotulosPrioridade, type ItemFila } from './solicitacoes'
 import './CartaoSolicitacao.css'
 
@@ -27,6 +28,25 @@ export function CartaoSolicitacao({
   onAlterarPrioridade,
   onConcluir,
 }: CartaoSolicitacaoProps) {
+  const previa = useRef<HTMLHeadingElement>(null)
+  const dialogo = useRef<HTMLDialogElement>(null)
+  const dialogoId = useId()
+  const [descricaoCortada, setDescricaoCortada] = useState(false)
+
+  useEffect(() => {
+    const titulo = previa.current
+    if (!titulo) return
+
+    const medirDescricao = () => {
+      setDescricaoCortada(titulo.scrollHeight > titulo.clientHeight)
+    }
+
+    medirDescricao()
+    const observador = new ResizeObserver(medirDescricao)
+    observador.observe(titulo)
+    return () => observador.disconnect()
+  }, [item.descricao])
+
   return (
     <li className={proxima ? 'item-fila proxima-da-fila' : 'item-fila'}>
       <div className="item-fila-cabecalho">
@@ -37,7 +57,19 @@ export function CartaoSolicitacao({
           {rotulosPrioridade[item.prioridade]}
         </span>
       </div>
-      <h3>{item.descricao}</h3>
+      <div className="descricao-cartao">
+        <h3 ref={previa}>{item.descricao}</h3>
+        <button
+          type="button"
+          className="botao-secundario"
+          hidden={!descricaoCortada}
+          aria-haspopup="dialog"
+          aria-controls={dialogoId}
+          onClick={() => dialogo.current?.showModal()}
+        >
+          Ver descrição completa
+        </button>
+      </div>
       <dl className="departamentos-cartao">
         <div>
           <dt>De</dt>
@@ -77,6 +109,13 @@ export function CartaoSolicitacao({
           </button>
         </div>
       )}
+      <dialog ref={dialogo} id={dialogoId} className="descricao-completa" aria-labelledby={`${dialogoId}-titulo`}>
+        <h4 id={`${dialogoId}-titulo`}>Descrição da solicitação #{item.id}</h4>
+        <p>{item.descricao}</p>
+        <form method="dialog">
+          <button type="submit">Fechar</button>
+        </form>
+      </dialog>
     </li>
   )
 }

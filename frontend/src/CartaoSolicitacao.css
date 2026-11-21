@@ -1,5 +1,11 @@
+.lista-fila {
+  grid-auto-rows: 1fr;
+}
+
 .item-fila {
   display: grid;
+  grid-template-rows: auto auto auto 1fr;
+  align-items: start;
   gap: 0.625rem;
   min-inline-size: 0;
   padding: 0.875rem 1rem;
@@ -14,7 +20,13 @@
   background: #f4faf6;
 }
 
-.item-fila-cabecalho,
+.item-fila-cabecalho {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.5rem;
+}
+
 .metadados-fila {
   display: flex;
   align-items: center;
@@ -22,12 +34,58 @@
   gap: 0.45rem 0.75rem;
 }
 
+.descricao-cartao {
+  display: grid;
+  grid-template-rows: auto minmax(2.75rem, auto);
+  gap: 0.25rem;
+}
+
 .item-fila h3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  block-size: 3lh;
   margin: 0;
+  overflow: hidden;
   font-size: 1.125rem;
   line-height: 1.35;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
+}
+
+.descricao-cartao button {
+  justify-self: start;
+  min-block-size: 2.75rem;
+  text-align: start;
+}
+
+.descricao-completa {
+  inline-size: min(40rem, calc(100% - 2rem));
+  max-block-size: calc(100% - 2rem);
+  padding: 1.25rem;
+  border: 1px solid #d7e3dc;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: #192a25;
+}
+
+.descricao-completa::backdrop {
+  background: #192a2599;
+}
+
+.descricao-completa h4 {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+}
+
+.descricao-completa p {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.descricao-completa form {
+  display: flex;
+  margin-block-start: 1rem;
 }
 
 .proxima-etiqueta,
@@ -39,14 +97,15 @@
 }
 
 .proxima-etiqueta {
-  max-inline-size: 100%;
+  justify-self: start;
   overflow-wrap: anywhere;
   background: #e1f2e8;
   color: #145641;
 }
 
 .prioridade {
-  margin-inline-start: auto;
+  grid-column: 2;
+  grid-row: 1;
   background: #edf1ee;
   color: #354c42;
 }
