@@ -8,6 +8,7 @@ import { listarDepartamentos, type Departamento } from './departamentos'
 import {
   alterarPrioridade,
   concluirSolicitacao,
+  listarConcluidas,
   listarFila,
   type ItemFila,
 } from './solicitacoes'
@@ -30,7 +31,7 @@ type Catalogo =
 
 type Fila =
   | { estado: 'carregando' | 'erro' }
-  | { estado: 'pronta'; itens: ItemFila[] }
+  | { estado: 'pronta'; ativas: ItemFila[]; concluidas: ItemFila[] }
 
 type AcaoFila = {
   tipo: keyof typeof mensagensAcaoFila
@@ -85,9 +86,9 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
 
   useEffect(() => {
     let substituida = false
-    listarFila().then(
-      (itens) => {
-        if (!substituida) setFila({ estado: 'pronta', itens })
+    Promise.all([listarFila(), listarConcluidas()]).then(
+      ([ativas, concluidas]) => {
+        if (!substituida) setFila({ estado: 'pronta', ativas, concluidas })
       },
       (erro) => {
         if (substituida || tratarSessaoExpirada(erro)) return
@@ -160,7 +161,8 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
             )}
             {fila.estado === 'pronta' && (
               <FilaAtendimento
-                itens={fila.itens}
+                itens={fila.ativas}
+                concluidas={fila.concluidas}
                 departamentos={departamentos}
                 departamentosResponsaveisSelecionados={departamentosSelecionados}
                 acaoEmAndamento={acaoEmAndamento}

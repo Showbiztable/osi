@@ -120,6 +120,43 @@ it('identifica o departamento solicitante e o responsável no cartão', () => {
   expect(pagina.includes('Para TI'), 'O cartão deve identificar TI como responsável').toBe(true)
 })
 
+it('mostra as concluídas do departamento responsável selecionado mesmo sem solicitações ativas', () => {
+  const financeiro = { id: 10, nome: 'Financeiro' }
+  const ti = { id: departamentoResponsavelId, nome: 'TI' }
+  const concluidaTi: ItemFila = {
+    id: 42,
+    descricao: 'Restaurar o acesso',
+    departamentoSolicitanteId: financeiro.id,
+    departamentoResponsavelId: ti.id,
+    prioridade: 'ALTA',
+    entrada: '2026-11-19T12:15:00Z',
+  }
+  const concluidaFinanceiro: ItemFila = {
+    ...concluidaTi,
+    id: 41,
+    descricao: 'Revisar os reembolsos',
+    departamentoSolicitanteId: ti.id,
+    departamentoResponsavelId: financeiro.id,
+  }
+
+  const pagina = renderToStaticMarkup(
+    <FilaAtendimento
+      itens={[]}
+      concluidas={[concluidaTi, concluidaFinanceiro]}
+      departamentos={[financeiro, ti]}
+      departamentosResponsaveisSelecionados={[ti.id]}
+    />,
+  )
+  const coluna = pagina.match(/<section\b[^>]*aria-labelledby="titulo-concluidas"[^>]*>([\s\S]*?)<\/section>/)?.[1]
+
+  expect(coluna, 'O quadro deve exibir a coluna Concluídas mesmo com a fila ativa vazia').toBeDefined()
+  expect(coluna).toContain('>Concluídas</h2>')
+  expect(coluna).toContain(concluidaTi.descricao)
+  expect(coluna).toContain('>Alta</span>')
+  expect(pagina).not.toContain(concluidaFinanceiro.descricao)
+  expect(coluna).not.toMatch(/Próxima solicitação|Alterar prioridade|Concluir solicitação/)
+})
+
 it('oferece a alteração de prioridade com a prioridade atual selecionada', () => {
   const item: ItemFila = {
     id: 42,

@@ -5,8 +5,9 @@ type CartaoSolicitacaoProps = {
   item: ItemFila
   departamentoSolicitante: string
   departamentoResponsavel: string
-  proxima: boolean
-  acaoEmAndamento: boolean
+  concluida?: boolean
+  proxima?: boolean
+  acaoEmAndamento?: boolean
   onAlterarPrioridade?: (solicitacaoId: number, prioridade: ItemFila['prioridade']) => void
   onConcluir?: (solicitacaoId: number) => void
 }
@@ -20,8 +21,9 @@ export function CartaoSolicitacao({
   item,
   departamentoSolicitante,
   departamentoResponsavel,
-  proxima,
-  acaoEmAndamento,
+  concluida = false,
+  proxima = false,
+  acaoEmAndamento = false,
   onAlterarPrioridade,
   onConcluir,
 }: CartaoSolicitacaoProps) {
@@ -40,29 +42,31 @@ export function CartaoSolicitacao({
         <span>Para {departamentoResponsavel}</span>
         <time dateTime={item.entrada}>{formatoEntrada.format(new Date(item.entrada))}</time>
       </p>
-      <div className="item-fila-acoes">
-        <label className="campo">
-          Alterar prioridade
-          <select
-            aria-label={`Alterar prioridade da solicitação #${item.id}`}
-            value={item.prioridade}
-            disabled={acaoEmAndamento || !onAlterarPrioridade}
-            onChange={(evento) => onAlterarPrioridade?.(item.id, evento.currentTarget.value as ItemFila['prioridade'])}
+      {!concluida && (
+        <div className="item-fila-acoes">
+          <label className="campo">
+            Alterar prioridade
+            <select
+              aria-label={`Alterar prioridade da solicitação #${item.id}`}
+              value={item.prioridade}
+              disabled={acaoEmAndamento || !onAlterarPrioridade}
+              onChange={(evento) => onAlterarPrioridade?.(item.id, evento.currentTarget.value as ItemFila['prioridade'])}
+            >
+              {Object.entries(rotulosPrioridade).map(([valor, rotulo]) => (
+                <option key={valor} value={valor}>{rotulo}</option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            aria-label={`Concluir solicitação #${item.id}`}
+            disabled={acaoEmAndamento || !onConcluir}
+            onClick={() => onConcluir?.(item.id)}
           >
-            {Object.entries(rotulosPrioridade).map(([valor, rotulo]) => (
-              <option key={valor} value={valor}>{rotulo}</option>
-            ))}
-          </select>
-        </label>
-        <button
-          type="button"
-          aria-label={`Concluir solicitação #${item.id}`}
-          disabled={acaoEmAndamento || !onConcluir}
-          onClick={() => onConcluir?.(item.id)}
-        >
-          Concluir
-        </button>
-      </div>
+            Concluir
+          </button>
+        </div>
+      )}
     </li>
   )
 }
