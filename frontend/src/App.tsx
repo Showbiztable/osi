@@ -83,10 +83,9 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
   }, [tratarSessaoExpirada])
 
   useEffect(() => {
-    if (!departamentoFila) return
-
     let substituida = false
-    listarFila(Number(departamentoFila)).then(
+    const departamentoResponsavelId = departamentoFila === '' ? undefined : Number(departamentoFila)
+    listarFila(departamentoResponsavelId).then(
       (itens) => {
         if (!substituida) setFila({ estado: 'pronta', itens })
       },
@@ -140,16 +139,15 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
                   setDepartamentoFila(evento.target.value)
                 }}
               >
-                <option value="" disabled>Selecione um departamento</option>
+                <option value="">Todos os departamentos</option>
                 {departamentos.map(({ id, nome }) => (
                   <option key={id} value={id}>{nome}</option>
                 ))}
               </select>
             </label>
 
-            {!departamentoFila && <p>Selecione o departamento responsável para consultar a fila.</p>}
-            {departamentoFila && fila.estado === 'carregando' && <p role="status">Carregando fila…</p>}
-            {departamentoFila && fila.estado === 'erro' && (
+            {fila.estado === 'carregando' && <p role="status">Carregando fila…</p>}
+            {fila.estado === 'erro' && (
               <div className="fila-erro">
                 <p className="mensagem erro" role="alert">Não foi possível carregar a fila.</p>
                 <button type="button" onClick={atualizarFila}>Tentar novamente</button>
@@ -163,7 +161,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
                 {mensagensAcaoFila[acaoFila.tipo][acaoFila.estado]}
               </p>
             )}
-            {departamentoFila && fila.estado === 'pronta' && (
+            {fila.estado === 'pronta' && (
               <FilaAtendimento
                 itens={fila.itens}
                 departamentos={departamentos}

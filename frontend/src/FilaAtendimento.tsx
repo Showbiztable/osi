@@ -18,7 +18,7 @@ export function FilaAtendimento({
   onConcluir,
 }: FilaAtendimentoProps) {
   if (!itens.length) {
-    return <p role="status">Nenhuma solicitação ativa neste departamento.</p>
+    return <p role="status">Nenhuma solicitação ativa.</p>
   }
 
   const departamentosJaExibidos = new Set<number>()
