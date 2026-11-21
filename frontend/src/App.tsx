@@ -7,6 +7,7 @@ import { TelaDepartamentos } from './TelaDepartamentos'
 import { SessaoExpiradaError } from './acesso'
 import { listarDepartamentos, type Departamento } from './departamentos'
 import {
+  alterarDescricao,
   alterarPrioridade,
   concluirSolicitacao,
   listarConcluidas,
@@ -158,6 +159,22 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
     }
   }
 
+  async function salvarDescricaoDaSolicitacao(id: number, descricao: string) {
+    try {
+      await alterarDescricao(id, descricao)
+    } catch (erro) {
+      tratarSessaoExpirada(erro)
+      throw erro
+    }
+
+    const atualizarDescricao = (itens: ItemFila[]) => itens.map((item) => item.id === id ? { ...item, descricao } : item)
+    setFila((atual) => atual.estado === 'pronta' ? {
+      estado: 'pronta',
+      ativas: atualizarDescricao(atual.ativas),
+      concluidas: atualizarDescricao(atual.concluidas),
+    } : atual)
+  }
+
   function adicionarDepartamento(departamento: Departamento) {
     setCatalogo((atual) => {
       if (atual.estado !== 'pronto') return atual
@@ -221,6 +238,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
                 departamentos={departamentos}
                 departamentosResponsaveisSelecionados={departamentosSelecionados}
                 acaoEmAndamento={acaoEmAndamento}
+                onAlterarDescricao={salvarDescricaoDaSolicitacao}
                 onAlterarPrioridade={(id, prioridade) =>
                   executarAcaoDaFila('prioridade', () => alterarPrioridade(id, prioridade))
                 }

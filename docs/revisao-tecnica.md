@@ -17,6 +17,6 @@ A mudança de estado fica na entidade e é persistida em transações do serviç
 
 ## Verificações do quadro
 
-- Frontend com 43 testes, lint e build.
-- Backend com 47 testes, incluindo integração com PostgreSQL 17 e Flyway.
-- Conferência no navegador local com API simulada para arraste nos dois sentidos, leitura da descrição completa, seleção e limpeza de filtros, cadastro de departamentos e notificações.
+- Frontend com 45 testes, lint e build.
+- Backend com 57 testes, incluindo integração com PostgreSQL 17 e Flyway.
+- Conferência no navegador local com API simulada para arraste nos dois sentidos, leitura e edição da descrição de cartões ativos e concluídos, seleção e limpeza de filtros, cadastro de departamentos e notificações.

@@ -1,6 +1,7 @@
 import { useId, useRef, type DragEvent } from 'react'
 import { rotulosPrioridade, type ItemFila } from './solicitacoes'
 import { SeletorPrioridade } from './SeletorPrioridade'
+import { DialogoDescricao } from './DialogoDescricao'
 import './CartaoSolicitacao.css'
 
 type CartaoSolicitacaoProps = {
@@ -11,6 +12,7 @@ type CartaoSolicitacaoProps = {
   proxima?: boolean
   acaoEmAndamento?: boolean
   onAlterarPrioridade?: (solicitacaoId: number, prioridade: ItemFila['prioridade']) => void
+  onAlterarDescricao?: (solicitacaoId: number, descricao: string) => Promise<void>
   onConcluir?: (solicitacaoId: number) => void
   onReabrir?: (solicitacaoId: number) => void
   onArrastar?: (evento: DragEvent<HTMLLIElement>) => void
@@ -30,6 +32,7 @@ export function CartaoSolicitacao({
   proxima = false,
   acaoEmAndamento = false,
   onAlterarPrioridade,
+  onAlterarDescricao,
   onConcluir,
   onReabrir,
   onArrastar,
@@ -110,13 +113,14 @@ export function CartaoSolicitacao({
           )}
         </div>
       </div>
-      <dialog ref={dialogo} id={dialogoId} className="descricao-completa" aria-labelledby={`${dialogoId}-titulo`}>
-        <h4 id={`${dialogoId}-titulo`}>Descrição da solicitação #{item.id}</h4>
-        <p>{item.descricao}</p>
-        <form method="dialog">
-          <button type="submit">Fechar</button>
-        </form>
-      </dialog>
+      <DialogoDescricao
+        id={dialogoId}
+        dialogo={dialogo}
+        solicitacaoId={item.id}
+        descricao={item.descricao}
+        bloquearEdicao={acaoEmAndamento}
+        aoSalvar={onAlterarDescricao ? (descricao) => onAlterarDescricao(item.id, descricao) : undefined}
+      />
     </li>
   )
 }

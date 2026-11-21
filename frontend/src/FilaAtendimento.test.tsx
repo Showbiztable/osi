@@ -138,6 +138,7 @@ it.each(['Concluir', 'Reabrir'])('oferece a descrição curta antes de %s e iden
       concluidas={acao === 'Reabrir' ? [item] : []}
       onConcluir={() => {}}
       onReabrir={() => {}}
+      onAlterarDescricao={async () => {}}
     />,
   )
   const dialogo = pagina.match(/<dialog\b[^>]*id="([^"]+)"[^>]*>[\s\S]*?<\/dialog>/)
@@ -147,6 +148,8 @@ it.each(['Concluir', 'Reabrir'])('oferece a descrição curta antes de %s e iden
 
   expect(dialogo).not.toBeNull()
   expect(dialogo?.[0]).toContain(`<p>${descricao}</p>`)
+  const botoesDialogo = Array.from(dialogo?.[0].matchAll(/<button\b[^>]*>([^<]+)<\/button>/g) ?? [], ([, rotulo]) => rotulo)
+  expect(botoesDialogo).toEqual(['Editar descrição', 'Fechar'])
   expect(botoes).toEqual(['Ver descrição completa', acao])
   expect(botaoDescricao).not.toContain('hidden')
   expect(rodape).toContain('aria-haspopup="dialog"')

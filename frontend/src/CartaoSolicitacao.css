@@ -79,9 +79,19 @@
   white-space: pre-wrap;
 }
 
-.descricao-completa form {
+.descricao-completa .mensagem {
+  margin-block-start: 0.75rem;
+}
+
+.descricao-completa-acoes {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-block-start: 1rem;
+}
+
+.descricao-completa-acoes button:first-child:not(:only-child) {
+  margin-inline-start: 0;
 }
 
 .proxima-etiqueta,

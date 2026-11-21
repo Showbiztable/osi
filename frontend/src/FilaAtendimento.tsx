@@ -10,6 +10,7 @@ type FilaAtendimentoProps = {
   departamentosResponsaveisSelecionados?: number[]
   acaoEmAndamento?: boolean
   onAlterarPrioridade?: (solicitacaoId: number, prioridade: ItemFila['prioridade']) => void
+  onAlterarDescricao?: (solicitacaoId: number, descricao: string) => Promise<void>
   onConcluir?: (solicitacaoId: number) => void
   onReabrir?: (solicitacaoId: number) => void
 }
@@ -28,6 +29,7 @@ export function FilaAtendimento({
   departamentosResponsaveisSelecionados = [],
   acaoEmAndamento = false,
   onAlterarPrioridade,
+  onAlterarDescricao,
   onConcluir,
   onReabrir,
 }: FilaAtendimentoProps) {
@@ -104,6 +106,7 @@ export function FilaAtendimento({
                   proxima={proxima}
                   acaoEmAndamento={acaoEmAndamento}
                   onAlterarPrioridade={onAlterarPrioridade}
+                  onAlterarDescricao={onAlterarDescricao}
                   onConcluir={onConcluir}
                   onArrastar={podeConcluir ? (evento) => iniciarArraste(evento, 'ativa', item.id) : undefined}
                   onTerminarArraste={terminarArraste}
@@ -134,6 +137,7 @@ export function FilaAtendimento({
                 departamentoResponsavel={nomeDepartamento(item.departamentoResponsavelId)}
                 concluida
                 acaoEmAndamento={acaoEmAndamento}
+                onAlterarDescricao={onAlterarDescricao}
                 onReabrir={onReabrir}
                 onArrastar={podeReabrir ? (evento) => iniciarArraste(evento, 'concluida', item.id) : undefined}
                 onTerminarArraste={terminarArraste}
