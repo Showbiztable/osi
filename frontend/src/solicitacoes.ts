@@ -82,3 +82,11 @@ export async function concluirSolicitacao(solicitacaoId: number): Promise<void> 
     throw new Error('Não foi possível concluir a solicitação.')
   }
 }
+
+export async function reabrirSolicitacao(solicitacaoId: number): Promise<void> {
+  const resposta = await requisitarComSessao(`/api/solicitacoes/${solicitacaoId}/reabertura`, { method: 'PATCH' })
+
+  if (!resposta.ok) {
+    throw new Error('Não foi possível reabrir a solicitação.')
+  }
+}

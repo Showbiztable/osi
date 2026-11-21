@@ -5,6 +5,7 @@ import {
   concluirSolicitacao,
   listarConcluidas,
   listarFila,
+  reabrirSolicitacao,
   type DadosCadastro,
   type ItemFila,
 } from './solicitacoes'
@@ -152,4 +153,14 @@ it('sinaliza erro quando a API rejeita a conclusão', async () => {
   await expect(concluirSolicitacao(solicitacaoId)).rejects.toThrow(
     'Não foi possível concluir a solicitação.',
   )
+})
+
+it('envia o pedido de reabertura sem corpo e aceita a resposta 204', async () => {
+  const solicitacaoId = 42
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 204 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(reabrirSolicitacao(solicitacaoId)).resolves.toBeUndefined()
+
+  expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes/42/reabertura', { method: 'PATCH' })
 })
