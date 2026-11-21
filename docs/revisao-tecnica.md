@@ -16,7 +16,7 @@ O cadastro valida descrição, prioridade e departamentos na API antes de salvar
 
 - **Tornar explícita a ordem das concluídas se ela virar requisito.** A consulta usa o estado da solicitação. Uma ordem cronológica de conclusão também exigiria registrar o momento da conclusão. [Repositório de solicitações](../backend/src/main/java/io/github/showbiztable/osi/solicitacao/SolicitacaoRepository.java)
 
-## Verificações do quadro
+## Verificações registradas na revisão de 21/11/2026
 
 - Frontend com 53 testes, lint e build.
 - Backend com 67 testes, incluindo integração com PostgreSQL 17 e Flyway.

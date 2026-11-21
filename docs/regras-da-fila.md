@@ -45,7 +45,7 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - **Reabrir uma solicitação:** ela volta à fila do mesmo departamento com o mesmo identificador, a prioridade registrada e a data de entrada original. A ordem de atendimento determina sua posição e qual solicitação fica em destaque. Repetir a reabertura de uma solicitação já ativa preserva seus dados e sua posição.
 - **Editar a descrição:** qualquer solicitação, ativa ou concluída, pode ter a descrição atualizada pelo diálogo do cartão. O sistema remove espaços nas extremidades e rejeita texto ausente, nulo ou em branco. O cadastro mantém o identificador, os departamentos, a prioridade, a data de entrada e a situação que já tinha.
 
-## Quadro de solicitações previsto
+## Quadro de solicitações
 
 - O quadro abre com as solicitações de todos os departamentos responsáveis nas colunas **Ativas** e **Concluídas**. Cada cartão identifica o departamento solicitante e o responsável.
 - O filtro permite selecionar um ou mais departamentos responsáveis e se aplica às duas colunas. Sem seleção, o quadro mostra todos os departamentos.
@@ -56,7 +56,7 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - Se a atualização da fila falhar, os cartões continuam visíveis e as ações de alteração ficam desabilitadas até uma nova consulta bem-sucedida. A leitura da descrição e os filtros continuam disponíveis.
 - Se o catálogo de departamentos falhar, o usuário pode tentar novamente na própria tela. O formulário de solicitação preserva os valores já digitados.
 
-## Melhorias pendentes do quadro
+## Melhorias implementadas no quadro
 
 - [x] Remover o atalho **Nova solicitação** do cabeçalho do quadro. O formulário já está visível na tela da fila.
 - [x] Aumentar a legibilidade de **De** e **Para** nos cartões e dar mais destaque ao departamento responsável. A indicação de próxima solicitação deve deixar claro a qual departamento ela pertence.

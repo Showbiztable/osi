@@ -47,6 +47,14 @@ No Linux ou macOS, use o script `mvnw`.
 OSI_DEMO_CODIGO=osi-local ./backend/mvnw -B -ntp -f backend/pom.xml spring-boot:run
 ```
 
+A variável definida no terminal vale para a execução iniciada nele. Para executar ou depurar a API pelo VS Code, outra opção é criar um arquivo `.env` na raiz do repositório com o conteúdo abaixo.
+
+```dotenv
+OSI_DEMO_CODIGO=osi-local
+```
+
+Na configuração Java de execução ou depuração do VS Code, em `.vscode/launch.json`, indique `"envFile": "${workspaceFolder}/.env"`. O VS Code carrega as variáveis ao iniciar a API por essa configuração. O Maven executado diretamente no terminal precisa receber a variável como nos comandos acima. O `.env` e as configurações da pasta `.vscode` são locais e ignorados pelo Git. Use um código diferente do exemplo se o ambiente estiver acessível a outras pessoas.
+
 A API roda em `http://localhost:8080` e o Flyway aplica as migrations ao iniciar.
 
 ### Frontend
@@ -62,6 +70,16 @@ npm run dev
 Abra `http://localhost:5173` e entre com o código local `osi-local`. O Vite encaminha as chamadas `/api` para o backend.
 
 Use `Ctrl+C` nos terminais da API e do frontend para encerrá-los. Na raiz, use `docker compose stop db` para parar o banco. O volume `postgres-data` guarda os dados entre execuções.
+
+## Verificações do frontend
+
+Na pasta `frontend`, com as dependências instaladas, execute os testes, o lint e o build.
+
+```sh
+npm test
+npm run lint
+npm run build
+```
 
 ## Testes do backend
 
