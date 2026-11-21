@@ -41,6 +41,7 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - **Alterar a prioridade:** a solicitação muda de posição conforme a nova prioridade, preservando a data e a hora de entrada originais.
 - **Concluir uma solicitação:** ela sai da fila ativa e permanece registrada como concluída. Se era a primeira da fila, a próxima da fila assume o destaque.
 - **Reabrir uma solicitação:** ela volta à fila do mesmo departamento com o mesmo identificador, a prioridade registrada e a data de entrada original. A ordem de atendimento determina sua posição e qual solicitação fica em destaque. Repetir a reabertura de uma solicitação já ativa preserva seus dados e sua posição.
+- **Editar a descrição:** qualquer solicitação, ativa ou concluída, pode ter a descrição atualizada pelo diálogo do cartão. O sistema remove espaços nas extremidades e rejeita texto ausente, nulo ou em branco. O cadastro mantém o identificador, os departamentos, a prioridade, a data de entrada e a situação que já tinha.
 
 ## Quadro de solicitações previsto
 
@@ -56,17 +57,20 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - [x] Remover o atalho **Nova solicitação** do cabeçalho do quadro. O formulário já está visível na tela da fila.
 - [x] Aumentar a legibilidade de **De** e **Para** nos cartões e dar mais destaque ao departamento responsável. A indicação de próxima solicitação deve deixar claro a qual departamento ela pertence.
 - [x] Reorganizar o conteúdo dos cartões para destacar descrição, prioridade e departamentos. Manter o identificador e a data de entrada em segundo plano, com contraste suficiente para leitura.
-- [x] Alinhar as ações no rodapé do cartão, com **Ver descrição completa** à esquerda de **Concluir** ou **Reabrir** quando houver texto cortado.
+- [x] Alinhar as ações no rodapé do cartão, com **Ver descrição completa** à esquerda de **Concluir** ou **Reabrir**.
 - [x] Centralizar o botão **Cadastrar solicitação** no rodapé do formulário, ocupando a largura disponível em telas estreitas.
 - [x] Exibir o sucesso ou erro do cadastro em uma notificação temporária no canto superior direito, fora do rodapé do formulário. O componente pode ser reutilizado em outras ações do painel.
 - [x] Adicionar **Fila de atendimento** e **Departamentos** à navegação do topo. A tela de departamentos tem sua própria listagem e formulário de cadastro.
 - [x] Centralizar o título da fila. Abrir as caixas de seleção ao lado do botão **Filtro** e exibir os nomes selecionados mesmo com as opções recolhidas. **Limpar filtros** restaura as duas colunas para todos os departamentos.
 - [x] Adicionar um favicon da OSI para identificar a aplicação na aba do navegador.
-- [x] Padronizar a altura dos cartões em cada coluna. Limitar a descrição a três linhas e oferecer **Ver descrição completa** quando o texto for cortado.
+- [x] Padronizar a altura dos cartões em cada coluna e limitar a prévia da descrição a três linhas.
 - [x] Exibir o número à esquerda e a prioridade à direita na primeira linha do cartão. Mostrar o destaque de próxima solicitação e a data de entrada em linhas próprias. Usar o mesmo fundo para **De** e **Para**.
 - [x] Exibir o rótulo **Prioridade** e o seletor na mesma linha, com opções nas cores das etiquetas em navegadores que permitem personalizar o seletor nativo.
 - [x] Permitir arrastar cartões de **Ativas** para **Concluídas**, reaproveitando a ação do botão **Concluir**.
 - [x] Permitir arrastar cartões de **Concluídas** para **Ativas** para reabrir a solicitação com a regra de ordenação acima. Oferecer também a ação **Reabrir** no cartão concluído.
+- [ ] Exibir **Ver descrição completa** em todos os cartões e identificar a data de entrada com **Aberto em**.
+- [ ] Usar o mesmo esquema de cores no seletor de prioridade dos cartões e do cadastro.
+- [ ] Permitir editar e salvar a descrição no diálogo, com o botão de edição à esquerda de **Fechar**.
 
 ## Revisão técnica antes da entrega
 
