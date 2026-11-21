@@ -10,6 +10,8 @@ Quem cadastra a solicitação informa a descrição, o departamento solicitante,
 O sistema registra a data e a hora do cadastro como entrada.  
 A solicitação entra na fila ativa do departamento responsável com a prioridade informada.
 
+A API remove espaços das extremidades da descrição e retorna `400` para descrição ausente, nula ou em branco, prioridade ausente ou referência a um departamento inexistente.
+
 Por exemplo, em 18/11/2026 às 09:15, o Financeiro solicita à TI acesso ao sistema de notas fiscais e escolhe a prioridade alta.  
 A solicitação entra na fila da TI com prioridade alta e entrada em 18/11/2026 às 09:15.  
 O Financeiro aparece como departamento solicitante.
@@ -51,6 +53,8 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - O botão **Concluir** e o arraste de um cartão ativo para **Concluídas** executam a mesma ação. Após a confirmação, o cartão muda de coluna e a próxima solicitação daquele departamento assume o destaque. O cartão concluído exibe a prioridade registrada.
 - O formulário **Nova solicitação** fica disponível ao lado do quadro em telas largas. Um cadastro confirmado atualiza o quadro.
 - A aba **Departamentos** lista os departamentos e permite cadastrar um nome. O cadastro remove espaços nas extremidades e rejeita nomes vazios e duplicatas que diferem apenas por maiúsculas e minúsculas. O novo departamento aparece nas opções do formulário e do filtro.
+- Se a atualização da fila falhar, os cartões continuam visíveis e as ações de alteração ficam desabilitadas até uma nova consulta bem-sucedida. A leitura da descrição e os filtros continuam disponíveis.
+- Se o catálogo de departamentos falhar, o usuário pode tentar novamente na própria tela. O formulário de solicitação preserva os valores já digitados.
 
 ## Melhorias pendentes do quadro
 
