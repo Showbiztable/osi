@@ -65,6 +65,43 @@ it('destaca a primeira solicitação de cada departamento responsável na fila g
   expect(itensExibidos.map((item) => item.includes('Próxima solicitação'))).toEqual([true, false, true, false])
 })
 
+it('filtra por múltiplos departamentos responsáveis e mantém a ordem da fila', () => {
+  const financeiroId = 10
+  const tiId = 20
+  const rhId = 30
+  const solicitacaoTi: ItemFila = {
+    id: 42,
+    descricao: 'Restaurar o acesso',
+    departamentoSolicitanteId: financeiroId,
+    departamentoResponsavelId: tiId,
+    prioridade: 'URGENTE',
+    entrada: '2026-11-19T12:15:00Z',
+  }
+  const solicitacaoFinanceiro: ItemFila = {
+    ...solicitacaoTi,
+    id: 41,
+    descricao: 'Revisar os reembolsos',
+    departamentoSolicitanteId: tiId,
+    departamentoResponsavelId: financeiroId,
+    prioridade: 'ALTA',
+  }
+  const solicitacaoRh: ItemFila = {
+    ...solicitacaoTi,
+    id: 40,
+    descricao: 'Atualizar a lista de integração',
+    departamentoResponsavelId: rhId,
+    prioridade: 'MEDIA',
+  }
+  const itens = [solicitacaoTi, solicitacaoFinanceiro, solicitacaoRh]
+
+  const pagina = renderToStaticMarkup(
+    <FilaAtendimento itens={itens} departamentosResponsaveisSelecionados={[rhId, tiId]} />,
+  )
+  const descricoes = Array.from(pagina.matchAll(/<h3>([^<]+)<\/h3>/g), ([, descricao]) => descricao)
+
+  expect(descricoes).toEqual([solicitacaoTi.descricao, solicitacaoRh.descricao])
+})
+
 it('oferece a alteração de prioridade com a prioridade atual selecionada', () => {
   const item: ItemFila = {
     id: 42,

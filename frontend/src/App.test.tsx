@@ -31,5 +31,6 @@ it('mostra o carregamento da fila geral ao abrir o painel', () => {
   const pagina = renderToStaticMarkup(<PainelSolicitacoes aoExpirarSessao={() => {}} />)
 
   expect(pagina.includes('Carregando fila…'), 'O painel deve abrir com a fila em carregamento').toBe(true)
-  expect(pagina).toMatch(/<option\b[^>]*\bselected=""[^>]*>Todos os departamentos<\/option>/)
+  expect(pagina).toContain('<legend>Departamentos responsáveis</legend>')
+  expect(pagina).toContain('>Todos os departamentos</p>')
 })

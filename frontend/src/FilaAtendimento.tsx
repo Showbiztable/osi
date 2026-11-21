@@ -5,6 +5,7 @@ import type { ItemFila } from './solicitacoes'
 type FilaAtendimentoProps = {
   itens: ItemFila[]
   departamentos?: Departamento[]
+  departamentosResponsaveisSelecionados?: number[]
   acaoEmAndamento?: boolean
   onAlterarPrioridade?: (solicitacaoId: number, prioridade: ItemFila['prioridade']) => void
   onConcluir?: (solicitacaoId: number) => void
@@ -13,11 +14,16 @@ type FilaAtendimentoProps = {
 export function FilaAtendimento({
   itens,
   departamentos = [],
+  departamentosResponsaveisSelecionados = [],
   acaoEmAndamento = false,
   onAlterarPrioridade,
   onConcluir,
 }: FilaAtendimentoProps) {
-  if (!itens.length) {
+  const itensVisiveis = departamentosResponsaveisSelecionados.length
+    ? itens.filter((item) => departamentosResponsaveisSelecionados.includes(item.departamentoResponsavelId))
+    : itens
+
+  if (!itensVisiveis.length) {
     return <p role="status">Nenhuma solicitação ativa.</p>
   }
 
@@ -25,7 +31,7 @@ export function FilaAtendimento({
 
   return (
     <ol className="lista-fila" aria-label="Ordem de atendimento" role="list">
-      {itens.map((item) => {
+      {itensVisiveis.map((item) => {
         const proxima = !departamentosJaExibidos.has(item.departamentoResponsavelId)
         departamentosJaExibidos.add(item.departamentoResponsavelId)
         const solicitante = departamentos.find(({ id }) => id === item.departamentoSolicitanteId)

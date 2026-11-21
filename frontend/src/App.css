@@ -95,6 +95,42 @@ h2 {
   background: #edf3ef;
 }
 
+.filtro-departamentos {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d7e3dc;
+  border-radius: 0.625rem;
+  background: #fff;
+}
+
+.filtro-departamentos legend {
+  padding-inline: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.opcoes-departamentos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+}
+
+.opcoes-departamentos label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-block-size: 2.75rem;
+  font-size: 0.875rem;
+}
+
+.opcoes-departamentos input {
+  inline-size: 1rem;
+  min-block-size: 1rem;
+  margin: 0;
+  accent-color: #145641;
+}
+
 .atalho-cadastro {
   display: inline-flex;
   align-items: center;

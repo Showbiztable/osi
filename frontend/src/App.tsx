@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { FilaAtendimento } from './FilaAtendimento'
+import { FiltroDepartamentos } from './FiltroDepartamentos'
 import { FormularioSolicitacao } from './FormularioSolicitacao'
 import { TelaAcesso } from './TelaAcesso'
 import { SessaoExpiradaError } from './acesso'
@@ -53,7 +54,7 @@ function Cabecalho() {
 
 export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps) {
   const [catalogo, setCatalogo] = useState<Catalogo>({ estado: 'carregando' })
-  const [departamentoFila, setDepartamentoFila] = useState('')
+  const [departamentosSelecionados, setDepartamentosSelecionados] = useState<number[]>([])
   const [fila, setFila] = useState<Fila>({ estado: 'carregando' })
   const [revisaoFila, setRevisaoFila] = useState(0)
   const [acaoFila, setAcaoFila] = useState<AcaoFila | null>(null)
@@ -84,8 +85,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
 
   useEffect(() => {
     let substituida = false
-    const departamentoResponsavelId = departamentoFila === '' ? undefined : Number(departamentoFila)
-    listarFila(departamentoResponsavelId).then(
+    listarFila().then(
       (itens) => {
         if (!substituida) setFila({ estado: 'pronta', itens })
       },
@@ -97,7 +97,15 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
     return () => {
       substituida = true
     }
-  }, [departamentoFila, revisaoFila, tratarSessaoExpirada])
+  }, [revisaoFila, tratarSessaoExpirada])
+
+  function alterarFiltroDepartamento(departamentoId: number, selecionado: boolean) {
+    setDepartamentosSelecionados((atuais) => selecionado
+      ? [...atuais, departamentoId]
+      : atuais.filter((id) => id !== departamentoId)
+    )
+    setAcaoFila(null)
+  }
 
   function atualizarFila() {
     setFila({ estado: 'carregando' })
@@ -128,23 +136,12 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
             <a className="atalho-cadastro" href="#titulo-cadastro">Nova solicitação</a>
           </div>
           <div className="campos">
-            <label className="campo">
-              Departamento da fila
-              <select
-                value={departamentoFila}
-                disabled={!departamentos.length || acaoEmAndamento}
-                onChange={(evento) => {
-                  setAcaoFila(null)
-                  setFila({ estado: 'carregando' })
-                  setDepartamentoFila(evento.target.value)
-                }}
-              >
-                <option value="">Todos os departamentos</option>
-                {departamentos.map(({ id, nome }) => (
-                  <option key={id} value={id}>{nome}</option>
-                ))}
-              </select>
-            </label>
+            <FiltroDepartamentos
+              departamentos={departamentos}
+              selecionados={departamentosSelecionados}
+              desabilitado={acaoEmAndamento}
+              aoAlterar={alterarFiltroDepartamento}
+            />
 
             {fila.estado === 'carregando' && <p role="status">Carregando fila…</p>}
             {fila.estado === 'erro' && (
@@ -165,6 +162,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
               <FilaAtendimento
                 itens={fila.itens}
                 departamentos={departamentos}
+                departamentosResponsaveisSelecionados={departamentosSelecionados}
                 acaoEmAndamento={acaoEmAndamento}
                 onAlterarPrioridade={(id, prioridade) =>
                   executarAcaoDaFila('prioridade', () => alterarPrioridade(id, prioridade))
