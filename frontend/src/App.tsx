@@ -36,9 +36,11 @@ type Catalogo =
   | { estado: 'carregando' | 'erro' }
   | { estado: 'pronto'; departamentos: Departamento[] }
 
+type DadosFila = { ativas: ItemFila[]; concluidas: ItemFila[] }
+
 type Fila =
-  | { estado: 'carregando' | 'erro' }
-  | { estado: 'pronta'; ativas: ItemFila[]; concluidas: ItemFila[] }
+  | { estado: 'carregando' | 'erro'; dados?: DadosFila }
+  | { estado: 'pronta'; dados: DadosFila }
 
 type AcaoFila = {
   tipo: keyof typeof mensagensAcaoFila
@@ -82,7 +84,8 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
   const [revisaoFila, setRevisaoFila] = useState(0)
   const [acaoFila, setAcaoFila] = useState<AcaoFila | null>(null)
   const departamentos = catalogo.estado === 'pronto' ? catalogo.departamentos : []
-  const acaoEmAndamento = acaoFila?.estado === 'enviando'
+  const atualizandoFila = fila.estado === 'carregando' && Boolean(fila.dados)
+  const acaoEmAndamento = acaoFila?.estado === 'enviando' || atualizandoFila
 
   useEffect(() => {
     const atualizarPagina = () => setPagina(paginaDaUrl())
@@ -116,11 +119,11 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
     let substituida = false
     Promise.all([listarFila(), listarConcluidas()]).then(
       ([ativas, concluidas]) => {
-        if (!substituida) setFila({ estado: 'pronta', ativas, concluidas })
+        if (!substituida) setFila({ estado: 'pronta', dados: { ativas, concluidas } })
       },
       (erro) => {
         if (substituida || tratarSessaoExpirada(erro)) return
-        setFila({ estado: 'erro' })
+        setFila((atual) => ({ ...atual, estado: 'erro' }))
       },
     )
     return () => {
@@ -142,7 +145,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
   }
 
   function atualizarFila() {
-    setFila({ estado: 'carregando' })
+    setFila((atual) => ({ ...atual, estado: 'carregando' }))
     setRevisaoFila((anterior) => anterior + 1)
   }
 
@@ -168,10 +171,12 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
     }
 
     const atualizarDescricao = (itens: ItemFila[]) => itens.map((item) => item.id === id ? { ...item, descricao } : item)
-    setFila((atual) => atual.estado === 'pronta' ? {
-      estado: 'pronta',
-      ativas: atualizarDescricao(atual.ativas),
-      concluidas: atualizarDescricao(atual.concluidas),
+    setFila((atual) => atual.dados ? {
+      ...atual,
+      dados: {
+        ativas: atualizarDescricao(atual.dados.ativas),
+        concluidas: atualizarDescricao(atual.dados.concluidas),
+      },
     } : atual)
   }
 
@@ -216,10 +221,12 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
               aoLimpar={limparFiltroDepartamentos}
             />
 
-            {fila.estado === 'carregando' && <p role="status">Carregando fila…</p>}
+            {fila.estado === 'carregando' && !fila.dados && <p role="status">Carregando fila…</p>}
             {fila.estado === 'erro' && (
               <div className="fila-erro">
-                <p className="mensagem erro" role="alert">Não foi possível carregar a fila.</p>
+                <p className="mensagem erro" role="alert">
+                  {fila.dados ? 'Não foi possível atualizar a fila.' : 'Não foi possível carregar a fila.'}
+                </p>
                 <button type="button" onClick={atualizarFila}>Tentar novamente</button>
               </div>
             )}
@@ -231,10 +238,10 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
                 {mensagensAcaoFila[acaoFila.tipo][acaoFila.estado]}
               </p>
             )}
-            {fila.estado === 'pronta' && (
+            {fila.dados && (
               <FilaAtendimento
-                itens={fila.ativas}
-                concluidas={fila.concluidas}
+                itens={fila.dados.ativas}
+                concluidas={fila.dados.concluidas}
                 departamentos={departamentos}
                 departamentosResponsaveisSelecionados={departamentosSelecionados}
                 acaoEmAndamento={acaoEmAndamento}
