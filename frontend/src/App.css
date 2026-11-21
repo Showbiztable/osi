@@ -148,11 +148,14 @@ h2 {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  min-inline-size: 0;
   min-block-size: 2.75rem;
   font-size: 0.875rem;
+  overflow-wrap: anywhere;
 }
 
 .opcoes-departamentos input {
+  flex: 0 0 auto;
   inline-size: 1rem;
   min-block-size: 1rem;
   margin: 0;
