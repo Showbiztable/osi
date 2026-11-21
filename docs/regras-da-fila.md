@@ -47,8 +47,26 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - O filtro permite selecionar um ou mais departamentos responsáveis e se aplica às duas colunas. Sem seleção, o quadro mostra todos os departamentos.
 - A coluna **Ativas** usa a ordem de atendimento definida acima. A primeira solicitação ativa de cada departamento visível recebe o destaque de próxima, mesmo quando vários departamentos aparecem juntos.
 - O botão **Concluir** e o arraste de um cartão ativo para **Concluídas** executam a mesma ação. Após a confirmação, o cartão muda de coluna e a próxima solicitação daquele departamento assume o destaque. O cartão concluído exibe a prioridade registrada.
-- **Nova solicitação** abre o formulário no quadro. Cancelar fecha o formulário e um cadastro confirmado atualiza o quadro.
+- O formulário **Nova solicitação** fica disponível ao lado do quadro em telas largas. Um cadastro confirmado atualiza o quadro.
 - A aba **Departamentos** lista os departamentos e permite cadastrar um nome. O cadastro remove espaços nas extremidades e rejeita nomes vazios e duplicatas que diferem apenas por maiúsculas e minúsculas. O novo departamento aparece nas opções do formulário e do filtro.
+
+## Melhorias pendentes do quadro
+
+- [ ] Remover o atalho **Nova solicitação** do cabeçalho do quadro. O formulário já está visível na tela da fila.
+- [ ] Aumentar a legibilidade de **De** e **Para** nos cartões e dar mais destaque ao departamento responsável. A indicação de próxima solicitação deve deixar claro a qual departamento ela pertence.
+- [ ] Reorganizar o conteúdo dos cartões para destacar descrição, prioridade e departamentos. Manter o identificador e a data de entrada em segundo plano, com contraste suficiente para leitura.
+- [ ] Rever a posição do botão **Concluir** no cartão ativo. Avaliar a centralização quando ele ocupar uma linha própria.
+- [ ] Rever a posição do botão **Cadastrar solicitação** no rodapé do formulário para que a ação principal não fique isolada no canto direito.
+- [ ] Exibir o sucesso ou erro do cadastro em uma notificação temporária no canto superior direito, fora do rodapé do formulário. Reaproveitar esse padrão para avisos de outras ações do painel.
+- [ ] Adicionar **Fila de atendimento** e **Departamentos** à navegação do topo. A tela de departamentos terá sua própria listagem e formulário de cadastro.
+- [ ] Reunir a seleção de departamentos no botão **Filtro**. Manter a seleção múltipla e oferecer **Limpar filtros** para voltar a exibir todos os departamentos nas duas colunas.
+- [ ] Adicionar um favicon da OSI para identificar a aplicação na aba do navegador.
+
+## Revisão técnica antes da entrega
+
+- [ ] Revisar o frontend com foco em responsabilidades dos componentes, estado, acessibilidade e testes dos fluxos principais.
+- [ ] Revisar o backend com foco em responsabilidades das camadas, validação das regras de negócio, testes, migrations e configuração da API.
+- [ ] Registrar os achados com exemplos do código e priorizar as melhorias pelo impacto na entrega.
 
 ## Exemplo
 
