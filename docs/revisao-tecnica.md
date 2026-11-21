@@ -12,12 +12,15 @@ O painel mantém um catálogo compartilhado entre formulário, filtro e tela de 
 
 A mudança de estado fica na entidade e é persistida em transações do serviço. O repositório concentra a ordem de atendimento. A migration V3 garante a unicidade de nomes de departamentos sem distinção entre maiúsculas e minúsculas, inclusive quando os cadastros são simultâneos. [Serviço de solicitações](../backend/src/main/java/io/github/showbiztable/osi/solicitacao/SolicitacaoService.java), [repositório](../backend/src/main/java/io/github/showbiztable/osi/solicitacao/SolicitacaoRepository.java) e [migration V3](../backend/src/main/resources/db/migration/V3__garante_nomes_de_departamento_unicos.sql).
 
-1. **Validar o cadastro de solicitações na API.** Validar a descrição e traduzir referências de departamento inválidas em respostas `4xx` com mensagens claras. Hoje o formulário ajuda a prevenir esses casos e as chaves estrangeiras protegem os dados. [Controlador de solicitações](../backend/src/main/java/io/github/showbiztable/osi/solicitacao/SolicitacaoController.java) e [schema de solicitações](../backend/src/main/resources/db/migration/V2__cria_solicitacoes.sql)
-2. **Tornar explícita a ordem das concluídas se ela virar requisito.** A consulta usa o estado da solicitação. Uma ordem cronológica de conclusão também exigiria registrar o momento da conclusão. [Repositório de solicitações](../backend/src/main/java/io/github/showbiztable/osi/solicitacao/SolicitacaoRepository.java)
+O cadastro valida descrição, prioridade e departamentos na API antes de salvar. Entradas inválidas recebem `400`. [Controlador de solicitações](../backend/src/main/java/io/github/showbiztable/osi/solicitacao/SolicitacaoController.java)
+
+- **Tornar explícita a ordem das concluídas se ela virar requisito.** A consulta usa o estado da solicitação. Uma ordem cronológica de conclusão também exigiria registrar o momento da conclusão. [Repositório de solicitações](../backend/src/main/java/io/github/showbiztable/osi/solicitacao/SolicitacaoRepository.java)
 
 ## Verificações do quadro
 
-- Frontend com 45 testes, lint e build.
-- Backend com 57 testes, incluindo integração com PostgreSQL 17 e Flyway.
+- Frontend com 53 testes, lint e build.
+- Backend com 67 testes, incluindo integração com PostgreSQL 17 e Flyway.
 - Conferência no navegador local com API simulada para arraste nos dois sentidos, leitura e edição da descrição de cartões ativos e concluídos, seleção e limpeza de filtros, cadastro de departamentos e notificações.
 - Conferência da rolagem com a atualização da fila atrasada e com falha seguida de nova tentativa.
+- Conferência do indicador de disponibilidade e da retomada da demo no navegador, com respostas simuladas. Os testes do backend verificam a prontidão com PostgreSQL local.
+- Conferência da recuperação do catálogo sem perder o rascunho e do bloqueio das ações de cartões desatualizados até a próxima consulta bem-sucedida.

@@ -98,13 +98,13 @@ class SolicitacaoTest {
 	}
 
 	@Test
-	void registra_A_Descricao_Informada_No_Cadastro() {
+	void registra_A_Descricao_Sem_Os_Espacos_Das_Extremidades_No_Cadastro() {
 		// Given
 		String descricaoInformada = "O sistema de notas fiscais não abre.";
 
 		// When
 		Solicitacao solicitacao = Solicitacao.cadastrar(
-			descricaoInformada,
+			"  " + descricaoInformada + " \t",
 			DEPARTAMENTO_SOLICITANTE_ID,
 			DEPARTAMENTO_RESPONSAVEL_ID,
 			Prioridade.ALTA,

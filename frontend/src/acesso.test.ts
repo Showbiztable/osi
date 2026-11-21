@@ -19,6 +19,7 @@ it('envia o código de acesso e confirma a entrada com a resposta 204', async ()
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ codigo }),
+    signal: expect.any(AbortSignal),
   })
 })
 
@@ -49,12 +50,26 @@ it('informa o tempo de espera quando a API bloqueia novas tentativas', async () 
   await expect(entrarNaDemo('codigo-ficticio-da-demo')).rejects.toThrow('Aguarde 30 segundos')
 })
 
+it('libera a entrada para nova tentativa quando o login fica sem resposta', async () => {
+  vi.useFakeTimers()
+  const fetchPendente = vi.fn<typeof fetch>().mockImplementation((_recurso, { signal } = {}) =>
+    new Promise<Response>((_resolver, rejeitar) => {
+      signal?.addEventListener('abort', () => rejeitar(signal.reason), { once: true })
+    }),
+  )
+  vi.stubGlobal('fetch', fetchPendente)
+
+  const resultado = expect(entrarNaDemo('codigo-ficticio-da-demo')).rejects.toMatchObject({ name: 'DemoIndisponivelError' })
+  await vi.advanceTimersByTimeAsync(10_000)
+  await resultado
+})
+
 it('confirma a conexão com a resposta 204 da API', async () => {
   const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 204 }))
   vi.stubGlobal('fetch', fetchMock)
 
   await expect(verificarConexao()).resolves.toBe(true)
-  expect(fetchMock).toHaveBeenCalledWith('/api/saude', {
+  expect(fetchMock).toHaveBeenCalledWith('/api/prontidao', {
     method: 'GET',
     cache: 'no-store',
     credentials: 'omit',
@@ -98,6 +113,34 @@ it('indica indisponibilidade após dez segundos sem resposta da API', async () =
 
   await vi.advanceTimersByTimeAsync(1)
   expect(registrarDisponibilidade).toHaveBeenCalledExactlyOnceWith(false)
+})
+
+it('tenta novamente enquanto a demo inicia quando a verificação é manual', async () => {
+  vi.useFakeTimers()
+  const fetchMock = vi.fn<typeof fetch>()
+    .mockResolvedValueOnce(new Response(null, { status: 503 }))
+    .mockResolvedValueOnce(new Response(null, { status: 204 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  const resultado = verificarConexao({ repetir: true })
+  await vi.advanceTimersByTimeAsync(2_999)
+  expect(fetchMock).toHaveBeenCalledTimes(1)
+  await vi.advanceTimersByTimeAsync(1)
+
+  await expect(resultado).resolves.toBe(true)
+  expect(fetchMock).toHaveBeenCalledTimes(2)
+})
+
+it('encerra as tentativas manuais depois de 75 segundos', async () => {
+  vi.useFakeTimers()
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 503 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  const resultado = verificarConexao({ repetir: true })
+  await vi.advanceTimersByTimeAsync(75_000)
+
+  await expect(resultado).resolves.toBe(false)
+  expect(fetchMock).toHaveBeenCalledTimes(25)
 })
 
 it.each([

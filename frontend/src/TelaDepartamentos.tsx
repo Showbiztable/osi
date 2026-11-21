@@ -7,6 +7,7 @@ import './TelaDepartamentos.css'
 type TelaDepartamentosProps = {
   departamentos: Departamento[]
   estadoCatalogo: 'carregando' | 'erro' | 'pronto'
+  aoRecarregarCatalogo: () => void
   aoCadastrar: (departamento: Departamento) => void
   aoExpirarSessao: () => void
 }
@@ -14,6 +15,7 @@ type TelaDepartamentosProps = {
 export function TelaDepartamentos({
   departamentos,
   estadoCatalogo,
+  aoRecarregarCatalogo,
   aoCadastrar,
   aoExpirarSessao,
 }: TelaDepartamentosProps) {
@@ -61,9 +63,14 @@ export function TelaDepartamentos({
         <div className="campos">
           {estadoCatalogo === 'carregando' && <p role="status">Carregando departamentos…</p>}
           {estadoCatalogo === 'erro' && (
-            <p className="mensagem erro" role="alert">
-              Não foi possível carregar os departamentos. Atualize a página para tentar novamente.
-            </p>
+            <div className="erro-carregamento">
+              <p id="erro-catalogo-departamentos" className="mensagem erro" role="alert">
+                Não foi possível carregar os departamentos.
+              </p>
+              <button type="button" aria-describedby="erro-catalogo-departamentos" onClick={aoRecarregarCatalogo}>
+                Tentar novamente
+              </button>
+            </div>
           )}
           {estadoCatalogo === 'pronto' && departamentos.length === 0 && (
             <p role="status">Nenhum departamento cadastrado.</p>

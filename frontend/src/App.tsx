@@ -79,13 +79,13 @@ function Cabecalho({ pagina }: { pagina?: Pagina }) {
 export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps) {
   const [pagina, setPagina] = useState(paginaDaUrl)
   const [catalogo, setCatalogo] = useState<Catalogo>({ estado: 'carregando' })
+  const [revisaoCatalogo, setRevisaoCatalogo] = useState(0)
   const [departamentosSelecionados, setDepartamentosSelecionados] = useState<number[]>([])
   const [fila, setFila] = useState<Fila>({ estado: 'carregando' })
   const [revisaoFila, setRevisaoFila] = useState(0)
   const [acaoFila, setAcaoFila] = useState<AcaoFila | null>(null)
   const departamentos = catalogo.estado === 'pronto' ? catalogo.departamentos : []
-  const atualizandoFila = fila.estado === 'carregando' && Boolean(fila.dados)
-  const acaoEmAndamento = acaoFila?.estado === 'enviando' || atualizandoFila
+  const acaoEmAndamento = acaoFila?.estado === 'enviando'
 
   useEffect(() => {
     const atualizarPagina = () => setPagina(paginaDaUrl())
@@ -113,7 +113,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
     return () => {
       desmontado = true
     }
-  }, [tratarSessaoExpirada])
+  }, [revisaoCatalogo, tratarSessaoExpirada])
 
   useEffect(() => {
     let substituida = false
@@ -142,6 +142,11 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
   function limparFiltroDepartamentos() {
     setDepartamentosSelecionados([])
     setAcaoFila(null)
+  }
+
+  function recarregarCatalogo() {
+    setCatalogo({ estado: 'carregando' })
+    setRevisaoCatalogo((anterior) => anterior + 1)
   }
 
   function atualizarFila() {
@@ -196,6 +201,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
         <TelaDepartamentos
           departamentos={departamentos}
           estadoCatalogo={catalogo.estado}
+          aoRecarregarCatalogo={recarregarCatalogo}
           aoCadastrar={adicionarDepartamento}
           aoExpirarSessao={aoExpirarSessao}
         />
@@ -223,7 +229,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
 
             {fila.estado === 'carregando' && !fila.dados && <p role="status">Carregando fila…</p>}
             {fila.estado === 'erro' && (
-              <div className="fila-erro">
+              <div className="erro-carregamento">
                 <p className="mensagem erro" role="alert">
                   {fila.dados ? 'Não foi possível atualizar a fila.' : 'Não foi possível carregar a fila.'}
                 </p>
@@ -245,6 +251,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
                 departamentos={departamentos}
                 departamentosResponsaveisSelecionados={departamentosSelecionados}
                 acaoEmAndamento={acaoEmAndamento}
+                estadoFila={fila.estado}
                 onAlterarDescricao={salvarDescricaoDaSolicitacao}
                 onAlterarPrioridade={(id, prioridade) =>
                   executarAcaoDaFila('prioridade', () => alterarPrioridade(id, prioridade))
@@ -258,6 +265,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
         <FormularioSolicitacao
           departamentos={departamentos}
           estadoCatalogo={catalogo.estado}
+          aoRecarregarCatalogo={recarregarCatalogo}
           aoCadastrar={atualizarFila}
           aoExpirarSessao={aoExpirarSessao}
         />

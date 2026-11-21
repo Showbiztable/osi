@@ -79,8 +79,11 @@ class Solicitacao {
 
 	static Solicitacao cadastrar(String descricao, long departamentoSolicitanteId, long departamentoResponsavelId,
 		Prioridade prioridade, Clock relogio) {
+		if (prioridade == null) {
+			throw new IllegalArgumentException("A prioridade da solicitação é obrigatória.");
+		}
 		return new Solicitacao(relogio.instant(), departamentoSolicitanteId, departamentoResponsavelId,
-			prioridade, descricao);
+			prioridade, normalizarDescricao(descricao));
 	}
 
 	void alterarPrioridade(Prioridade novaPrioridade) {
@@ -88,10 +91,7 @@ class Solicitacao {
 	}
 
 	void alterarDescricao(String novaDescricao) {
-		if (novaDescricao == null || novaDescricao.isBlank()) {
-			throw new IllegalArgumentException("A descrição da solicitação é obrigatória.");
-		}
-		this.descricao = novaDescricao.strip();
+		this.descricao = normalizarDescricao(novaDescricao);
 	}
 
 	void concluir() {
@@ -100,5 +100,12 @@ class Solicitacao {
 
 	void reabrir() {
 		this.ativa = true;
+	}
+
+	private static String normalizarDescricao(String descricao) {
+		if (descricao == null || descricao.isBlank()) {
+			throw new IllegalArgumentException("A descrição da solicitação é obrigatória.");
+		}
+		return descricao.strip();
 	}
 }

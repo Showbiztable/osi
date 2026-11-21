@@ -9,6 +9,7 @@ type FilaAtendimentoProps = {
   departamentos?: Departamento[]
   departamentosResponsaveisSelecionados?: number[]
   acaoEmAndamento?: boolean
+  estadoFila?: 'carregando' | 'erro' | 'pronta'
   onAlterarPrioridade?: (solicitacaoId: number, prioridade: ItemFila['prioridade']) => void
   onAlterarDescricao?: (solicitacaoId: number, descricao: string) => Promise<void>
   onConcluir?: (solicitacaoId: number) => void
@@ -28,6 +29,7 @@ export function FilaAtendimento({
   departamentos = [],
   departamentosResponsaveisSelecionados = [],
   acaoEmAndamento = false,
+  estadoFila = 'pronta',
   onAlterarPrioridade,
   onAlterarDescricao,
   onConcluir,
@@ -42,8 +44,9 @@ export function FilaAtendimento({
   const departamentosJaExibidos = new Set<number>()
   const nomesDepartamentos = new Map(departamentos.map(({ id, nome }) => [id, nome]))
   const nomeDepartamento = (id: number) => nomesDepartamentos.get(id) ?? `Departamento #${id}`
-  const podeReabrir = !acaoEmAndamento && Boolean(onReabrir)
-  const podeConcluir = !acaoEmAndamento && Boolean(onConcluir)
+  const alteracoesBloqueadas = acaoEmAndamento || estadoFila !== 'pronta'
+  const podeReabrir = !alteracoesBloqueadas && Boolean(onReabrir)
+  const podeConcluir = !alteracoesBloqueadas && Boolean(onConcluir)
 
   function iniciarArraste(evento: DragEvent<HTMLLIElement>, origem: OrigemArraste, id: number) {
     evento.dataTransfer.effectAllowed = 'move'
@@ -104,7 +107,7 @@ export function FilaAtendimento({
                   departamentoSolicitante={nomeDepartamento(item.departamentoSolicitanteId)}
                   departamentoResponsavel={nomeDepartamento(item.departamentoResponsavelId)}
                   proxima={proxima}
-                  acaoEmAndamento={acaoEmAndamento}
+                  acaoEmAndamento={alteracoesBloqueadas}
                   onAlterarPrioridade={onAlterarPrioridade}
                   onAlterarDescricao={onAlterarDescricao}
                   onConcluir={onConcluir}
@@ -136,7 +139,7 @@ export function FilaAtendimento({
                 departamentoSolicitante={nomeDepartamento(item.departamentoSolicitanteId)}
                 departamentoResponsavel={nomeDepartamento(item.departamentoResponsavelId)}
                 concluida
-                acaoEmAndamento={acaoEmAndamento}
+                acaoEmAndamento={alteracoesBloqueadas}
                 onAlterarDescricao={onAlterarDescricao}
                 onReabrir={onReabrir}
                 onArrastar={podeReabrir ? (evento) => iniciarArraste(evento, 'concluida', item.id) : undefined}

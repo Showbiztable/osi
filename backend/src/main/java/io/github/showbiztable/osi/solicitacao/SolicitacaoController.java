@@ -41,10 +41,14 @@ class SolicitacaoController {
 
 	@PostMapping("/api/solicitacoes")
 	ResponseEntity<SolicitacaoCriada> cadastrar(@RequestBody DadosCadastro dados) {
-		Long id = service.cadastrar(
-			dados.descricao(), dados.departamentoSolicitanteId(), dados.departamentoResponsavelId(), dados.prioridade()
-		);
-		return ResponseEntity.status(HttpStatus.CREATED).body(new SolicitacaoCriada(id));
+		try {
+			Long id = service.cadastrar(
+				dados.descricao(), dados.departamentoSolicitanteId(), dados.departamentoResponsavelId(), dados.prioridade()
+			);
+			return ResponseEntity.status(HttpStatus.CREATED).body(new SolicitacaoCriada(id));
+		} catch (IllegalArgumentException erro) {
+			return ResponseEntity.badRequest().build();
+		}
 	}
 
 	@PatchMapping("/api/solicitacoes/{id}/prioridade")

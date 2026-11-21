@@ -8,6 +8,7 @@ import { cadastrarSolicitacao, type DadosCadastro } from './solicitacoes'
 type FormularioSolicitacaoProps = {
   departamentos: Departamento[]
   estadoCatalogo: 'carregando' | 'erro' | 'pronto'
+  aoRecarregarCatalogo: () => void
   aoCadastrar: () => void
   aoExpirarSessao: () => void
 }
@@ -20,6 +21,7 @@ const camposDepartamento = [
 export function FormularioSolicitacao({
   departamentos,
   estadoCatalogo,
+  aoRecarregarCatalogo,
   aoCadastrar,
   aoExpirarSessao,
 }: FormularioSolicitacaoProps) {
@@ -96,9 +98,14 @@ export function FormularioSolicitacao({
 
           {estadoCatalogo === 'carregando' && <p role="status">Carregando departamentos…</p>}
           {estadoCatalogo === 'erro' && (
-            <p className="mensagem erro" role="alert">
-              Não foi possível carregar os departamentos. Atualize a página para tentar novamente.
-            </p>
+            <div className="erro-carregamento">
+              <p id="erro-catalogo-solicitacao" className="mensagem erro" role="alert">
+                Não foi possível carregar os departamentos.
+              </p>
+              <button type="button" aria-describedby="erro-catalogo-solicitacao" onClick={aoRecarregarCatalogo}>
+                Tentar novamente
+              </button>
+            </div>
           )}
           {estadoCatalogo === 'pronto' && !departamentos.length && (
             <p role="status">Nenhum departamento cadastrado.</p>

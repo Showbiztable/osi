@@ -98,9 +98,9 @@ A fila destaca a próxima solicitação de cada departamento. Alterar a priorida
 - **Concluído:** escopo, tecnologias, [regras da fila de atendimento](docs/regras-da-fila.md) e [arquitetura inicial](docs/arquitetura.md) definidos.
 - **Estrutura inicial:** backend Spring Boot com Maven Wrapper e frontend React com Vite.
 - **Verificações:** GitHub Actions executa os testes e o build dos dois projetos, além do lint do frontend.
-- **Cadastro:** o formulário consulta os departamentos pela API, grava a solicitação no PostgreSQL e confirma o ID em uma notificação temporária.
+- **Cadastro:** o formulário consulta os departamentos pela API, grava a solicitação no PostgreSQL e confirma o ID em uma notificação temporária. A API valida a descrição, a prioridade e as referências aos departamentos antes de salvar.
 - **Fila de atendimento:** o quadro mostra ativas e concluídas de todos os departamentos, com filtro por responsáveis e destaque da próxima de cada departamento. A descrição completa de qualquer cartão pode ser aberta e editada no diálogo.
 - **Ações da fila:** alterar a prioridade, concluir e reabrir solicitações. As duas últimas estão disponíveis pelo botão do cartão e por arraste entre colunas.
 - **Departamentos:** a tela lista e cadastra departamentos. O catálogo também alimenta o filtro e o formulário de solicitações.
 - **Banco de dados:** PostgreSQL local com Docker Compose e migrations do Flyway para departamentos e solicitações.
-- **Publicação:** [Demo da OSI](https://osi-demo.onrender.com/) com acesso por código. Use **Verificar conexão** na tela de acesso se a API estiver em pausa.
+- **Publicação:** a tela de acesso mostra quando a API e o PostgreSQL estão prontos. Se a demo estiver indisponível, use **Verificar conexão** para aguardar a retomada. [Demo da OSI](https://osi-demo.onrender.com/)
