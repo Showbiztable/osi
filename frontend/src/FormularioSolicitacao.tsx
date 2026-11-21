@@ -114,7 +114,7 @@ export function FormularioSolicitacao({
           </label>
         </fieldset>
 
-        <div className="acoes">
+        <div className="acoes acoes-cadastro">
           {envio?.estado === 'erro' && (
             <p className="mensagem erro" role="alert">{envio.mensagem}</p>
           )}

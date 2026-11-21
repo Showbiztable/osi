@@ -196,6 +196,15 @@ textarea::placeholder {
   background: #f9fbfa;
 }
 
+.acoes-cadastro {
+  display: grid;
+}
+
+.acoes-cadastro button {
+  justify-self: center;
+  margin-inline: 0;
+}
+
 .mensagem {
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;

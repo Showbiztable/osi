@@ -56,7 +56,7 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - [x] Aumentar a legibilidade de **De** e **Para** nos cartões e dar mais destaque ao departamento responsável. A indicação de próxima solicitação deve deixar claro a qual departamento ela pertence.
 - [x] Reorganizar o conteúdo dos cartões para destacar descrição, prioridade e departamentos. Manter o identificador e a data de entrada em segundo plano, com contraste suficiente para leitura.
 - [x] Centralizar o botão **Concluir** em uma linha própria, abaixo do seletor de prioridade do cartão ativo.
-- [ ] Rever a posição do botão **Cadastrar solicitação** no rodapé do formulário para que a ação principal não fique isolada no canto direito.
+- [x] Centralizar o botão **Cadastrar solicitação** no rodapé do formulário, ocupando a largura disponível em telas estreitas.
 - [ ] Exibir o sucesso ou erro do cadastro em uma notificação temporária no canto superior direito, fora do rodapé do formulário. Reaproveitar esse padrão para avisos de outras ações do painel.
 - [ ] Adicionar **Fila de atendimento** e **Departamentos** à navegação do topo. A tela de departamentos terá sua própria listagem e formulário de cadastro.
 - [ ] Reunir a seleção de departamentos no botão **Filtro**. Manter a seleção múltipla e oferecer **Limpar filtros** para voltar a exibir todos os departamentos nas duas colunas.
