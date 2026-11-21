@@ -52,7 +52,7 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 
 ## Melhorias pendentes do quadro
 
-- [ ] Remover o atalho **Nova solicitação** do cabeçalho do quadro. O formulário já está visível na tela da fila.
+- [x] Remover o atalho **Nova solicitação** do cabeçalho do quadro. O formulário já está visível na tela da fila.
 - [ ] Aumentar a legibilidade de **De** e **Para** nos cartões e dar mais destaque ao departamento responsável. A indicação de próxima solicitação deve deixar claro a qual departamento ela pertence.
 - [ ] Reorganizar o conteúdo dos cartões para destacar descrição, prioridade e departamentos. Manter o identificador e a data de entrada em segundo plano, com contraste suficiente para leitura.
 - [ ] Rever a posição do botão **Concluir** no cartão ativo. Avaliar a centralização quando ele ocupar uma linha própria.

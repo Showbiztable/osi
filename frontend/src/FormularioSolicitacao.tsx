@@ -63,7 +63,7 @@ export function FormularioSolicitacao({
   return (
     <section className="painel" aria-labelledby="titulo-cadastro">
       <div className="painel-cabecalho">
-        <h2 id="titulo-cadastro" tabIndex={-1}>Nova solicitação</h2>
+        <h2 id="titulo-cadastro">Nova solicitação</h2>
         <p>O pedido entra na fila do departamento responsável.</p>
       </div>
 

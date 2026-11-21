@@ -14,10 +14,9 @@ it('mostra a tela de acesso antes do painel de solicitações', () => {
   expect(pagina).not.toContain('id="titulo-fila"')
 })
 
-it('oferece os campos e a ação para cadastrar uma solicitação', () => {
+it('oferece o formulário de cadastro direto no painel, sem atalho duplicado', () => {
   const pagina = renderToStaticMarkup(<PainelSolicitacoes aoExpirarSessao={() => {}} />)
 
-  expect(pagina).toContain('href="#titulo-cadastro"')
   expect(pagina).toContain('id="titulo-cadastro"')
   expect(pagina).toContain('<form')
   expect(pagina).toContain('name="descricao"')
@@ -25,6 +24,7 @@ it('oferece os campos e a ação para cadastrar uma solicitação', () => {
   expect(pagina).toContain('name="departamentoResponsavelId"')
   expect(pagina).toContain('name="prioridade"')
   expect(pagina).toContain('type="submit"')
+  expect(pagina).not.toMatch(/<(?:a|button)\b[^>]*>Nova solicitação<\/(?:a|button)>/)
 })
 
 it('mostra o carregamento da fila geral ao abrir o painel', () => {

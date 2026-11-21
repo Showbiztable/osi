@@ -79,15 +79,7 @@ h2 {
   line-height: 1.15;
 }
 
-.cabecalho-fila {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem 1rem;
-}
-
-.cabecalho-fila h1 {
+.painel-fila h1 {
   margin-bottom: 0;
 }
 
@@ -129,23 +121,6 @@ h2 {
   min-block-size: 1rem;
   margin: 0;
   accent-color: #145641;
-}
-
-.atalho-cadastro {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 2.75rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #bccfc5;
-  border-radius: 0.5rem;
-  color: #145641;
-  font-size: 0.875rem;
-  font-weight: 650;
-  text-decoration: none;
-}
-
-.atalho-cadastro:hover {
-  background: #eef7f1;
 }
 
 p {
@@ -207,8 +182,7 @@ textarea::placeholder {
   color: #596d63;
 }
 
-:is(input, textarea, select, button, .atalho-cadastro):focus-visible,
-#titulo-cadastro:focus-visible {
+:is(input, textarea, select, button):focus-visible {
   outline: 2px solid #11664f;
   outline-offset: 2px;
 }

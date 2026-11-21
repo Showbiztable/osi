@@ -132,9 +132,8 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
 
       <main className="conteudo">
         <section className="painel painel-fila" aria-labelledby="titulo-fila">
-          <div className="painel-cabecalho cabecalho-fila">
+          <div className="painel-cabecalho">
             <h1 id="titulo-fila">Fila de atendimento</h1>
-            <a className="atalho-cadastro" href="#titulo-cadastro">Nova solicitação</a>
           </div>
           <div className="campos">
             <FiltroDepartamentos
