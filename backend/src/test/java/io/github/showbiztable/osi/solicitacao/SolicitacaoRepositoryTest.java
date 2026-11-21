@@ -1,5 +1,7 @@
 package io.github.showbiztable.osi.solicitacao;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -96,6 +98,66 @@ class SolicitacaoRepositoryTest {
 
 		// Then
 		assertEquals(List.of(urgente, primeiraAltaAntiga, segundaAltaAntiga, altaRecente, media, baixa), fila);
+	}
+
+	@Test
+	void lista_A_Fila_Ativa_De_Todos_Os_Departamentos_Na_Ordem_De_Atendimento() {
+		// Given
+		String identificadorTeste = UUID.randomUUID().toString();
+		long primeiroDepartamentoId = inserirDepartamento("Primeiro " + identificadorTeste);
+		long segundoDepartamentoId = inserirDepartamento("Segundo " + identificadorTeste);
+		OffsetDateTime entradaAntiga = OffsetDateTime.parse("2026-11-18T09:00:00Z");
+		OffsetDateTime entradaRecente = entradaAntiga.plusMinutes(15);
+
+		long altaRecente = inserirSolicitacao(
+			primeiroDepartamentoId, segundoDepartamentoId, Prioridade.ALTA, entradaRecente, true
+		);
+		long primeiraAltaAntiga = inserirSolicitacao(
+			primeiroDepartamentoId, segundoDepartamentoId, Prioridade.ALTA, entradaAntiga, true
+		);
+		long segundaAltaAntiga = inserirSolicitacao(
+			segundoDepartamentoId, primeiroDepartamentoId, Prioridade.ALTA, entradaAntiga, true
+		);
+		long urgenteRecente = inserirSolicitacao(
+			segundoDepartamentoId, primeiroDepartamentoId, Prioridade.URGENTE, entradaRecente, true
+		);
+		inserirSolicitacao(primeiroDepartamentoId, segundoDepartamentoId, Prioridade.URGENTE, entradaAntiga, false);
+
+		// When
+		List<Long> fila = repository.listarFilaAtiva().stream()
+			.filter(solicitacao -> solicitacao.getDepartamentoResponsavelId() == primeiroDepartamentoId
+				|| solicitacao.getDepartamentoResponsavelId() == segundoDepartamentoId)
+			.map(solicitacao -> solicitacao.getId())
+			.toList();
+
+		// Then
+		assertEquals(List.of(urgenteRecente, primeiraAltaAntiga, segundaAltaAntiga, altaRecente), fila);
+	}
+
+	@Test
+	void lista_Somente_As_Solicitacoes_Concluidas_De_Diferentes_Departamentos() {
+		// Given
+		String identificadorTeste = UUID.randomUUID().toString();
+		long primeiroDepartamentoId = inserirDepartamento("Primeiro " + identificadorTeste);
+		long segundoDepartamentoId = inserirDepartamento("Segundo " + identificadorTeste);
+		OffsetDateTime entrada = OffsetDateTime.parse("2026-11-18T09:00:00Z");
+		long concluidaDoPrimeiro = inserirSolicitacao(
+			segundoDepartamentoId, primeiroDepartamentoId, Prioridade.ALTA, entrada, false
+		);
+		long concluidaDoSegundo = inserirSolicitacao(
+			primeiroDepartamentoId, segundoDepartamentoId, Prioridade.BAIXA, entrada, false
+		);
+		inserirSolicitacao(segundoDepartamentoId, primeiroDepartamentoId, Prioridade.ALTA, entrada, true);
+
+		// When
+		List<Long> concluidas = repository.listarConcluidas().stream()
+			.filter(solicitacao -> solicitacao.getDepartamentoResponsavelId() == primeiroDepartamentoId
+				|| solicitacao.getDepartamentoResponsavelId() == segundoDepartamentoId)
+			.map(solicitacao -> solicitacao.getId())
+			.toList();
+
+		// Then
+		assertThat(concluidas, containsInAnyOrder(concluidaDoPrimeiro, concluidaDoSegundo));
 	}
 
 	private long buscarIdDepartamento(String nome) {

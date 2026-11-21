@@ -20,6 +20,14 @@ class SolicitacaoService {
 		return repository.listarFilaAtivaPorDepartamentoResponsavel(departamentoResponsavelId);
 	}
 
+	List<Solicitacao> listarFilaGeral() {
+		return repository.listarFilaAtiva();
+	}
+
+	List<Solicitacao> listarConcluidas() {
+		return repository.listarConcluidas();
+	}
+
 	Long cadastrar(String descricao, long departamentoSolicitanteId, long departamentoResponsavelId,
 		Prioridade prioridade) {
 		Solicitacao solicitacao = Solicitacao.cadastrar(
@@ -34,8 +42,18 @@ class SolicitacaoService {
 	}
 
 	@Transactional
+	void alterarDescricao(long solicitacaoId, String novaDescricao) {
+		buscarPorId(solicitacaoId).alterarDescricao(novaDescricao);
+	}
+
+	@Transactional
 	void concluir(long solicitacaoId) {
 		buscarPorId(solicitacaoId).concluir();
+	}
+
+	@Transactional
+	void reabrir(long solicitacaoId) {
+		buscarPorId(solicitacaoId).reabrir();
 	}
 
 	private Solicitacao buscarPorId(long solicitacaoId) {

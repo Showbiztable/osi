@@ -1,0 +1,19 @@
+.notificacao {
+  position: fixed;
+  z-index: 10;
+  inset-block-start: 1rem;
+  inset-inline-end: 1rem;
+  inline-size: max-content;
+  max-inline-size: min(24rem, calc(100% - 2rem));
+  pointer-events: none;
+}
+
+.notificacao .mensagem:empty {
+  padding: 0;
+}
+
+.notificacao .mensagem:not(:empty) {
+  padding: 0.75rem 1rem;
+  box-shadow: 0 6px 20px #16393026;
+  overflow-wrap: anywhere;
+}

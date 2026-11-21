@@ -25,16 +25,18 @@ class SolicitacaoController {
 	}
 
 	@GetMapping("/api/solicitacoes")
-	List<ItemFila> listarFila(@RequestParam("departamentoResponsavelId") long departamentoResponsavelId) {
-		return service.listarFila(departamentoResponsavelId).stream()
-			.map(solicitacao -> new ItemFila(
-				solicitacao.getId(),
-				solicitacao.getDescricao(),
-				solicitacao.getDepartamentoSolicitanteId(),
-				solicitacao.getPrioridade(),
-				solicitacao.getEntrada()
-			))
-			.toList();
+	List<ItemFila> listarFila(
+		@RequestParam(name = "departamentoResponsavelId", required = false) Long departamentoResponsavelId
+	) {
+		List<Solicitacao> fila = departamentoResponsavelId == null
+			? service.listarFilaGeral()
+			: service.listarFila(departamentoResponsavelId);
+		return paraItensDaFila(fila);
+	}
+
+	@GetMapping("/api/solicitacoes/concluidas")
+	List<ItemFila> listarConcluidas() {
+		return paraItensDaFila(service.listarConcluidas());
 	}
 
 	@PostMapping("/api/solicitacoes")
@@ -56,15 +58,44 @@ class SolicitacaoController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PatchMapping("/api/solicitacoes/{id}/descricao")
+	ResponseEntity<Void> alterarDescricao(@PathVariable("id") long id, @RequestBody DadosDescricao dados) {
+		try {
+			service.alterarDescricao(id, dados.descricao());
+		} catch (IllegalArgumentException erro) {
+			return ResponseEntity.badRequest().build();
+		}
+		return ResponseEntity.noContent().build();
+	}
+
 	@PatchMapping("/api/solicitacoes/{id}/conclusao")
 	ResponseEntity<Void> concluir(@PathVariable("id") long id) {
 		service.concluir(id);
 		return ResponseEntity.noContent().build();
 	}
 
+	@PatchMapping("/api/solicitacoes/{id}/reabertura")
+	ResponseEntity<Void> reabrir(@PathVariable("id") long id) {
+		service.reabrir(id);
+		return ResponseEntity.noContent().build();
+	}
+
 	@ExceptionHandler(NoSuchElementException.class)
 	ResponseEntity<Void> responderSolicitacaoInexistente() {
 		return ResponseEntity.notFound().build();
+	}
+
+	private static List<ItemFila> paraItensDaFila(List<Solicitacao> solicitacoes) {
+		return solicitacoes.stream()
+			.map(solicitacao -> new ItemFila(
+				solicitacao.getId(),
+				solicitacao.getDescricao(),
+				solicitacao.getDepartamentoSolicitanteId(),
+				solicitacao.getDepartamentoResponsavelId(),
+				solicitacao.getPrioridade(),
+				solicitacao.getEntrada()
+			))
+			.toList();
 	}
 
 	record DadosCadastro(
@@ -78,10 +109,13 @@ class SolicitacaoController {
 
 	record DadosPrioridade(Prioridade prioridade) {}
 
+	record DadosDescricao(String descricao) {}
+
 	record ItemFila(
 		Long id,
 		String descricao,
 		long departamentoSolicitanteId,
+		long departamentoResponsavelId,
 		Prioridade prioridade,
 		Instant entrada
 	) {}

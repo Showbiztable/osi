@@ -1,9 +1,12 @@
 import { afterEach, expect, it, vi } from 'vitest'
 import {
+  alterarDescricao,
   alterarPrioridade,
   cadastrarSolicitacao,
   concluirSolicitacao,
+  listarConcluidas,
   listarFila,
+  reabrirSolicitacao,
   type DadosCadastro,
   type ItemFila,
 } from './solicitacoes'
@@ -41,6 +44,7 @@ it('consulta a fila do departamento responsável na ordem devolvida pela API', a
       id: 42,
       descricao: 'Restaurar o acesso',
       departamentoSolicitanteId: 10,
+      departamentoResponsavelId,
       prioridade: 'URGENTE',
       entrada: '2026-11-19T12:15:00Z',
     },
@@ -48,6 +52,7 @@ it('consulta a fila do departamento responsável na ordem devolvida pela API', a
       id: 41,
       descricao: 'Atualizar o cadastro',
       departamentoSolicitanteId: 10,
+      departamentoResponsavelId,
       prioridade: 'BAIXA',
       entrada: '2026-11-19T12:00:00Z',
     },
@@ -59,6 +64,52 @@ it('consulta a fila do departamento responsável na ordem devolvida pela API', a
 
   expect(resultado).toEqual(fila)
   expect(fetchMock).toHaveBeenCalledWith('/api/solicitacoes?departamentoResponsavelId=20')
+})
+
+it('consulta a fila geral sem filtro e recebe o departamento responsável de cada item', async () => {
+  const fila: ItemFila[] = [
+    {
+      id: 42,
+      descricao: 'Restaurar o acesso',
+      departamentoSolicitanteId: 10,
+      departamentoResponsavelId: 20,
+      prioridade: 'URGENTE',
+      entrada: '2026-11-19T12:15:00Z',
+    },
+    {
+      id: 41,
+      descricao: 'Atualizar o cadastro',
+      departamentoSolicitanteId: 20,
+      departamentoResponsavelId: 10,
+      prioridade: 'ALTA',
+      entrada: '2026-11-19T12:00:00Z',
+    },
+  ]
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(Response.json(fila))
+  vi.stubGlobal('fetch', fetchMock)
+
+  const resultado = await listarFila()
+
+  expect(resultado).toEqual(fila)
+  expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes')
+})
+
+it('consulta as solicitações concluídas e devolve os dados do cartão', async () => {
+  const concluidas: ItemFila[] = [{
+    id: 42,
+    descricao: 'Restaurar o acesso',
+    departamentoSolicitanteId: 10,
+    departamentoResponsavelId: 20,
+    prioridade: 'ALTA',
+    entrada: '2026-11-19T12:15:00Z',
+  }]
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(Response.json(concluidas))
+  vi.stubGlobal('fetch', fetchMock)
+
+  const resultado = await listarConcluidas()
+
+  expect(resultado).toEqual(concluidas)
+  expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes/concluidas')
 })
 
 it('envia a nova prioridade e aceita uma resposta sem corpo', async () => {
@@ -103,4 +154,27 @@ it('sinaliza erro quando a API rejeita a conclusão', async () => {
   await expect(concluirSolicitacao(solicitacaoId)).rejects.toThrow(
     'Não foi possível concluir a solicitação.',
   )
+})
+
+it('envia o pedido de reabertura sem corpo e aceita a resposta 204', async () => {
+  const solicitacaoId = 42
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 204 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(reabrirSolicitacao(solicitacaoId)).resolves.toBeUndefined()
+
+  expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes/42/reabertura', { method: 'PATCH' })
+})
+
+it('envia a nova descrição sem alterar os outros dados da solicitação', async () => {
+  const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response(null, { status: 204 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(alterarDescricao(42, 'Restaurar o acesso ao portal')).resolves.toBeUndefined()
+
+  expect(fetchMock).toHaveBeenCalledExactlyOnceWith('/api/solicitacoes/42/descricao', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ descricao: 'Restaurar o acesso ao portal' }),
+  })
 })

@@ -3,6 +3,7 @@ package io.github.showbiztable.osi.solicitacao;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Clock;
@@ -12,6 +13,8 @@ import java.time.ZoneOffset;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class SolicitacaoTest {
 
@@ -113,6 +116,44 @@ class SolicitacaoTest {
 	}
 
 	@Test
+	void edita_A_Descricao_Removendo_Os_Espacos_Das_Extremidades() {
+		// Given
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			"Acesso ao sistema de notas fiscais",
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
+			Prioridade.ALTA,
+			Clock.systemUTC()
+		);
+		String descricaoEditada = "Acesso ao portal de notas\nIndisponibilidade desde as 9h";
+
+		// When
+		solicitacao.alterarDescricao("  " + descricaoEditada + "\t\n");
+
+		// Then
+		assertEquals(descricaoEditada, solicitacao.getDescricao());
+	}
+
+	@ParameterizedTest
+	@NullAndEmptySource
+	@ValueSource(strings = {" \t\n "})
+	void rejeita_Uma_Edicao_Sem_Descricao(String descricaoInvalida) {
+		// Given
+		String descricaoOriginal = "Acesso ao sistema de notas fiscais";
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			descricaoOriginal,
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
+			Prioridade.ALTA,
+			Clock.systemUTC()
+		);
+
+		// When & Then
+		assertThrows(IllegalArgumentException.class, () -> solicitacao.alterarDescricao(descricaoInvalida));
+		assertEquals(descricaoOriginal, solicitacao.getDescricao());
+	}
+
+	@Test
 	void inicia_Ativa_Ao_Cadastrar_Uma_Solicitacao() {
 		// Given & When
 		Solicitacao solicitacao = Solicitacao.cadastrar(
@@ -143,5 +184,29 @@ class SolicitacaoTest {
 
 		// Then
 		assertFalse(solicitacao.isAtiva());
+	}
+
+	@Test
+	void reabre_A_Solicitacao_Preservando_A_Prioridade_E_A_Entrada() {
+		// Given
+		Instant entrada = Instant.parse("2026-11-18T12:15:00Z");
+		Solicitacao solicitacao = Solicitacao.cadastrar(
+			"Acesso ao sistema de notas fiscais",
+			DEPARTAMENTO_SOLICITANTE_ID,
+			DEPARTAMENTO_RESPONSAVEL_ID,
+			Prioridade.ALTA,
+			Clock.fixed(entrada, ZoneOffset.UTC)
+		);
+		solicitacao.concluir();
+
+		// When
+		solicitacao.reabrir();
+
+		// Then
+		assertAll(
+			() -> assertTrue(solicitacao.isAtiva()),
+			() -> assertEquals(Prioridade.ALTA, solicitacao.getPrioridade()),
+			() -> assertEquals(entrada, solicitacao.getEntrada())
+		);
 	}
 }

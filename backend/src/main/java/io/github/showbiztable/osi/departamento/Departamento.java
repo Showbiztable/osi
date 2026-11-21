@@ -19,6 +19,13 @@ class Departamento {
 	protected Departamento() {
 	}
 
+	Departamento(String nome) {
+		if (nome == null || nome.isBlank()) {
+			throw new IllegalArgumentException("O nome do departamento é obrigatório.");
+		}
+		this.nome = nome.strip();
+	}
+
 	Long getId() {
 		return id;
 	}

@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
 import { FilaAtendimento } from './FilaAtendimento'
+import { FiltroDepartamentos } from './FiltroDepartamentos'
 import { FormularioSolicitacao } from './FormularioSolicitacao'
 import { TelaAcesso } from './TelaAcesso'
+import { TelaDepartamentos } from './TelaDepartamentos'
 import { SessaoExpiradaError } from './acesso'
 import { listarDepartamentos, type Departamento } from './departamentos'
 import {
+  alterarDescricao,
   alterarPrioridade,
   concluirSolicitacao,
+  listarConcluidas,
   listarFila,
+  reabrirSolicitacao,
   type ItemFila,
 } from './solicitacoes'
 import './App.css'
@@ -21,6 +26,10 @@ const mensagensAcaoFila = {
     enviando: 'Concluindo solicitação…',
     erro: 'Não foi possível concluir a solicitação. Tente novamente.',
   },
+  reabertura: {
+    enviando: 'Reabrindo solicitação…',
+    erro: 'Não foi possível reabrir a solicitação. Tente novamente.',
+  },
 }
 
 type Catalogo =
@@ -29,7 +38,7 @@ type Catalogo =
 
 type Fila =
   | { estado: 'carregando' | 'erro' }
-  | { estado: 'pronta'; itens: ItemFila[] }
+  | { estado: 'pronta'; ativas: ItemFila[]; concluidas: ItemFila[] }
 
 type AcaoFila = {
   tipo: keyof typeof mensagensAcaoFila
@@ -40,25 +49,46 @@ type PainelSolicitacoesProps = { aoExpirarSessao: () => void }
 
 type SessaoDemo = { estado: 'acesso' | 'ativa' | 'expirada' }
 
-function Cabecalho() {
+type Pagina = 'fila' | 'departamentos'
+
+function paginaDaUrl(): Pagina {
+  return typeof window !== 'undefined' && window.location.hash === '#departamentos' ? 'departamentos' : 'fila'
+}
+
+function Cabecalho({ pagina }: { pagina?: Pagina }) {
   return (
     <header className="barra-topo">
-      <div className="marca">
-        <span className="marca-sigla">OSI</span>
-        <span>Organização de Solicitações Internas</span>
+      <div className="barra-topo-conteudo">
+        <div className="marca">
+          <span className="marca-sigla">OSI</span>
+          <span>Organização de Solicitações Internas</span>
+        </div>
+        {pagina && (
+          <nav className="navegacao-topo" aria-label="Navegação principal">
+            <a href="#fila" aria-current={pagina === 'fila' ? 'page' : undefined}>Fila de atendimento</a>
+            <a href="#departamentos" aria-current={pagina === 'departamentos' ? 'page' : undefined}>Departamentos</a>
+          </nav>
+        )}
       </div>
     </header>
   )
 }
 
 export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps) {
+  const [pagina, setPagina] = useState(paginaDaUrl)
   const [catalogo, setCatalogo] = useState<Catalogo>({ estado: 'carregando' })
-  const [departamentoFila, setDepartamentoFila] = useState('')
+  const [departamentosSelecionados, setDepartamentosSelecionados] = useState<number[]>([])
   const [fila, setFila] = useState<Fila>({ estado: 'carregando' })
   const [revisaoFila, setRevisaoFila] = useState(0)
   const [acaoFila, setAcaoFila] = useState<AcaoFila | null>(null)
   const departamentos = catalogo.estado === 'pronto' ? catalogo.departamentos : []
   const acaoEmAndamento = acaoFila?.estado === 'enviando'
+
+  useEffect(() => {
+    const atualizarPagina = () => setPagina(paginaDaUrl())
+    window.addEventListener('hashchange', atualizarPagina)
+    return () => window.removeEventListener('hashchange', atualizarPagina)
+  }, [])
 
   const tratarSessaoExpirada = useCallback((erro: unknown) => {
     if (!(erro instanceof SessaoExpiradaError)) return false
@@ -83,12 +113,10 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
   }, [tratarSessaoExpirada])
 
   useEffect(() => {
-    if (!departamentoFila) return
-
     let substituida = false
-    listarFila(Number(departamentoFila)).then(
-      (itens) => {
-        if (!substituida) setFila({ estado: 'pronta', itens })
+    Promise.all([listarFila(), listarConcluidas()]).then(
+      ([ativas, concluidas]) => {
+        if (!substituida) setFila({ estado: 'pronta', ativas, concluidas })
       },
       (erro) => {
         if (substituida || tratarSessaoExpirada(erro)) return
@@ -98,7 +126,20 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
     return () => {
       substituida = true
     }
-  }, [departamentoFila, revisaoFila, tratarSessaoExpirada])
+  }, [revisaoFila, tratarSessaoExpirada])
+
+  function alterarFiltroDepartamento(departamentoId: number, selecionado: boolean) {
+    setDepartamentosSelecionados((atuais) => selecionado
+      ? [...atuais, departamentoId]
+      : atuais.filter((id) => id !== departamentoId)
+    )
+    setAcaoFila(null)
+  }
+
+  function limparFiltroDepartamentos() {
+    setDepartamentosSelecionados([])
+    setAcaoFila(null)
+  }
 
   function atualizarFila() {
     setFila({ estado: 'carregando' })
@@ -118,38 +159,65 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
     }
   }
 
+  async function salvarDescricaoDaSolicitacao(id: number, descricao: string) {
+    try {
+      await alterarDescricao(id, descricao)
+    } catch (erro) {
+      tratarSessaoExpirada(erro)
+      throw erro
+    }
+
+    const atualizarDescricao = (itens: ItemFila[]) => itens.map((item) => item.id === id ? { ...item, descricao } : item)
+    setFila((atual) => atual.estado === 'pronta' ? {
+      estado: 'pronta',
+      ativas: atualizarDescricao(atual.ativas),
+      concluidas: atualizarDescricao(atual.concluidas),
+    } : atual)
+  }
+
+  function adicionarDepartamento(departamento: Departamento) {
+    setCatalogo((atual) => {
+      if (atual.estado !== 'pronto') return atual
+      const departamentos = [...atual.departamentos, departamento]
+      departamentos.sort((primeiro, segundo) => primeiro.nome.localeCompare(segundo.nome, 'pt-BR'))
+      return { estado: 'pronto', departamentos }
+    })
+  }
+
+  if (pagina === 'departamentos') {
+    return (
+      <>
+        <Cabecalho pagina={pagina} />
+        <TelaDepartamentos
+          departamentos={departamentos}
+          estadoCatalogo={catalogo.estado}
+          aoCadastrar={adicionarDepartamento}
+          aoExpirarSessao={aoExpirarSessao}
+        />
+      </>
+    )
+  }
+
   return (
     <>
-      <Cabecalho />
+      <Cabecalho pagina={pagina} />
 
       <main className="conteudo">
         <section className="painel painel-fila" aria-labelledby="titulo-fila">
-          <div className="painel-cabecalho cabecalho-fila">
+          <div className="painel-cabecalho">
             <h1 id="titulo-fila">Fila de atendimento</h1>
-            <a className="atalho-cadastro" href="#titulo-cadastro">Nova solicitação</a>
           </div>
           <div className="campos">
-            <label className="campo">
-              Departamento da fila
-              <select
-                value={departamentoFila}
-                disabled={!departamentos.length || acaoEmAndamento}
-                onChange={(evento) => {
-                  setAcaoFila(null)
-                  setFila({ estado: 'carregando' })
-                  setDepartamentoFila(evento.target.value)
-                }}
-              >
-                <option value="" disabled>Selecione um departamento</option>
-                {departamentos.map(({ id, nome }) => (
-                  <option key={id} value={id}>{nome}</option>
-                ))}
-              </select>
-            </label>
+            <FiltroDepartamentos
+              departamentos={departamentos}
+              selecionados={departamentosSelecionados}
+              desabilitado={acaoEmAndamento}
+              aoAlterar={alterarFiltroDepartamento}
+              aoLimpar={limparFiltroDepartamentos}
+            />
 
-            {!departamentoFila && <p>Selecione o departamento responsável para consultar a fila.</p>}
-            {departamentoFila && fila.estado === 'carregando' && <p role="status">Carregando fila…</p>}
-            {departamentoFila && fila.estado === 'erro' && (
+            {fila.estado === 'carregando' && <p role="status">Carregando fila…</p>}
+            {fila.estado === 'erro' && (
               <div className="fila-erro">
                 <p className="mensagem erro" role="alert">Não foi possível carregar a fila.</p>
                 <button type="button" onClick={atualizarFila}>Tentar novamente</button>
@@ -163,15 +231,19 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
                 {mensagensAcaoFila[acaoFila.tipo][acaoFila.estado]}
               </p>
             )}
-            {departamentoFila && fila.estado === 'pronta' && (
+            {fila.estado === 'pronta' && (
               <FilaAtendimento
-                itens={fila.itens}
+                itens={fila.ativas}
+                concluidas={fila.concluidas}
                 departamentos={departamentos}
+                departamentosResponsaveisSelecionados={departamentosSelecionados}
                 acaoEmAndamento={acaoEmAndamento}
+                onAlterarDescricao={salvarDescricaoDaSolicitacao}
                 onAlterarPrioridade={(id, prioridade) =>
                   executarAcaoDaFila('prioridade', () => alterarPrioridade(id, prioridade))
                 }
                 onConcluir={(id) => executarAcaoDaFila('conclusao', () => concluirSolicitacao(id))}
+                onReabrir={(id) => executarAcaoDaFila('reabertura', () => reabrirSolicitacao(id))}
               />
             )}
           </div>

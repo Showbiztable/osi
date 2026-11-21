@@ -1,0 +1,44 @@
+:is(.prioridade, .seletor-prioridade option)[data-prioridade='BAIXA'] {
+  background: #edf1ee;
+  color: #354c42;
+}
+
+:is(.prioridade, .seletor-prioridade option)[data-prioridade='MEDIA'] {
+  background: #e7efff;
+  color: #254479;
+}
+
+:is(.prioridade, .seletor-prioridade option)[data-prioridade='ALTA'] {
+  background: #fff0db;
+  color: #754500;
+}
+
+:is(.prioridade, .seletor-prioridade option)[data-prioridade='URGENTE'] {
+  background: #fee9e5;
+  color: #8f3024;
+}
+
+.seletor-prioridade {
+  min-inline-size: 0;
+}
+
+@supports (appearance: base-select) {
+  .seletor-prioridade,
+  .seletor-prioridade::picker(select) {
+    appearance: base-select;
+  }
+
+  .seletor-prioridade::picker(select) {
+    border: 1px solid #bccfc5;
+    border-radius: 0.5rem;
+  }
+
+  .seletor-prioridade option {
+    padding: 0.5rem 0.625rem;
+  }
+
+  .seletor-prioridade option:is(:hover, :focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
+}

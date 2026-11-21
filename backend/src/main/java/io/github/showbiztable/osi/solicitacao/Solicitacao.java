@@ -87,7 +87,18 @@ class Solicitacao {
 		this.prioridade = novaPrioridade;
 	}
 
+	void alterarDescricao(String novaDescricao) {
+		if (novaDescricao == null || novaDescricao.isBlank()) {
+			throw new IllegalArgumentException("A descrição da solicitação é obrigatória.");
+		}
+		this.descricao = novaDescricao.strip();
+	}
+
 	void concluir() {
 		this.ativa = false;
+	}
+
+	void reabrir() {
+		this.ativa = true;
 	}
 }

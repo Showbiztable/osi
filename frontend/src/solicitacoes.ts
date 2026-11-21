@@ -18,14 +18,28 @@ export type ItemFila = {
   id: number
   descricao: string
   departamentoSolicitanteId: number
+  departamentoResponsavelId: number
   prioridade: DadosCadastro['prioridade']
   entrada: string
 }
 
-export async function listarFila(departamentoResponsavelId: number): Promise<ItemFila[]> {
-  const resposta = await requisitarComSessao(`/api/solicitacoes?departamentoResponsavelId=${departamentoResponsavelId}`)
+export async function listarFila(departamentoResponsavelId?: number): Promise<ItemFila[]> {
+  const recurso = '/api/solicitacoes'
+  const endereco = departamentoResponsavelId === undefined
+    ? recurso
+    : `${recurso}?departamentoResponsavelId=${departamentoResponsavelId}`
+  const resposta = await requisitarComSessao(endereco)
   if (!resposta.ok) {
-    throw new Error('Não foi possível carregar a fila do departamento.')
+    throw new Error('Não foi possível carregar a fila.')
+  }
+
+  return resposta.json()
+}
+
+export async function listarConcluidas(): Promise<ItemFila[]> {
+  const resposta = await requisitarComSessao('/api/solicitacoes/concluidas')
+  if (!resposta.ok) {
+    throw new Error('Não foi possível carregar as solicitações concluídas.')
   }
 
   return resposta.json()
@@ -66,5 +80,25 @@ export async function concluirSolicitacao(solicitacaoId: number): Promise<void> 
 
   if (!resposta.ok) {
     throw new Error('Não foi possível concluir a solicitação.')
+  }
+}
+
+export async function reabrirSolicitacao(solicitacaoId: number): Promise<void> {
+  const resposta = await requisitarComSessao(`/api/solicitacoes/${solicitacaoId}/reabertura`, { method: 'PATCH' })
+
+  if (!resposta.ok) {
+    throw new Error('Não foi possível reabrir a solicitação.')
+  }
+}
+
+export async function alterarDescricao(solicitacaoId: number, descricao: string): Promise<void> {
+  const resposta = await requisitarComSessao(`/api/solicitacoes/${solicitacaoId}/descricao`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ descricao }),
+  })
+
+  if (!resposta.ok) {
+    throw new Error('Não foi possível alterar a descrição da solicitação.')
   }
 }
