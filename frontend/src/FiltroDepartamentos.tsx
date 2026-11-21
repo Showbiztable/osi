@@ -1,3 +1,4 @@
+import { useId, useState } from 'react'
 import type { Departamento } from './departamentos'
 import './FiltroDepartamentos.css'
 
@@ -16,21 +17,28 @@ export function FiltroDepartamentos({
   aoAlterar,
   aoLimpar,
 }: FiltroDepartamentosProps) {
-  const quantidadeSelecionada = selecionados.length
+  const [aberto, setAberto] = useState(false)
+  const idOpcoes = useId()
+  const departamentosSelecionados = departamentos.filter(({ id }) => selecionados.includes(id))
 
   return (
-    <details className="filtro-controle">
-      <summary>
+    <div className="filtro-controle">
+      <button
+        type="button"
+        className="botao-secundario"
+        aria-expanded={aberto}
+        aria-controls={idOpcoes}
+        onClick={() => setAberto((atual) => !atual)}
+      >
         Filtro
-        {quantidadeSelecionada > 0 && (
-          <span className="filtro-contagem">
-            {' '}({quantidadeSelecionada} {quantidadeSelecionada === 1 ? 'selecionado' : 'selecionados'})
-          </span>
-        )}
-      </summary>
-      <fieldset className="filtro-departamentos" disabled={desabilitado}>
-        <legend>Departamentos responsáveis</legend>
-        {quantidadeSelecionada === 0 && <p>Todos os departamentos</p>}
+      </button>
+      <fieldset
+        id={idOpcoes}
+        className="filtro-departamentos"
+        aria-label="Departamentos responsáveis"
+        disabled={desabilitado}
+        hidden={!aberto}
+      >
         <div className="opcoes-departamentos">
           {departamentos.map(({ id, nome }) => (
             <label key={id}>
@@ -47,6 +55,11 @@ export function FiltroDepartamentos({
           Limpar filtros
         </button>
       </fieldset>
-    </details>
+      {departamentosSelecionados.length > 0 && (
+        <ul className="filtros-selecionados" aria-label="Departamentos selecionados" role="list">
+          {departamentosSelecionados.map(({ id, nome }) => <li key={id}>{nome}</li>)}
+        </ul>
+      )}
+    </div>
   )
 }

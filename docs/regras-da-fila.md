@@ -60,7 +60,7 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - [x] Centralizar o botão **Cadastrar solicitação** no rodapé do formulário, ocupando a largura disponível em telas estreitas.
 - [x] Exibir o sucesso ou erro do cadastro em uma notificação temporária no canto superior direito, fora do rodapé do formulário. O componente pode ser reutilizado em outras ações do painel.
 - [x] Adicionar **Fila de atendimento** e **Departamentos** à navegação do topo. A tela de departamentos tem sua própria listagem e formulário de cadastro.
-- [x] Reunir a seleção de departamentos no botão **Filtro**. Manter a seleção múltipla e oferecer **Limpar filtros** para voltar a exibir todos os departamentos nas duas colunas.
+- [x] Centralizar o título da fila. Abrir as caixas de seleção ao lado do botão **Filtro** e exibir os nomes selecionados mesmo com as opções recolhidas. **Limpar filtros** restaura as duas colunas para todos os departamentos.
 - [x] Adicionar um favicon da OSI para identificar a aplicação na aba do navegador.
 - [x] Padronizar a altura dos cartões em cada coluna. Limitar a descrição a três linhas e oferecer **Ver descrição completa** quando o texto for cortado.
 - [x] Exibir o número à esquerda e a prioridade à direita na primeira linha do cartão. Mostrar o destaque de próxima solicitação e a data de entrada em linhas próprias. Usar o mesmo fundo para **De** e **Para**.
