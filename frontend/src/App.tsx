@@ -84,8 +84,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
   const [revisaoFila, setRevisaoFila] = useState(0)
   const [acaoFila, setAcaoFila] = useState<AcaoFila | null>(null)
   const departamentos = catalogo.estado === 'pronto' ? catalogo.departamentos : []
-  const atualizandoFila = fila.estado === 'carregando' && Boolean(fila.dados)
-  const acaoEmAndamento = acaoFila?.estado === 'enviando' || atualizandoFila
+  const acaoEmAndamento = acaoFila?.estado === 'enviando'
 
   useEffect(() => {
     const atualizarPagina = () => setPagina(paginaDaUrl())
@@ -245,6 +244,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
                 departamentos={departamentos}
                 departamentosResponsaveisSelecionados={departamentosSelecionados}
                 acaoEmAndamento={acaoEmAndamento}
+                estadoFila={fila.estado}
                 onAlterarDescricao={salvarDescricaoDaSolicitacao}
                 onAlterarPrioridade={(id, prioridade) =>
                   executarAcaoDaFila('prioridade', () => alterarPrioridade(id, prioridade))

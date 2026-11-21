@@ -258,3 +258,39 @@ it('oferece arraste nos dois sentidos e um botão para reabrir a solicitação c
   expect(pagina).toMatch(/<button\b[^>]*aria-label="Reabrir solicitação #41"[^>]*>Reabrir<\/button>/)
   expect(painel(true)).not.toContain('draggable="true"')
 })
+
+it.each(['carregando', 'erro'] as const)(
+  'preserva a leitura e bloqueia alterações de cartões enquanto a fila está em %s',
+  (estadoFila) => {
+    const ativa: ItemFila = {
+      id: 42,
+      descricao: 'Restaurar o acesso',
+      departamentoSolicitanteId: 10,
+      departamentoResponsavelId,
+      prioridade: 'URGENTE',
+      entrada: '2026-11-19T12:15:00Z',
+    }
+    const concluida: ItemFila = { ...ativa, id: 41, descricao: 'Atualizar o cadastro' }
+
+    const pagina = renderToStaticMarkup(
+      <FilaAtendimento
+        itens={[ativa]}
+        concluidas={[concluida]}
+        estadoFila={estadoFila}
+        onAlterarPrioridade={() => {}}
+        onAlterarDescricao={async () => {}}
+        onConcluir={() => {}}
+        onReabrir={() => {}}
+      />,
+    )
+
+    expect(pagina).toContain(ativa.descricao)
+    expect(pagina).toContain(concluida.descricao)
+    expect(pagina.match(/<button\b(?![^>]*disabled)[^>]*>Ver descrição completa<\/button>/g)).toHaveLength(2)
+    expect(pagina).toMatch(/<select\b[^>]*aria-label="Alterar prioridade da solicitação #42"[^>]*disabled=""/)
+    expect(pagina).toMatch(/<button\b[^>]*aria-label="Concluir solicitação #42"[^>]*disabled=""/)
+    expect(pagina).toMatch(/<button\b[^>]*aria-label="Reabrir solicitação #41"[^>]*disabled=""/)
+    expect(pagina.match(/<button\b[^>]*disabled=""[^>]*>Editar descrição<\/button>/g)).toHaveLength(2)
+    expect(pagina).not.toContain('draggable="true"')
+  },
+)
