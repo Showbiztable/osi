@@ -121,8 +121,8 @@ it('distingue os departamentos no cartão e identifica a fila da próxima solici
   expect(pagina).toContain('<dt>Para</dt><dd>TI</dd>')
 })
 
-it.each(['Concluir', 'Reabrir'])('coloca a leitura da descrição antes de %s no rodapé do cartão', (acao) => {
-  const descricao = 'Restaurar o acesso ao sistema de notas fiscais e confirmar a permissão do Financeiro. '.repeat(4).trim()
+it.each(['Concluir', 'Reabrir'])('oferece a descrição curta antes de %s e identifica a abertura do cartão', (acao) => {
+  const descricao = 'Restaurar o acesso'
   const item: ItemFila = {
     id: 42,
     descricao,
@@ -143,12 +143,15 @@ it.each(['Concluir', 'Reabrir'])('coloca a leitura da descrição antes de %s no
   const dialogo = pagina.match(/<dialog\b[^>]*id="([^"]+)"[^>]*>[\s\S]*?<\/dialog>/)
   const rodape = pagina.match(/<div class="item-fila-botoes">([\s\S]*?)<\/div>/)?.[1] ?? ''
   const botoes = Array.from(rodape.matchAll(/<button\b[^>]*>([^<]+)<\/button>/g), ([, rotulo]) => rotulo)
+  const botaoDescricao = rodape.match(/<button\b[^>]*>Ver descrição completa<\/button>/)?.[0]
 
   expect(dialogo).not.toBeNull()
   expect(dialogo?.[0]).toContain(`<p>${descricao}</p>`)
   expect(botoes).toEqual(['Ver descrição completa', acao])
+  expect(botaoDescricao).not.toContain('hidden')
   expect(rodape).toContain('aria-haspopup="dialog"')
   expect(rodape).toContain(`aria-controls="${dialogo?.[1]}"`)
+  expect(pagina).toMatch(/<time\b[^>]*>Aberto em /)
 })
 
 it('mostra as concluídas do departamento responsável selecionado mesmo sem solicitações ativas', () => {

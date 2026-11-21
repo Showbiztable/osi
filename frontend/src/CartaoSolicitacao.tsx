@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type DragEvent } from 'react'
+import { useId, useRef, type DragEvent } from 'react'
 import { rotulosPrioridade, type ItemFila } from './solicitacoes'
 import './CartaoSolicitacao.css'
 
@@ -34,24 +34,8 @@ export function CartaoSolicitacao({
   onArrastar,
   onTerminarArraste,
 }: CartaoSolicitacaoProps) {
-  const previa = useRef<HTMLHeadingElement>(null)
   const dialogo = useRef<HTMLDialogElement>(null)
   const dialogoId = useId()
-  const [descricaoCortada, setDescricaoCortada] = useState(false)
-
-  useEffect(() => {
-    const titulo = previa.current
-    if (!titulo) return
-
-    const medirDescricao = () => {
-      setDescricaoCortada(titulo.scrollHeight > titulo.clientHeight)
-    }
-
-    medirDescricao()
-    const observador = new ResizeObserver(medirDescricao)
-    observador.observe(titulo)
-    return () => observador.disconnect()
-  }, [item.descricao])
 
   return (
     <li
@@ -69,7 +53,7 @@ export function CartaoSolicitacao({
       {proxima && (
         <span className="proxima-etiqueta">Próxima solicitação da fila de {departamentoResponsavel}</span>
       )}
-      <h3 ref={previa}>{item.descricao}</h3>
+      <h3>{item.descricao}</h3>
       <dl className="departamentos-cartao">
         <div>
           <dt>De</dt>
@@ -80,7 +64,7 @@ export function CartaoSolicitacao({
           <dd>{departamentoResponsavel}</dd>
         </div>
       </dl>
-      <time className="entrada-cartao" dateTime={item.entrada}>{formatoEntrada.format(new Date(item.entrada))}</time>
+      <time className="entrada-cartao" dateTime={item.entrada}>Aberto em {formatoEntrada.format(new Date(item.entrada))}</time>
       <div className="item-fila-acoes">
         {!concluida && (
           <label className="campo prioridade-cartao-campo">
@@ -102,7 +86,6 @@ export function CartaoSolicitacao({
           <button
             type="button"
             className="botao-secundario"
-            hidden={!descricaoCortada}
             aria-haspopup="dialog"
             aria-controls={dialogoId}
             onClick={() => dialogo.current?.showModal()}

@@ -68,7 +68,7 @@ Se chegarem solicitações de prioridade maior continuamente, as de prioridade m
 - [x] Exibir o rótulo **Prioridade** e o seletor na mesma linha, com opções nas cores das etiquetas em navegadores que permitem personalizar o seletor nativo.
 - [x] Permitir arrastar cartões de **Ativas** para **Concluídas**, reaproveitando a ação do botão **Concluir**.
 - [x] Permitir arrastar cartões de **Concluídas** para **Ativas** para reabrir a solicitação com a regra de ordenação acima. Oferecer também a ação **Reabrir** no cartão concluído.
-- [ ] Exibir **Ver descrição completa** em todos os cartões e identificar a data de entrada com **Aberto em**.
+- [x] Exibir **Ver descrição completa** em todos os cartões e identificar a data de entrada com **Aberto em**.
 - [ ] Usar o mesmo esquema de cores no seletor de prioridade dos cartões e do cadastro.
 - [ ] Permitir editar e salvar a descrição no diálogo, com o botão de edição à esquerda de **Fechar**.
 
