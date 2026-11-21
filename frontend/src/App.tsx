@@ -108,6 +108,11 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
     setAcaoFila(null)
   }
 
+  function limparFiltroDepartamentos() {
+    setDepartamentosSelecionados([])
+    setAcaoFila(null)
+  }
+
   function atualizarFila() {
     setFila({ estado: 'carregando' })
     setRevisaoFila((anterior) => anterior + 1)
@@ -141,6 +146,7 @@ export function PainelSolicitacoes({ aoExpirarSessao }: PainelSolicitacoesProps)
               selecionados={departamentosSelecionados}
               desabilitado={acaoEmAndamento}
               aoAlterar={alterarFiltroDepartamento}
+              aoLimpar={limparFiltroDepartamentos}
             />
 
             {fila.estado === 'carregando' && <p role="status">Carregando fila…</p>}
